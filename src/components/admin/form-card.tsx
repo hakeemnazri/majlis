@@ -13,7 +13,7 @@ function FormCard() {
     <>
       <Card className="w-full">
         <CardHeader>
-          <CardTitle>Main form</CardTitle>
+          <CardTitle>Event Build form</CardTitle>
           <CardDescription>
             Fill in all fields within this form.
           </CardDescription>
