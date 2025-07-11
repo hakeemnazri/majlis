@@ -40,6 +40,23 @@ export const BuildEventContextProvider = ({
           ticketQuantity: 0,
         },
       ],
+      survey:[
+        {
+          type: "short answer",
+          question: "Nama",
+          options: null
+        },
+        {
+          type: "short answer",
+          question: "Emel",
+          options: null
+        },
+        {
+          type: "short answer",
+          question: "Tempat tinggal (cth: Kota Damansara)",
+          options: null
+        },
+      ]
     },
   });
   const fieldArray = useFieldArray({

@@ -2,21 +2,17 @@ import React from "react";
 import {
   Card,
   CardHeader,
-  CardTitle,
-  CardDescription,
   CardContent,
 } from "../ui/card";
 import MainForm from "./main-form";
+import BuildFormHeaders from "./build-form-headers";
 
 function FormCard() {
   return (
     <>
       <Card className="w-full">
         <CardHeader>
-          <CardTitle>Event Build form</CardTitle>
-          <CardDescription>
-            Fill in all fields within this form.
-          </CardDescription>
+          <BuildFormHeaders />
         </CardHeader>
         <CardContent>
           <MainForm />

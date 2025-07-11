@@ -1,5 +1,20 @@
 import { EventQuestion, TInputTickets, TValidatePageFields } from "../types";
 
+export const BUILD_FORM_HEADERS = [
+  {
+    title: "Event Build form",
+    description: "Select event type & host within this section",
+  },
+  {
+    title: "Event Details",
+    description: "Fill in all event details within this section.",
+  },
+  {
+    title: "Survey Questions",
+    description: "Customize survey questions within this section.",
+  },
+];
+
 export const EVENT_FIRST_PAGE_FORM_QUESTIONS: EventQuestion[] = [
   {
     label: "category",

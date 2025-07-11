@@ -161,6 +161,16 @@ const looseTicketSchema = z.object({
   ticketQuantity: strictShape.ticketQuantity.nullable(),
 });
 
+const surveyQuestionSchema = z.object({
+  type: z.enum(["short answer", "paragraph", "mutliple choice", "checkboxes"]),
+  question: z.string().min(2, {
+    message: "Question must be at least 2 characters.",
+  }),
+  options: z.array(z.string()).min(2, {
+    message: "Options must be at least 2.",
+  }).nullable(),
+})
+
 export const formSchema2 = (isStrict: boolean) =>baseFormSchema.extend({
   registerTickets: z
   .array(isStrict ? strictTicketSchema : looseTicketSchema)
@@ -168,6 +178,9 @@ export const formSchema2 = (isStrict: boolean) =>baseFormSchema.extend({
     message: "Tickets must be at least 1.",
   })
   .nullable(),
+  survey: z.array(surveyQuestionSchema).min(1, {
+    message: "Surveys must be at least 1 question.",
+  })
 }).refine((data) => {
   if (data.category === "infaq") {
     data.frequency = null;
