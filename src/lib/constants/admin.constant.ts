@@ -65,7 +65,10 @@ export const EVENT_SECOND_PAGE_FORM_QUESTIONS: EventQuestion[] = [
   },
 ];
 
-export const VALIDATE_FIRST_PAGE: TValidatePageFields = ["category", "eventHost"];
+export const VALIDATE_FIRST_PAGE: TValidatePageFields = [
+  "category",
+  "eventHost",
+];
 
 export const VALIDATE_SECOND_PAGE: TValidatePageFields = [
   "description",

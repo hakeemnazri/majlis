@@ -29,11 +29,7 @@ export const formSchema = z
     eventImage: z.string().min(2, {
       message: "Image must be at least 2 characters.",
     }),
-    category: z.union([z.enum(["premium", "general", "infaq", "preview"],{
-      required_error: "Category is required.",
-    }),
-    z.literal("")
-  ]),
+    category:z.enum(["premium", "general", "infaq", "preview"]),
     frequency: z.string().nullable(),
     donationTarget: z.coerce
       .number()

@@ -29,14 +29,6 @@ export const BuildEventContextProvider = ({
   const form = useForm<TForm>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      category: "",
-      title: "",
-      description: "",
-      eventHost: "",
-      eventImage: "",
-      frequency: null,
-      donationTarget: null,
-      reference: "",
       registerTickets: [
         {
           ticketName: null,

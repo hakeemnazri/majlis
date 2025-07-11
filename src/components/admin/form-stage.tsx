@@ -10,7 +10,7 @@ type StageIndicatorProps = {
 
 function FormStage() {
   const { formPage } = useBuildFormStore((state) => state);
-  return <StageIndicator stages={["1", "2"]} currentStage={formPage} />;
+  return <StageIndicator stages={["1", "2", "3"]} currentStage={formPage} />;
 }
 
 export default FormStage;
