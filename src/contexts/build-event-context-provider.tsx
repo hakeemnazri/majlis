@@ -1,6 +1,6 @@
 "use client";
 
-import { formSchema } from "@/lib/schemas";
+import { formSchema2 } from "@/lib/schemas";
 import { TForm } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { createContext } from "react";
@@ -26,15 +26,16 @@ export const BuildEventContextProvider = ({
   children,
 }: BuildEventContextProviderProps) => {
   //React-hook-form
-  const form = useForm<TForm>({
-    resolver: zodResolver(formSchema),
+  const isStrict = true;
+  const form = useForm<TForm>({ //TForm
+    resolver: zodResolver(formSchema2(isStrict)), //formSchema
     defaultValues: {
       registerTickets: [
         {
-          ticketName: null,
-          ticketDescription: null,
-          ticketPrice: null,
-          ticketQuantity: null,
+          ticketName: "",
+          ticketDescription: "",
+          ticketPrice: 0,
+          ticketQuantity: 0,
         },
       ],
     },
