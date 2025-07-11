@@ -27,9 +27,11 @@ export const BuildEventContextProvider = ({
 }: BuildEventContextProviderProps) => {
   //React-hook-form
   const isStrict = true;
-  const form = useForm<TForm>({ //TForm
+  const form = useForm<TForm>({
+    //TForm
     resolver: zodResolver(formSchema2(isStrict)), //formSchema
     defaultValues: {
+      donationTarget: 0,
       registerTickets: [
         {
           ticketName: "",

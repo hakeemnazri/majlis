@@ -16,14 +16,14 @@ function FormStageButtons() {
   );
 
   const handleNextPage = async () => {
-    let isFieldValid = false;
-    if (formPage === 0) {
-      isFieldValid = await validatePageFields("firstPage", form);
-    }
-    if(formPage === 1){
-      isFieldValid = await validatePageFields("secondPage", form);
-    }
-    if (!isFieldValid) return;
+    // let isFieldValid = false;
+    // if (formPage === 0) {
+    //   isFieldValid = await validatePageFields("firstPage", form);
+    // }
+    // if(formPage === 1){
+    //   isFieldValid = await validatePageFields("secondPage", form);
+    // }
+    // if (!isFieldValid) return;
     nextFormPage();
   };
 
