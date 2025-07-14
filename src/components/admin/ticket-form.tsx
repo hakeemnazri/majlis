@@ -21,7 +21,7 @@ type TicketFormProps = {
 function TicketForm({ index }: TicketFormProps) {
   const {
     form,
-    fieldArray: { move, remove, fields },
+    registerTickets: { move, remove, fields },
   } = useBuildEventContext();
   const handleMoveUp = (index: number) => {
     move(index, index - 1);

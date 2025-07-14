@@ -130,7 +130,7 @@ const baseFormSchema = z.object({
   }),
 });
 
-const strictTicketSchema = z.object({
+export const strictTicketSchema = z.object({
   ticketName: z
     .string()
     .min(2, {
@@ -161,12 +161,15 @@ const looseTicketSchema = z.object({
   ticketQuantity: strictShape.ticketQuantity.nullable(),
 });
 
-const surveyQuestionSchema = z.object({
+export const surveyQuestionSchema = z.object({
+  id: z.string(),
   type: z.enum(["short answer", "paragraph", "mutliple choice", "checkboxes"]),
   question: z.string().min(2, {
     message: "Question must be at least 2 characters.",
   }),
-  options: z.array(z.string()).min(2, {
+  options: z.array(z.string().min(2,{
+    message: "Option must be at least 2 characters.",
+  })).min(2, {
     message: "Options must be at least 2.",
   }).nullable(),
 })

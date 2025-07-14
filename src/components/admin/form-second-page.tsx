@@ -11,6 +11,7 @@ function FormSecondPage() {
   const category = watch("category");
   return (
     <>
+    {/* TODO: check if each tikcet has an id field */}
       <EventDetails />
       {category === "premium" && <TicketDetails />}
     </>

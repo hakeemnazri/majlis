@@ -15,23 +15,90 @@ import { Card, CardContent } from "../ui/card";
 import { Label } from "../ui/label";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Checkbox } from "../ui/checkbox";
-import { QUESTION_OPTIONS } from "@/lib/constants/admin.constant";
+import { QUESTION_TYPES } from "@/lib/constants/admin.constant";
+import { TSurveyQuestion } from "@/lib/types";
+
+type SurveyQuestionProps = {
+  surveyDetails: TSurveyQuestion[];
+  question: TSurveyQuestion;
+  index: number;
+};
 
 function FormThirdPage() {
-  const { form } = useBuildEventContext();
+  const {
+    form: { watch },
+  } = useBuildEventContext();
+  const surveyDetails = watch("survey");
   return (
     <>
-      {/* -------------------------- */}
-      {/* Short & Long Questions */}
+      {surveyDetails.map((question, index) => (
+        <SurveyQuestion
+          key={question.id}
+          surveyDetails={surveyDetails}
+          question={question}
+          index={index}
+        />
+      ))}
+    </>
+  );
+}
+
+export default FormThirdPage;
+
+const SurveyQuestion = ({
+  surveyDetails,
+  question,
+  index,
+}: SurveyQuestionProps) => {
+  const {
+    form: { control, formState },
+    survey: { remove, move, update, fields },
+  } = useBuildEventContext();
+
+  console.log(formState)
+
+  const handleMoveUpQuestion = (index: number) => {
+    move(index, index - 1);
+  };
+  const handleMoveDownQuestion = (index: number) => {
+    move(index, index + 1);
+  };
+  const handleRemoveQuestion = (index: number) => {
+    remove(index);
+  };
+  const handleAddOption = (index: number) => {
+    if (!surveyDetails[index].options) return;
+    update(index, {
+      ...surveyDetails[index],
+      options: [...surveyDetails[index].options, ""],
+    });
+  };
+
+  const handleRemoveOption = (questionIndex: number, optionIndex: number) => {
+    if (!surveyDetails[questionIndex].options) return;
+    update(questionIndex, {
+      ...surveyDetails[questionIndex],
+      options: [
+        ...surveyDetails[questionIndex].options.filter(
+          (_, i) => i !== optionIndex
+        ),
+      ],
+    });
+  };
+
+  if (question.type === "short answer" || question.type === "paragraph") {
+    return (
       <Card>
         <CardContent className="space-y-4">
           <div>
-            <Label className="text-md font-semibold">Question 1</Label>
+            <Label className="text-md font-semibold">
+              Question {index + 1}
+            </Label>
           </div>
           <div className="space-y-4">
             <FormField
-              control={form.control}
-              name="title"
+              control={control}
+              name={`survey.${index}.type`}
               render={({ field }) => (
                 <FormItem>
                   <div className="flex gap-2 w-full">
@@ -42,13 +109,13 @@ function FormThirdPage() {
                       <FormControl>
                         <SelectTrigger className="w-1/2">
                           <SelectValue
-                            placeholder="placeholder"
+                            placeholder="Select question type"
                             className={cn()}
                           />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {QUESTION_OPTIONS.map((option, index) => (
+                        {QUESTION_TYPES.map((option, index) => (
                           <SelectItem key={index} value={option}>
                             {option.charAt(0).toUpperCase() + option.slice(1)}
                           </SelectItem>
@@ -57,9 +124,19 @@ function FormThirdPage() {
                     </Select>
                     <FormMessage />
                     <div className="space-x-2">
-                      <Button>Up</Button>
-                      <Button>Down</Button>
-                      <Button>Remove</Button>
+                      {index > 0 && (
+                        <Button onClick={() => handleMoveUpQuestion(index)}>
+                          Up
+                        </Button>
+                      )}
+                      {index < fields.length - 1 && (
+                        <Button onClick={() => handleMoveDownQuestion(index)}>
+                          Down
+                        </Button>
+                      )}
+                      <Button onClick={() => handleRemoveQuestion(index)}>
+                        Remove
+                      </Button>
                     </div>
                   </div>
                 </FormItem>
@@ -67,13 +144,13 @@ function FormThirdPage() {
             />
 
             <FormField
-              control={form.control}
-              name="title"
+              control={control}
+              name={`survey.${index}.question`}
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <Input
-                      placeholder="placeholder"
+                      placeholder={`Insert ${question.type} question`}
                       {...field}
                       className={cn()}
                     />
@@ -85,18 +162,22 @@ function FormThirdPage() {
           </div>
         </CardContent>
       </Card>
-      {/* -------------------------- */}
-      {/* Multiple Questions */}
+    );
+  }
+  if (question.type === "checkboxes" || question.type === "mutliple choice") {
+    return (
       <Card>
         <CardContent className="space-y-4">
           <div>
-            <Label className="text-md font-semibold">Question 1</Label>
+            <Label className="text-md font-semibold">
+              Question {index + 1}
+            </Label>
           </div>
           <div className="space-y-4">
             <>
               <FormField
-                control={form.control}
-                name="title"
+                control={control}
+                name={`survey.${index}.type`}
                 render={({ field }) => (
                   <FormItem>
                     <div className="flex gap-2 w-full">
@@ -107,13 +188,13 @@ function FormThirdPage() {
                         <FormControl>
                           <SelectTrigger className="w-1/2">
                             <SelectValue
-                              placeholder="placeholder"
+                              placeholder="Select question type"
                               className={cn()}
                             />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {QUESTION_OPTIONS.map((option, index) => (
+                          {QUESTION_TYPES.map((option, index) => (
                             <SelectItem key={index} value={option}>
                               {option.charAt(0).toUpperCase() + option.slice(1)}
                             </SelectItem>
@@ -122,9 +203,19 @@ function FormThirdPage() {
                       </Select>
                       <FormMessage />
                       <div className="space-x-2">
-                        <Button>Up</Button>
-                        <Button>Down</Button>
-                        <Button>Remove</Button>
+                        {index > 0 && (
+                          <Button onClick={() => handleMoveUpQuestion(index)}>
+                            Up
+                          </Button>
+                        )}
+                        {index < fields.length - 1 && (
+                          <Button onClick={() => handleMoveDownQuestion(index)}>
+                            Down
+                          </Button>
+                        )}
+                        <Button onClick={() => handleRemoveQuestion(index)}>
+                          Remove
+                        </Button>
                       </div>
                     </div>
                   </FormItem>
@@ -132,13 +223,13 @@ function FormThirdPage() {
               />
 
               <FormField
-                control={form.control}
-                name="title"
+                control={control}
+                name={`survey.${index}.question`}
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
                       <Input
-                        placeholder="placeholder"
+                        placeholder={`Insert ${question.type} question`}
                         {...field}
                         className={cn()}
                       />
@@ -150,213 +241,53 @@ function FormThirdPage() {
             </>
             {/* Options */}
             <section className="space-y-4">
-              <div className="flex items-center gap-3 w-full">
-                <RadioGroup>
-                  <RadioGroupItem className="w-6 h-6" value="" disabled />
-                </RadioGroup>
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Input
-                          placeholder="placeholder"
-                          {...field}
-                          className={cn("")}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+              {question.options?.map((_, i) => (
+                <div key={i} className="flex items-center gap-3 w-full">
+                  {question.type === "checkboxes" ? (
+                    <>
+                      <Checkbox disabled className="w-6 h-6" />
+                    </>
+                  ) : (
+                    <>
+                      <RadioGroup>
+                        <RadioGroupItem className="w-6 h-6" value="" disabled />
+                      </RadioGroup>
+                    </>
                   )}
-                />
-                <Button>Remove</Button>
-              </div>
-
-              <div className="flex items-center gap-3 w-full">
-                <RadioGroup>
-                  <RadioGroupItem className="w-6 h-6" value="" disabled />
-                </RadioGroup>
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Input
-                          placeholder="placeholder"
-                          {...field}
-                          className={cn("")}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button>Remove</Button>
-              </div>
-
-              <div className="flex items-center gap-3 w-full">
-                <RadioGroup>
-                  <RadioGroupItem className="w-6 h-6" value="" disabled />
-                </RadioGroup>
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Input
-                          placeholder="placeholder"
-                          {...field}
-                          className={cn("")}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button>Remove</Button>
-              </div>
-
-              <Button>Add Option</Button>
-            </section>
-          </div>
-        </CardContent>
-      </Card>
-      {/* -------------------------- */}
-      {/* Checkbox Questions */}
-      <Card>
-        <CardContent className="space-y-4">
-          <div>
-            <Label className="text-md font-semibold">Question 1</Label>
-          </div>
-          <div className="space-y-4">
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="flex gap-2 w-full">
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value?.toString()}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="w-1/2">
-                          <SelectValue
-                            placeholder="placeholder"
-                            className={cn()}
+                  <FormField
+                    control={control}
+                    name={`survey.${index}.options.${i}`}
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormControl>
+                          <Input
+                            placeholder={`Insert ${question.type} option`}
+                            {...field}
+                            className={cn("")}
                           />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {QUESTION_OPTIONS.map((option, index) => (
-                          <SelectItem key={index} value={option}>
-                            {option.charAt(0).toUpperCase() + option.slice(1)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                    <div className="space-x-2">
-                      <Button>Up</Button>
-                      <Button>Down</Button>
-                      <Button>Remove</Button>
-                    </div>
-                  </div>
-                </FormItem>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {i > 0 && (
+                    <Button onClick={() => handleRemoveOption(index, i)}>
+                      Remove
+                    </Button>
+                  )}
+                </div>
+              ))}
+
+              <Button onClick={() => handleAddOption(index)}>Add Option</Button>
+              {formState.errors?.survey?.[index]?.options?.root?.message && (
+                <p className="text-sm text-destructive">
+                  {formState.errors.survey[index].options.root?.message}
+                </p>
               )}
-            />
-
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      placeholder="placeholder"
-                      {...field}
-                      className={cn()}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {/* Options */}
-            <section className="space-y-4">
-              <div className="flex items-center gap-3 w-full">
-                <Checkbox disabled className="w-6 h-6" />
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Input
-                          placeholder="placeholder"
-                          {...field}
-                          className={cn("")}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button>Remove</Button>
-              </div>
-
-              <div className="flex items-center gap-3 w-full">
-                <Checkbox disabled className="w-6 h-6" />
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Input
-                          placeholder="placeholder"
-                          {...field}
-                          className={cn("")}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button>Remove</Button>
-              </div>
-
-              <div className="flex items-center gap-3 w-full">
-                <Checkbox disabled className="w-6 h-6" />
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Input
-                          placeholder="placeholder"
-                          {...field}
-                          className={cn("")}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button>Remove</Button>
-              </div>
-
-              <Button>Add Option</Button>
             </section>
           </div>
         </CardContent>
       </Card>
-    </>
-  );
-}
-
-export default FormThirdPage;
+    );
+  }
+};

@@ -7,7 +7,7 @@ import { useBuildEventContext } from "@/lib/hooks/build-event-hooks";
 import TicketForm from "./ticket-form";
 
 function TicketDetails() {
-  const { fieldArray: {fields, append} } = useBuildEventContext();
+  const { registerTickets: {fields, append} } = useBuildEventContext();
 
   return (
     <>

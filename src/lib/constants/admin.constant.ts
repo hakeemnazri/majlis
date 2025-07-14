@@ -13,6 +13,10 @@ export const BUILD_FORM_HEADERS = [
     title: "Survey Questions",
     description: "Customize survey questions within this section.",
   },
+  {
+    title: "Review & Submit",
+    description: "Review and submit event within this section.",
+  },
 ];
 
 export const EVENT_FIRST_PAGE_FORM_QUESTIONS: EventQuestion[] = [
@@ -94,6 +98,7 @@ export const VALIDATE_SECOND_PAGE: TValidatePageFields = [
   "frequency",
   "registerTickets",
 ];
+export const VALIDATE_THIRD_PAGE: TValidatePageFields = ["survey"];
 
 export const INPUT_TICKETS: TInputTickets[] = [
   {
@@ -122,4 +127,9 @@ export const INPUT_TICKETS: TInputTickets[] = [
   },
 ];
 
-export const QUESTION_OPTIONS = ["short answer", "paragraph", "mutliple choice", "checkboxes"];
+export const QUESTION_TYPES = [
+  "short answer",
+  "paragraph",
+  "mutliple choice",
+  "checkboxes",
+];

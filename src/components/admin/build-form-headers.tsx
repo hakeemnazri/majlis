@@ -5,6 +5,7 @@ import { useBuildFormStore } from "@/stores/admin/buildFormStore";
 import { CardTitle, CardDescription } from "../ui/card";
 import { useBuildEventContext } from "@/lib/hooks/build-event-hooks";
 import { Button } from "../ui/button";
+import { generateCUID } from "@/lib/utils";
 
 function BuildFormHeaders() {
   const { formPage } = useBuildFormStore((state) => state);
@@ -20,7 +21,7 @@ export default BuildFormHeaders;
 
 // BuildFormHeaders Components
 
-const CardHeader = ({formPage}: {formPage: number}) => {
+const CardHeader = ({ formPage }: { formPage: number }) => {
   return (
     <div className="flex flex-col">
       <CardTitle>{BUILD_FORM_HEADERS[formPage].title}</CardTitle>
@@ -33,14 +34,15 @@ const CardHeader = ({formPage}: {formPage: number}) => {
 
 const AddSurveyQuestion = () => {
   const {
-    fieldArray: { append },
+    survey: { append },
   } = useBuildEventContext();
 
   const handleAddSurveyQuestion = () => {
     append({
+      id: generateCUID(),
       type: "short answer",
-      question: "Nama",
-      options: null,
+      question: "",
+      options: [""],
     });
   };
   return (

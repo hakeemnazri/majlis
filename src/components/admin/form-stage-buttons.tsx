@@ -7,7 +7,7 @@ import React from "react";
 import { Button } from "../ui/button";
 import { useBuildEventContext } from "@/lib/hooks/build-event-hooks";
 import { TForm, TValidatePageFields } from "@/lib/types";
-import { UseFormReturn } from "react-hook-form";
+import { FieldPath, UseFormReturn } from "react-hook-form";
 
 function FormStageButtons() {
   const { form } = useBuildEventContext();
@@ -16,14 +16,18 @@ function FormStageButtons() {
   );
 
   const handleNextPage = async () => {
-    // let isFieldValid = false;
-    // if (formPage === 0) {
-    //   isFieldValid = await validatePageFields("firstPage", form);
-    // }
-    // if(formPage === 1){
-    //   isFieldValid = await validatePageFields("secondPage", form);
-    // }
-    // if (!isFieldValid) return;
+    let isFieldValid = false;
+    if (formPage === 0) {
+      isFieldValid = await validatePageFields("firstPage", form);
+    }
+    if(formPage === 1){
+      isFieldValid = await validatePageFields("secondPage", form);
+    }
+    if(formPage === 2){
+      isFieldValid = await validatePageFields("thirdPage", form);
+    }
+    console.log(isFieldValid);
+    if (!isFieldValid) return;
     nextFormPage();
   };
 
@@ -58,12 +62,14 @@ const validatePageFields = async (
 ) => {
   const { trigger, watch } = form;
   const category = watch("category");
+  const survey = watch("survey")
   let isValid = false;
+
   if (action === "firstPage") {
     isValid = await trigger(VALIDATE_FIRST_PAGE, { shouldFocus: true });
     return isValid;
   }
-
+  
   if (action === "secondPage") {
     let validateFieldsArray = VALIDATE_SECOND_PAGE;
     if (category === "infaq") {
@@ -80,15 +86,38 @@ const validatePageFields = async (
         (field) => !exclude.includes(field)
       );
     }
-
+    
     if (category === "premium") {
-      validateFieldsArray = validateFieldsArray.filter(
+      validateFieldsArray = validateFieldsArray.filter( 
         (field) => field !== "donationTarget"
       );
     }
     isValid = await trigger(validateFieldsArray, { shouldFocus: true });
     return isValid;
   }
+  
+  if (action === "thirdPage") {
+    const validateThirdPage = survey.flatMap((question, index) => {
+      if(question.type === "short answer" || question.type === "paragraph"){
+        return ["survey." + index + ".question", "survey." + index + ".type"];
+      }
 
+      if(question.type === "mutliple choice" || question.type === "checkboxes"){
+        const validateSurveyQuestionOptions = question.options?.map((_, i) => {
+          return "survey." + index + ".options." + i
+        })
+
+        const validateSurveyQuestion = ["survey." + index + ".question", "survey." + index + ".options"]
+
+        const validateThirdPage = [...(validateSurveyQuestionOptions ?? []), ...validateSurveyQuestion]
+
+        return [...validateThirdPage];
+      }
+
+      return [];
+    }) as FieldPath<TForm>[]
+    isValid = await trigger(validateThirdPage, { shouldFocus: true });
+    return isValid;
+  }
   return isValid;
 };

@@ -1,7 +1,11 @@
 import z from "zod";
-import { formSchema2, ticketSchema } from "./schemas";
+import { formSchema2, strictTicketSchema, surveyQuestionSchema } from "./schemas";
 
-export type TRegisterTicket = keyof z.infer<typeof ticketSchema>;
+export type TRegisterTicketName = keyof z.infer<typeof strictTicketSchema>;
+
+export type TSurveyName = keyof z.infer<typeof surveyQuestionSchema>
+
+export type TSurveyQuestion = z.infer<typeof surveyQuestionSchema>
 
 export type TForm = z.infer<ReturnType<typeof formSchema2>>; //formSchema
 
@@ -17,7 +21,7 @@ export type EventQuestion = {
 };
 
 export type TInputTickets = {
-  name: TRegisterTicket;
+  name: TRegisterTicketName;
   label: string;
   placeholder: string;
   className: string;
