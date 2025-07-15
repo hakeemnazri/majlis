@@ -55,8 +55,6 @@ const SurveyQuestion = ({
     survey: { remove, move, update, fields },
   } = useBuildEventContext();
 
-  console.log(formState)
-
   const handleMoveUpQuestion = (index: number) => {
     move(index, index - 1);
   };

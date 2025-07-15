@@ -7,6 +7,8 @@ export type TSurveyName = keyof z.infer<typeof surveyQuestionSchema>
 
 export type TSurveyQuestion = z.infer<typeof surveyQuestionSchema>
 
+export type TCategory = z.infer<ReturnType<typeof formSchema2>>["category"];
+
 export type TForm = z.infer<ReturnType<typeof formSchema2>>; //formSchema
 
 export type TValidatePageFields = (keyof TForm)[];

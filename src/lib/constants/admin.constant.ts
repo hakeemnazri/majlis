@@ -1,4 +1,7 @@
 import { EventQuestion, TInputTickets, TValidatePageFields } from "../types";
+import { generateCUID } from "../utils";
+import z from "zod";
+import { surveyQuestionSchema } from "../schemas";
 
 export const BUILD_FORM_HEADERS = [
   {
@@ -35,6 +38,44 @@ export const EVENT_FIRST_PAGE_FORM_QUESTIONS: EventQuestion[] = [
     type: "select",
     options: ["pkam", "turath"],
     className: "",
+  },
+];
+
+export const EVENT_FORM_SECOND_PAGE_DEFAULT_VALUES = [
+  {
+    ticketName: "",
+    ticketDescription: "",
+    ticketPrice: 0,
+    ticketQuantity: 0,
+  },
+];
+
+export const EVENT_FORM_THIRD_PAGE_DEFAULT_VALUES: z.infer<
+  typeof surveyQuestionSchema
+>[] = [
+  {
+    id: generateCUID(),
+    type: "short answer",
+    question: "Nama",
+    options: [""],
+  },
+  {
+    id: generateCUID(),
+    type: "short answer",
+    question: "Emel",
+    options: [""],
+  },
+  {
+    id: generateCUID(),
+    type: "short answer",
+    question: "No. Telefon",
+    options: [""],
+  },
+  {
+    id: generateCUID(),
+    type: "short answer",
+    question: "Tempat tinggatl (Cth: Kota Damansara)",
+    options: [""],
   },
 ];
 
