@@ -4,7 +4,7 @@ import { BuildEventContextProvider } from "@/contexts/build-event-context-provid
 
 export default function Home() {
   return (
-    <main className="flex flex-col justify-center items-center h-full w-300 max-w-2xl gap-4">
+    <main className="flex flex-col h-full gap-4 w-full">
       <BuildEventContextProvider>
         <FormStage />
         <FormCard />

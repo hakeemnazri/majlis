@@ -6,7 +6,7 @@ type MainContainerProps = {
 
 function MainContainer({ children }: MainContainerProps) {
   return (
-    <main className="flex flex-col justify-center items-center min-h-screen">
+    <main className="flex flex-col min-h-screen transition-all duration-300 ease-in-out md:max-w-2xl lg:max-w-4xl mx-auto">
       {children}
     </main>
   );

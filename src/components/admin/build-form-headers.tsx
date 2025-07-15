@@ -1,4 +1,5 @@
 "use client";
+
 import React from "react";
 import { BUILD_FORM_HEADERS } from "@/lib/constants/admin.constant";
 import { useBuildFormStore } from "@/stores/admin/buildFormStore";
@@ -6,14 +7,17 @@ import { CardTitle, CardDescription } from "../ui/card";
 import { useBuildEventContext } from "@/lib/hooks/build-event-hooks";
 import { Button } from "../ui/button";
 import { generateCUID } from "@/lib/utils";
+import AnimContainer from "./anim-container";
 
 function BuildFormHeaders() {
   const { formPage } = useBuildFormStore((state) => state);
   return (
-    <div className="flex justify-between">
-      <CardHeader formPage={formPage} />
-      {formPage === 2 && <AddSurveyQuestion />}
-    </div>
+    <AnimContainer key={formPage}>
+      <div className="flex justify-between">
+        <CardHeader formPage={formPage} />
+        {formPage === 2 && <AddSurveyQuestion />}
+      </div>
+    </AnimContainer>
   );
 }
 

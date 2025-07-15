@@ -3,6 +3,17 @@ import React from "react";
 import { Button } from "../ui/button";
 import { useBuildEventContext } from "@/lib/hooks/build-event-hooks";
 import { formSchema2 } from "@/lib/schemas";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../ui/alert-dialog";
 
 function FormStageButtons() {
   const { validatePageFields, form } = useBuildEventContext();
@@ -46,7 +57,26 @@ function FormStageButtons() {
       {formPage < 3 ? (
         <Button onClick={handleNextPage}>next</Button>
       ) : (
-        <Button onClick={handleFormSubmit}>submit</Button>
+        // <Button onClick={handleFormSubmit}>submit</Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="outline">Submit</Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Please review all event details carefully before submitting.
+                Once submitted, your event will be published and visible to the
+                public. You can still edit it later if needed.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleFormSubmit}>Continue</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       )}
     </div>
   );

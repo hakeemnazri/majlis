@@ -22,7 +22,7 @@ const StageIndicator = ({
 } : StageIndicatorProps) => {
 
   return (
-      <section className="flex items-center justify-center w-full px-20">
+      <section className="flex items-center justify-center w-full px-10">
         {stages.map((stage, index) => (
           <div key={index} className="flex items-center w-full last:w-auto">
             <div className="flex flex-col items-center ">
