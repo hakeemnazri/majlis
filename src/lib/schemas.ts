@@ -103,7 +103,6 @@ export const formSchema = z
 // -----------------------------------------------
 // -----------------------------------------------
 
-
 const baseFormSchema = z.object({
   title: z.string().min(2, {
     message: "Title must be at least 2 characters.",
@@ -124,101 +123,87 @@ const baseFormSchema = z.object({
     .min(1, {
       message: "Donation target must be at least RM1.",
     })
-    .nullable(),
+    .nullish(),
   reference: z.string().min(2, {
     message: "Reference must be at least 2 characters.",
   }),
 });
 
 export const strictTicketSchema = z.object({
-  ticketName: z
-    .string()
-    .min(2, {
-      message: "Name must be at least 2 characters.",
-    }),
-  ticketDescription: z
-    .string()
-    .min(2, {
-      message: "Description must be at least 2 characters.",
-    }),
-  ticketPrice: z.coerce
-    .number()
-    .min(1, {
-      message: "Price must be at least RM1.",
-    }),
-  ticketQuantity: z.coerce
-    .number()
-    .min(1, {
-      message: "Quantity must be at least 1.",
-    }),
+  ticketName: z.string().min(2, {
+    message: "Name must be at least 2 characters.",
+  }),
+  ticketDescription: z.string().min(2, {
+    message: "Description must be at least 2 characters.",
+  }),
+  ticketPrice: z.coerce.number().min(1, {
+    message: "Price must be at least RM1.",
+  }),
+  ticketQuantity: z.coerce.number().min(1, {
+    message: "Quantity must be at least 1.",
+  }),
 });
 
-const strictShape = strictTicketSchema.shape;
+const strictTicketShape = strictTicketSchema.shape;
 const looseTicketSchema = z.object({
-  ticketName: strictShape.ticketName.nullable(),
-  ticketDescription: strictShape.ticketDescription.nullable(),
-  ticketPrice: strictShape.ticketPrice.nullable(),
-  ticketQuantity: strictShape.ticketQuantity.nullable(),
+  ticketName: strictTicketShape.ticketName.nullish(),
+  ticketDescription: strictTicketShape.ticketDescription.nullish(),
+  ticketPrice: strictTicketShape.ticketPrice.nullish(),
+  ticketQuantity: strictTicketShape.ticketQuantity.nullish(),
 });
 
-export const surveyQuestionSchema = z.object({
+export const strictSurveyQuestionSchema = z.object({
   id: z.string(),
   type: z.enum(["short answer", "paragraph", "mutliple choice", "checkboxes"]),
   question: z.string().min(2, {
     message: "Question must be at least 2 characters.",
   }),
-  options: z.array(z.string().min(2,{
-    message: "Option must be at least 2 characters.",
-  })).min(2, {
-    message: "Options must be at least 2.",
-  }).nullable(),
-})
+  options: z
+    .array(
+      z.string().min(2, {
+        message: "Option must be at least 2 characters.",
+      })
+    )
+    .min(2, {
+      message: "Options must be at least 2.",
+    }),
+});
 
-export const formSchema2 = (isStrict: boolean) =>baseFormSchema.extend({
-  registerTickets: z
-  .array(isStrict ? strictTicketSchema : looseTicketSchema)
-  .min(1, {
-    message: "Tickets must be at least 1.",
-  })
-  .nullable(),
-  survey: z.array(surveyQuestionSchema).min(1, {
-    message: "Surveys must be at least 1 question.",
-  })
-}).refine((data) => {
-  if (data.category === "infaq") {
-    data.frequency = null;
-  }
-  if (data.category !== "infaq") {
-    data.donationTarget = null;
-  }
+const strictSurveyShape = strictSurveyQuestionSchema.shape;
+const looseSurveyQuestionSchema = z.object({
+  id: strictSurveyShape.id,
+  type: strictSurveyShape.type,
+  question: strictSurveyShape.question,
+  options: z
+  .array(
+    z.string().nullish()
+  ),
+});
 
-  if (data.category !== "premium") {
-    data.registerTickets = null;
-  }
-  return true;
-})
-.superRefine((data, ctx) => {
-  if (
-    data.category !== "infaq" &&
-    (!data.frequency || data.frequency.trim() === "")
-  ) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Frequency is required.",
-      path: ["frequency"],
+export const formSchema2 = (isStrict: boolean) =>
+  baseFormSchema
+    .extend({
+      registerTickets: z
+        .array(isStrict ? strictTicketSchema : looseTicketSchema)
+        .min(1, {
+          message: "Tickets must be at least 1.",
+        })
+        .nullable(),
+      survey: z.array(isStrict ? strictSurveyQuestionSchema : looseSurveyQuestionSchema).min(1, {
+        message: "Surveys must be at least 1 question.",
+      }),
+    })
+    .refine((data) => {
+      if (data.category === "infaq") {
+        data.frequency = null;
+      }
+      if (data.category !== "infaq") {
+        data.donationTarget = null;
+      }
+
+      if (data.category !== "premium") {
+        data.registerTickets = null;
+      }
+
+      return true;
     });
-  }
-
-  if (
-    data.category === "infaq" &&
-    (!data.donationTarget || data.donationTarget < 1)
-  ) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Value is required and must be at least RM1.",
-      path: ["donationTarget"],
-    });
-  }
-
-  return true;
-})

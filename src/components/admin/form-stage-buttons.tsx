@@ -2,6 +2,7 @@ import { useBuildFormStore } from "@/stores/admin/buildFormStore";
 import React from "react";
 import { Button } from "../ui/button";
 import { useBuildEventContext } from "@/lib/hooks/build-event-hooks";
+import { formSchema2 } from "@/lib/schemas";
 
 function FormStageButtons() {
   const { validatePageFields, form } = useBuildEventContext();
@@ -31,7 +32,8 @@ function FormStageButtons() {
   const handleFormSubmit = async () => {
     const { getValues } = form;
     const formData = getValues();
-    console.log(formData);
+    const meow = formSchema2(false).safeParse(formData);
+    console.log(meow);
   };
 
   return (

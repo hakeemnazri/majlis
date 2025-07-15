@@ -229,6 +229,9 @@ const SurveyQuestion = ({
                       <Input
                         placeholder={`Insert ${question.type} question`}
                         {...field}
+                        value={
+                          typeof field.value === "string" ? field.value : ""
+                        }
                         className={cn()}
                       />
                     </FormControl>
@@ -261,6 +264,9 @@ const SurveyQuestion = ({
                           <Input
                             placeholder={`Insert ${question.type} option`}
                             {...field}
+                            value={
+                              typeof field.value === "string" ? field.value : ""
+                            }
                             className={cn("")}
                           />
                         </FormControl>

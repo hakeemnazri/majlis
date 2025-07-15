@@ -20,8 +20,9 @@ export const secondPageFieldsValidation = (category: TCategory) => {
   let secondPageFieldsValidation: TValidatePageFields = VALIDATE_SECOND_PAGE;
 
   if (category === "infaq") {
+    const exclude: TValidatePageFields = ["frequency", "registerTickets"];
     secondPageFieldsValidation = secondPageFieldsValidation.filter(
-      (field) => field !== "frequency"
+      (field) => !exclude.includes(field)
     );
   }
   if (category !== "infaq" && category !== "premium") {

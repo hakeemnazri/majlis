@@ -1,7 +1,7 @@
 import { EventQuestion, TInputTickets, TValidatePageFields } from "../types";
 import { generateCUID } from "../utils";
 import z from "zod";
-import { surveyQuestionSchema } from "../schemas";
+import { strictSurveyQuestionSchema } from "../schemas";
 
 export const BUILD_FORM_HEADERS = [
   {
@@ -43,15 +43,15 @@ export const EVENT_FIRST_PAGE_FORM_QUESTIONS: EventQuestion[] = [
 
 export const EVENT_FORM_SECOND_PAGE_DEFAULT_VALUES = [
   {
-    ticketName: "",
-    ticketDescription: "",
-    ticketPrice: 0,
-    ticketQuantity: 0,
+    ticketName: undefined,
+    ticketDescription: undefined,
+    ticketPrice: undefined,
+    ticketQuantity: undefined,
   },
 ];
 
 export const EVENT_FORM_THIRD_PAGE_DEFAULT_VALUES: z.infer<
-  typeof surveyQuestionSchema
+  typeof strictSurveyQuestionSchema
 >[] = [
   {
     id: generateCUID(),
