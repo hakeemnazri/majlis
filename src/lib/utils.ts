@@ -1,8 +1,16 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { createId } from "@paralleldrive/cuid2";
-import { VALIDATE_FIRST_PAGE, VALIDATE_SECOND_PAGE } from "./constants/admin.constant";
-import { TCategory, TForm, TSurveyQuestion, TValidatePageFields } from "./types";
+import {
+  VALIDATE_FIRST_PAGE,
+  VALIDATE_SECOND_PAGE,
+} from "./constants/admin.constant";
+import {
+  TCategory,
+  TForm,
+  TSurveyQuestion,
+  TValidatePageFields,
+} from "./types";
 import { FieldPath } from "react-hook-form";
 
 export function cn(...inputs: ClassValue[]) {
@@ -26,7 +34,7 @@ export const secondPageFieldsValidation = (category: TCategory) => {
     );
   }
   if (category !== "infaq" && category !== "premium") {
-    const exclude: TValidatePageFields = ["donationTarget", "registerTickets"];
+    const exclude: TValidatePageFields = ["targetDonation", "registerTickets"];
     secondPageFieldsValidation = secondPageFieldsValidation.filter(
       (field) => !exclude.includes(field)
     );
@@ -34,7 +42,7 @@ export const secondPageFieldsValidation = (category: TCategory) => {
 
   if (category === "premium") {
     secondPageFieldsValidation = secondPageFieldsValidation.filter(
-      (field) => field !== "donationTarget"
+      (field) => field !== "targetDonation"
     );
   }
 

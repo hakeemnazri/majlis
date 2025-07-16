@@ -110,7 +110,7 @@ export const EVENT_SECOND_PAGE_FORM_QUESTIONS: EventQuestion[] = [
     className: "",
   },
   {
-    label: "donationTarget",
+    label: "targetDonation",
     title: "Target Donation(RM)",
     placeholder: "Input donation target here...",
     type: "text",
@@ -132,7 +132,7 @@ export const VALIDATE_FIRST_PAGE: TValidatePageFields = [
 
 export const VALIDATE_SECOND_PAGE: TValidatePageFields = [
   "description",
-  "donationTarget",
+  "targetDonation",
   "reference",
   "title",
   "eventImage",

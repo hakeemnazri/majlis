@@ -20,7 +20,7 @@ import { Textarea } from "../ui/textarea";
 import { useBuildEventContext } from "@/lib/hooks/build-event-hooks";
 
 function EventDetails() {
-  const {form} = useBuildEventContext();
+  const { form } = useBuildEventContext();
   const { watch } = form;
   const category = watch("category");
   return (
@@ -35,7 +35,7 @@ function EventDetails() {
 
         if (
           category !== "infaq" &&
-          question.label === "donationTarget" &&
+          question.label === "targetDonation" &&
           question.type === "text"
         ) {
           return null;
@@ -54,7 +54,13 @@ function EventDetails() {
                     <Textarea
                       placeholder={question.placeholder}
                       {...field}
-                      value={typeof field.value === "string" ? field.value : (field.value === null || field.value === undefined ? "" : field.value.toString())}
+                      value={
+                        typeof field.value === "string"
+                          ? field.value
+                          : field.value === null || field.value === undefined
+                          ? ""
+                          : field.value.toString()
+                      }
                       className={cn("min-h-16", question.className)}
                     />
                   </FormControl>
@@ -114,7 +120,13 @@ function EventDetails() {
                   <Input
                     placeholder={question.placeholder}
                     {...field}
-                    value={typeof field.value === "string" ? field.value : (field.value === null || field.value === undefined ? "" : field.value.toString())}
+                    value={
+                      typeof field.value === "string"
+                        ? field.value
+                        : field.value === null || field.value === undefined
+                        ? ""
+                        : field.value.toString()
+                    }
                     className={cn(question.className)}
                   />
                 </FormControl>

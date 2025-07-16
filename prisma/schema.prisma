@@ -10,3 +10,73 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
+
+model Event {
+  id                String @id @default(cuid())
+  slug              String
+  title             String
+  description       String
+  frequency         String?
+  category          String
+  host              String
+  transferReference String
+  targetDonation    String?
+
+  // Image
+  mainImage String
+
+  // Relations
+  surveyQuestions Survey[]
+  tickets         Ticket[]
+
+  // time
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Ticket {
+  id          String @id @default(cuid())
+  name        String
+  price       Int
+  quantity    Int
+  description String
+
+  // Relations
+  Event   Event?  @relation(fields: [eventId], references: [id])
+  eventId String?
+
+  // Time
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+model Survey {
+  id       String       @id @default(cuid())
+  type     QuestionType
+  question String
+
+  // Relations
+  options Option[]
+  Event   Event    @relation(fields: [eventId], references: [id])
+  eventId String
+
+  // Time
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Option {
+  id     String @id @default(cuid())
+  option String
+
+  // Relations
+  Survey   Survey @relation(fields: [surveyId], references: [id])
+  surveyId String
+}
+
+enum QuestionType {
+  SHORT_ANSWER    @map("short answer")
+  PARAGRAPH       @map("paragraph")
+  MULTIPLE_CHOICE @map("mutliple choice")
+  CHECKBOXES      @map("checkboxes")
+}

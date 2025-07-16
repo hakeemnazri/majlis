@@ -43,7 +43,7 @@ export const formSchema = z
     }),
     category: z.enum(["premium", "general", "infaq", "preview"]),
     frequency: z.string().nullable(),
-    donationTarget: z.coerce
+    targetDonation: z.coerce
       .number()
       .min(1, {
         message: "Donation target must be at least RM1.",
@@ -64,7 +64,7 @@ export const formSchema = z
       data.frequency = null;
     }
     if (data.category !== "infaq") {
-      data.donationTarget = null;
+      data.targetDonation = null;
     }
 
     if (data.category !== "premium") {
@@ -86,12 +86,12 @@ export const formSchema = z
 
     if (
       data.category === "infaq" &&
-      (!data.donationTarget || data.donationTarget < 1)
+      (!data.targetDonation || data.targetDonation < 1)
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "Value is required and must be at least RM1.",
-        path: ["donationTarget"],
+        path: ["targetDonation"],
       });
     }
 
@@ -118,7 +118,7 @@ const baseFormSchema = z.object({
   }),
   category: z.enum(["premium", "general", "infaq", "preview"]),
   frequency: z.string().nullable(),
-  donationTarget: z.coerce
+  targetDonation: z.coerce
     .number()
     .min(1, {
       message: "Donation target must be at least RM1.",
@@ -154,7 +154,7 @@ const looseTicketSchema = z.object({
 
 export const strictSurveyQuestionSchema = z.object({
   id: z.string(),
-  type: z.enum(["short answer", "paragraph", "mutliple choice", "checkboxes"]),
+  type: z.enum(["short answer", "paragraph", "multiple choice", "checkboxes"]),
   question: z.string().min(2, {
     message: "Question must be at least 2 characters.",
   }),
@@ -174,10 +174,7 @@ const looseSurveyQuestionSchema = z.object({
   id: strictSurveyShape.id,
   type: strictSurveyShape.type,
   question: strictSurveyShape.question,
-  options: z
-  .array(
-    z.string().nullish()
-  ),
+  options: z.array(z.string().nullish()),
 });
 
 export const formSchema2 = (isStrict: boolean) =>
@@ -189,16 +186,20 @@ export const formSchema2 = (isStrict: boolean) =>
           message: "Tickets must be at least 1.",
         })
         .nullable(),
-      survey: z.array(isStrict ? strictSurveyQuestionSchema : looseSurveyQuestionSchema).min(1, {
-        message: "Surveys must be at least 1 question.",
-      }),
+      survey: z
+        .array(
+          isStrict ? strictSurveyQuestionSchema : looseSurveyQuestionSchema
+        )
+        .min(1, {
+          message: "Surveys must be at least 1 question.",
+        }),
     })
     .refine((data) => {
       if (data.category === "infaq") {
         data.frequency = null;
       }
       if (data.category !== "infaq") {
-        data.donationTarget = null;
+        data.targetDonation = null;
       }
 
       if (data.category !== "premium") {
