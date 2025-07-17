@@ -1,7 +1,7 @@
 import { useBuildFormStore } from "@/stores/admin/buildFormStore";
 import React from "react";
 import { Button } from "../ui/button";
-import { useBuildEventContext } from "@/lib/hooks/build-event-hooks";
+import { useBuildEventContext } from "@/lib/hooks/buildEvent.hook";
 import { formSchema2 } from "@/lib/schemas";
 import {
   AlertDialog,
@@ -14,6 +14,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
+import { addEvent } from "@/actions/adminBuildEvent.action";
+import { toast } from "sonner";
+import { ServerActionError } from "@/lib/types";
 
 function FormStageButtons() {
   const { validatePageFields, form } = useBuildEventContext();
@@ -43,8 +46,20 @@ function FormStageButtons() {
   const handleFormSubmit = async () => {
     const { getValues } = form;
     const formData = getValues();
-    const meow = formSchema2(false).safeParse(formData);
-    console.log(meow);
+    const parsedFormData = formSchema2(false).safeParse(formData);
+    if (!parsedFormData.success) return;
+    toast.promise(addEvent(parsedFormData.data), {
+      loading: "Adding event...",
+      success: (data) => {
+        if (data.success && "message" in data) {
+          return data.message;
+        } else if (!data.success && "error" in data) {
+          throw new Error(data.error);
+        }
+        return "Event added successfully!";
+      },
+      error: (error: ServerActionError) => error.error || "Failed to add event",
+    });
   };
 
   return (
@@ -57,7 +72,6 @@ function FormStageButtons() {
       {formPage < 3 ? (
         <Button onClick={handleNextPage}>next</Button>
       ) : (
-        // <Button onClick={handleFormSubmit}>submit</Button>
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button variant="outline">Submit</Button>
@@ -73,7 +87,9 @@ function FormStageButtons() {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleFormSubmit}>Continue</AlertDialogAction>
+              <AlertDialogAction onClick={handleFormSubmit}>
+                Continue
+              </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>

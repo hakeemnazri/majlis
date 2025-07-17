@@ -1,25 +1,25 @@
 import z from "zod";
 
 export const ticketSchema = z.object({
-  ticketName: z
+  name: z
     .string()
     .min(2, {
       message: "Name must be at least 2 characters.",
     })
     .nullable(),
-  ticketDescription: z
+  description: z
     .string()
     .min(2, {
       message: "Description must be at least 2 characters.",
     })
     .nullable(),
-  ticketPrice: z.coerce
+  price: z.coerce
     .number()
     .min(1, {
       message: "Price must be at least RM1.",
     })
     .nullable(),
-  ticketQuantity: z.coerce
+  quantity: z.coerce
     .number()
     .min(1, {
       message: "Quantity must be at least 1.",
@@ -35,10 +35,10 @@ export const formSchema = z
     description: z.string().min(2, {
       message: "Description must be at least 2 characters.",
     }),
-    eventHost: z.string().min(2, {
+    host: z.string().min(2, {
       message: "Host must be at least 2 characters.",
     }),
-    eventImage: z.string().min(2, {
+    mainImage: z.string().min(2, {
       message: "Image must be at least 2 characters.",
     }),
     category: z.enum(["premium", "general", "infaq", "preview"]),
@@ -52,7 +52,7 @@ export const formSchema = z
     reference: z.string().min(2, {
       message: "Reference must be at least 2 characters.",
     }),
-    registerTickets: z
+    tickets: z
       .array(ticketSchema)
       .min(1, {
         message: "Tickets must be at least 1.",
@@ -68,7 +68,7 @@ export const formSchema = z
     }
 
     if (data.category !== "premium") {
-      data.registerTickets = null;
+      data.tickets = null;
     }
     return true;
   })
@@ -110,14 +110,14 @@ const baseFormSchema = z.object({
   description: z.string().min(2, {
     message: "Description must be at least 2 characters.",
   }),
-  eventHost: z.string().min(2, {
+  host: z.string().min(2, {
     message: "Host must be at least 2 characters.",
   }),
-  eventImage: z.string().min(2, {
+  mainImage: z.string().min(2, {
     message: "Image must be at least 2 characters.",
   }),
   category: z.enum(["premium", "general", "infaq", "preview"]),
-  frequency: z.string().nullable(),
+  frequency: z.string().nullish(),
   targetDonation: z.coerce
     .number()
     .min(1, {
@@ -130,31 +130,30 @@ const baseFormSchema = z.object({
 });
 
 export const strictTicketSchema = z.object({
-  ticketName: z.string().min(2, {
+  name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
   }),
-  ticketDescription: z.string().min(2, {
+  description: z.string().min(2, {
     message: "Description must be at least 2 characters.",
   }),
-  ticketPrice: z.coerce.number().min(1, {
+  price: z.coerce.number().min(1, {
     message: "Price must be at least RM1.",
   }),
-  ticketQuantity: z.coerce.number().min(1, {
+  quantity: z.coerce.number().min(1, {
     message: "Quantity must be at least 1.",
   }),
 });
 
 const strictTicketShape = strictTicketSchema.shape;
 const looseTicketSchema = z.object({
-  ticketName: strictTicketShape.ticketName.nullish(),
-  ticketDescription: strictTicketShape.ticketDescription.nullish(),
-  ticketPrice: strictTicketShape.ticketPrice.nullish(),
-  ticketQuantity: strictTicketShape.ticketQuantity.nullish(),
+  name: strictTicketShape.name.nullish(),
+  description: strictTicketShape.description.nullish(),
+  price: strictTicketShape.price.nullish(),
+  quantity: strictTicketShape.quantity.nullish(),
 });
 
 export const strictSurveyQuestionSchema = z.object({
-  id: z.string(),
-  type: z.enum(["short answer", "paragraph", "multiple choice", "checkboxes"]),
+  type: z.enum(["short_answer", "paragraph", "multiple_choice", "checkboxes"]),
   question: z.string().min(2, {
     message: "Question must be at least 2 characters.",
   }),
@@ -171,7 +170,6 @@ export const strictSurveyQuestionSchema = z.object({
 
 const strictSurveyShape = strictSurveyQuestionSchema.shape;
 const looseSurveyQuestionSchema = z.object({
-  id: strictSurveyShape.id,
   type: strictSurveyShape.type,
   question: strictSurveyShape.question,
   options: z.array(z.string().nullish()),
@@ -180,7 +178,7 @@ const looseSurveyQuestionSchema = z.object({
 export const formSchema2 = (isStrict: boolean) =>
   baseFormSchema
     .extend({
-      registerTickets: z
+      tickets: z
         .array(isStrict ? strictTicketSchema : looseTicketSchema)
         .min(1, {
           message: "Tickets must be at least 1.",
@@ -197,13 +195,14 @@ export const formSchema2 = (isStrict: boolean) =>
     .refine((data) => {
       if (data.category === "infaq") {
         data.frequency = null;
+        data.tickets = null;
       }
       if (data.category !== "infaq") {
         data.targetDonation = null;
       }
 
       if (data.category !== "premium") {
-        data.registerTickets = null;
+        data.tickets = null;
       }
 
       return true;

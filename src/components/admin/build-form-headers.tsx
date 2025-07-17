@@ -4,9 +4,8 @@ import React from "react";
 import { BUILD_FORM_HEADERS } from "@/lib/constants/admin.constant";
 import { useBuildFormStore } from "@/stores/admin/buildFormStore";
 import { CardTitle, CardDescription } from "../ui/card";
-import { useBuildEventContext } from "@/lib/hooks/build-event-hooks";
+import { useBuildEventContext } from "@/lib/hooks/buildEvent.hook";
 import { Button } from "../ui/button";
-import { generateCUID } from "@/lib/utils";
 import AnimContainer from "./anim-container";
 
 function BuildFormHeaders() {
@@ -43,8 +42,7 @@ const AddSurveyQuestion = () => {
 
   const handleAddSurveyQuestion = () => {
     append({
-      id: generateCUID(),
-      type: "short answer",
+      type: "short_answer",
       question: "",
       options: [""],
     });

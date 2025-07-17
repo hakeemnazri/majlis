@@ -28,13 +28,13 @@ export const secondPageFieldsValidation = (category: TCategory) => {
   let secondPageFieldsValidation: TValidatePageFields = VALIDATE_SECOND_PAGE;
 
   if (category === "infaq") {
-    const exclude: TValidatePageFields = ["frequency", "registerTickets"];
+    const exclude: TValidatePageFields = ["frequency", "tickets"];
     secondPageFieldsValidation = secondPageFieldsValidation.filter(
       (field) => !exclude.includes(field)
     );
   }
   if (category !== "infaq" && category !== "premium") {
-    const exclude: TValidatePageFields = ["targetDonation", "registerTickets"];
+    const exclude: TValidatePageFields = ["targetDonation", "tickets"];
     secondPageFieldsValidation = secondPageFieldsValidation.filter(
       (field) => !exclude.includes(field)
     );
@@ -51,11 +51,11 @@ export const secondPageFieldsValidation = (category: TCategory) => {
 
 export const thirdPageFieldsValidation = (survey: TSurveyQuestion[]) => {
   const thirdPageFieldsValidation = survey.flatMap((question, index) => {
-    if (question.type === "short answer" || question.type === "paragraph") {
+    if (question.type === "short_answer" || question.type === "paragraph") {
       return ["survey." + index + ".question", "survey." + index + ".type"];
     }
 
-    if (question.type === "mutliple choice" || question.type === "checkboxes") {
+    if (question.type === "multiple_choice" || question.type === "checkboxes") {
       const validateSurveyQuestionOptions = question.options?.map((_, i) => {
         return "survey." + index + ".options." + i;
       });

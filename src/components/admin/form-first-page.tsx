@@ -1,4 +1,3 @@
-
 import React from "react";
 import { EVENT_FIRST_PAGE_FORM_QUESTIONS } from "@/lib/constants/admin.constant";
 import {
@@ -15,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { useBuildEventContext } from "@/lib/hooks/build-event-hooks";
+import { useBuildEventContext } from "@/lib/hooks/buildEvent.hook";
 
 function FormFirstPage() {
   const { form } = useBuildEventContext();

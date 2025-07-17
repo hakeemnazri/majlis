@@ -1,4 +1,4 @@
-import { useBuildEventContext } from "@/lib/hooks/build-event-hooks";
+import { useBuildEventContext } from "@/lib/hooks/buildEvent.hook";
 import { cn } from "@/lib/utils";
 import React from "react";
 import { FormField, FormItem, FormControl, FormMessage } from "../ui/form";
@@ -84,7 +84,7 @@ const SurveyQuestion = ({
     });
   };
 
-  if (question.type === "short answer" || question.type === "paragraph") {
+  if (question.type === "short_answer" || question.type === "paragraph") {
     return (
       <Card>
         <CardContent className="space-y-4">

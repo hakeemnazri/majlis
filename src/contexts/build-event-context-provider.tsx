@@ -26,7 +26,7 @@ type BuildEventContextProviderProps = {
 
 type TBuildEventContext = {
   form: UseFormReturn<TForm>;
-  registerTickets: UseFieldArrayReturn<TForm>;
+  tickets: UseFieldArrayReturn<TForm>;
   survey: UseFieldArrayReturn<TForm>;
   validatePageFields: (action: string) => Promise<boolean>;
 };
@@ -42,13 +42,13 @@ export const BuildEventContextProvider = ({
     //TForm
     resolver: zodResolver(formSchema2(isStrict)), //formSchema
     defaultValues: {
-      registerTickets: EVENT_FORM_SECOND_PAGE_DEFAULT_VALUES,
+      tickets: EVENT_FORM_SECOND_PAGE_DEFAULT_VALUES,
       survey: EVENT_FORM_THIRD_PAGE_DEFAULT_VALUES,
     },
   });
-  const registerTickets = useFieldArray({
+  const tickets = useFieldArray({
     control: form.control,
-    name: "registerTickets",
+    name: "tickets",
   });
   const survey = useFieldArray({
     control: form.control,
@@ -88,12 +88,13 @@ export const BuildEventContextProvider = ({
       isValid = await trigger(tovalidate, { shouldFocus: true });
       return isValid;
     }
+
     return isValid;
   };
 
   return (
     <BuildEventContext.Provider
-      value={{ form, registerTickets, survey, validatePageFields }}
+      value={{ form, tickets, survey, validatePageFields }}
     >
       {children}
     </BuildEventContext.Provider>

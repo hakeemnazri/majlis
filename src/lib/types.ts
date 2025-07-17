@@ -4,12 +4,15 @@ import {
   strictTicketSchema,
   strictSurveyQuestionSchema,
 } from "./schemas";
+import { handleServerActionError } from "./error";
 
-export type TRegisterTicketName = keyof z.infer<typeof strictTicketSchema>;
+export type TRegistername = keyof z.infer<typeof strictTicketSchema>;
 
 export type TSurveyName = keyof z.infer<typeof strictSurveyQuestionSchema>;
 
-export type TSurveyQuestion = z.infer<ReturnType<typeof formSchema2>>["survey"][0];
+export type TSurveyQuestion = z.infer<
+  ReturnType<typeof formSchema2>
+>["survey"][0];
 
 export type TCategory = z.infer<ReturnType<typeof formSchema2>>["category"];
 
@@ -17,6 +20,7 @@ export type TForm = z.infer<ReturnType<typeof formSchema2>>; //formSchema
 
 export type TValidatePageFields = (keyof TForm)[];
 
+export type ServerActionError = ReturnType<typeof handleServerActionError>;
 export type EventQuestion = {
   label: keyof TForm;
   title: string;
@@ -27,7 +31,7 @@ export type EventQuestion = {
 };
 
 export type TInputTickets = {
-  name: TRegisterTicketName;
+  name: TRegistername;
   label: string;
   placeholder: string;
   className: string;

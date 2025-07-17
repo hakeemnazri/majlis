@@ -17,7 +17,7 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
-import { useBuildEventContext } from "@/lib/hooks/build-event-hooks";
+import { useBuildEventContext } from "@/lib/hooks/buildEvent.hook";
 
 function EventDetails() {
   const { form } = useBuildEventContext();

@@ -1,82 +1,62 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model Event {
-  id                String @id @default(cuid())
-  slug              String
-  title             String
-  description       String
-  frequency         String?
-  category          String
-  host              String
-  transferReference String
-  targetDonation    String?
-
-  // Image
-  mainImage String
-
-  // Relations
-  surveyQuestions Survey[]
-  tickets         Ticket[]
-
-  // time
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String       @id @default(cuid())
+  title          String
+  description    String
+  frequency      String?
+  category       CategoryType
+  host           String
+  reference      String
+  targetDonation Int?
+  mainImage      String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  survey         Survey[]
+  tickets        Ticket[]
 }
 
 model Ticket {
-  id          String @id @default(cuid())
-  name        String
-  price       Int
-  quantity    Int
-  description String
-
-  // Relations
-  Event   Event?  @relation(fields: [eventId], references: [id])
-  eventId String?
-
-  // Time
-  updatedAt DateTime @updatedAt
-  createdAt DateTime @default(now())
+  id          String   @id @default(cuid())
+  name        String?
+  price       Int?
+  quantity    Int?
+  description String?
+  eventId     String?
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  Event       Event?  @relation(fields: [eventId], references: [id])
 }
 
 model Survey {
-  id       String       @id @default(cuid())
-  type     QuestionType
-  question String
-
-  // Relations
-  options Option[]
-  Event   Event    @relation(fields: [eventId], references: [id])
-  eventId String
-
-  // Time
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String     @id @default(cuid())
+  type      SurveyType
+  question  String
+  options   String[]
+  eventId   String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  Event     Event      @relation(fields: [eventId], references: [id])
 }
 
-model Option {
-  id     String @id @default(cuid())
-  option String
-
-  // Relations
-  Survey   Survey @relation(fields: [surveyId], references: [id])
-  surveyId String
+enum SurveyType {
+  short_answer
+  paragraph
+  multiple_choice
+  checkboxes
 }
 
-enum QuestionType {
-  SHORT_ANSWER    @map("short answer")
-  PARAGRAPH       @map("paragraph")
-  MULTIPLE_CHOICE @map("mutliple choice")
-  CHECKBOXES      @map("checkboxes")
+enum CategoryType {
+  premium
+  general
+  infaq
+  preview
 }

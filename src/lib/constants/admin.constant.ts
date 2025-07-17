@@ -1,5 +1,4 @@
 import { EventQuestion, TInputTickets, TValidatePageFields } from "../types";
-import { generateCUID } from "../utils";
 import z from "zod";
 import { strictSurveyQuestionSchema } from "../schemas";
 
@@ -32,7 +31,7 @@ export const EVENT_FIRST_PAGE_FORM_QUESTIONS: EventQuestion[] = [
     className: "",
   },
   {
-    label: "eventHost",
+    label: "host",
     title: "Event Host",
     placeholder: "Select host",
     type: "select",
@@ -43,10 +42,10 @@ export const EVENT_FIRST_PAGE_FORM_QUESTIONS: EventQuestion[] = [
 
 export const EVENT_FORM_SECOND_PAGE_DEFAULT_VALUES = [
   {
-    ticketName: undefined,
-    ticketDescription: undefined,
-    ticketPrice: undefined,
-    ticketQuantity: undefined,
+    name: undefined,
+    description: undefined,
+    price: undefined,
+    quantity: undefined,
   },
 ];
 
@@ -54,26 +53,22 @@ export const EVENT_FORM_THIRD_PAGE_DEFAULT_VALUES: z.infer<
   typeof strictSurveyQuestionSchema
 >[] = [
   {
-    id: generateCUID(),
-    type: "short answer",
+    type: "short_answer",
     question: "Nama",
     options: [""],
   },
   {
-    id: generateCUID(),
-    type: "short answer",
+    type: "short_answer",
     question: "Emel",
     options: [""],
   },
   {
-    id: generateCUID(),
-    type: "short answer",
+    type: "short_answer",
     question: "No. Telefon",
     options: [""],
   },
   {
-    id: generateCUID(),
-    type: "short answer",
+    type: "short_answer",
     question: "Tempat tinggatl (Cth: Kota Damansara)",
     options: [""],
   },
@@ -95,7 +90,7 @@ export const EVENT_SECOND_PAGE_FORM_QUESTIONS: EventQuestion[] = [
     className: "h-60",
   },
   {
-    label: "eventImage",
+    label: "mainImage",
     title: "Event Image",
     placeholder: "Upload image",
     type: "image",
@@ -125,43 +120,40 @@ export const EVENT_SECOND_PAGE_FORM_QUESTIONS: EventQuestion[] = [
   },
 ];
 
-export const VALIDATE_FIRST_PAGE: TValidatePageFields = [
-  "category",
-  "eventHost",
-];
+export const VALIDATE_FIRST_PAGE: TValidatePageFields = ["category", "host"];
 
 export const VALIDATE_SECOND_PAGE: TValidatePageFields = [
   "description",
   "targetDonation",
   "reference",
   "title",
-  "eventImage",
+  "mainImage",
   "frequency",
-  "registerTickets",
+  "tickets",
 ];
 export const VALIDATE_THIRD_PAGE: TValidatePageFields = ["survey"];
 
 export const INPUT_TICKETS: TInputTickets[] = [
   {
-    name: "ticketName",
+    name: "name",
     label: "Name",
     placeholder: "Input ticket name here...",
     className: "",
   },
   {
-    name: "ticketPrice",
+    name: "price",
     label: "Price",
     placeholder: "Input ticket price here...",
     className: "",
   },
   {
-    name: "ticketQuantity",
+    name: "quantity",
     label: "Quantity",
     placeholder: "Input ticket quantity here...",
     className: "",
   },
   {
-    name: "ticketDescription",
+    name: "description",
     label: "Short Description",
     placeholder: "Input ticket description here...",
     className: "",
@@ -169,7 +161,7 @@ export const INPUT_TICKETS: TInputTickets[] = [
 ];
 
 export const QUESTION_TYPES = [
-  "short answer",
+  "short_answer",
   "paragraph",
   "mutliple choice",
   "checkboxes",

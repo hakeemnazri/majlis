@@ -10,7 +10,7 @@ import {
 } from "../ui/form";
 import { cn } from "@/lib/utils";
 import { Input } from "../ui/input";
-import { useBuildEventContext } from "@/lib/hooks/build-event-hooks";
+import { useBuildEventContext } from "@/lib/hooks/buildEvent.hook";
 import { Card, CardContent } from "../ui/card";
 import { Label } from "../ui/label";
 
@@ -21,7 +21,7 @@ type TicketFormProps = {
 function TicketForm({ index }: TicketFormProps) {
   const {
     form,
-    registerTickets: { move, remove, fields },
+    tickets: { move, remove, fields },
   } = useBuildEventContext();
   const handleMoveUp = (index: number) => {
     move(index, index - 1);
@@ -57,7 +57,7 @@ function TicketForm({ index }: TicketFormProps) {
           <FormField
             key={index + input.name}
             control={form.control}
-            name={`registerTickets.${index}.${input.name}`}
+            name={`tickets.${index}.${input.name}`}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{input.label}</FormLabel>
