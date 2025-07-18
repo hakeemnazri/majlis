@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  Card,
-  CardHeader,
-  CardContent,
-} from "../ui/card";
+import { Card, CardHeader, CardContent } from "../../ui/card";
 import MainForm from "./main-form";
 import BuildFormHeaders from "./build-form-headers";
 

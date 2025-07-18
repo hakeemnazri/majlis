@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import MainContainer from "@/components/admin/main-container";
+import MainContainer from "@/components/admin/build-event/main-container";
 import { Toaster } from "@/components/ui/sonner";
+import { BuildEventContextProvider } from "@/contexts/build-event-context-provider";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
   description: "Program-program dakwah Baitussaadah",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -24,7 +25,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${poppins.variable} antialiased min-h-screen w-full`}>
-        <MainContainer>{children}</MainContainer>
+        <BuildEventContextProvider>
+          <MainContainer>{children}</MainContainer>
+        </BuildEventContextProvider>
         <Toaster />
       </body>
     </html>

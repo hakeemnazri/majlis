@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import { INPUT_TICKETS } from "@/lib/constants/admin.constant";
 import {
   FormControl,
@@ -7,12 +7,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../ui/form";
+} from "../../ui/form";
 import { cn } from "@/lib/utils";
-import { Input } from "../ui/input";
+import { Input } from "../../ui/input";
 import { useBuildEventContext } from "@/lib/hooks/buildEvent.hook";
-import { Card, CardContent } from "../ui/card";
-import { Label } from "../ui/label";
+import { Card, CardContent } from "../../ui/card";
+import { Label } from "../../ui/label";
 
 type TicketFormProps = {
   index: number;

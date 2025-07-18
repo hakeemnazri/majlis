@@ -1,8 +1,8 @@
 import React from "react";
-import { CardHeader, CardTitle, CardDescription } from "../ui/card";
+import { CardHeader, CardTitle, CardDescription } from "../../ui/card";
 import { UseFieldArrayAppend } from "react-hook-form";
 import { TForm } from "@/lib/types";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import { useBuildEventContext } from "@/lib/hooks/buildEvent.hook";
 import TicketForm from "./ticket-form";
 

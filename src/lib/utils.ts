@@ -77,3 +77,9 @@ export const thirdPageFieldsValidation = (survey: TSurveyQuestion[]) => {
   }) as FieldPath<TForm>[];
   return thirdPageFieldsValidation;
 };
+
+export const sleep = (ms: number) =>{
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}

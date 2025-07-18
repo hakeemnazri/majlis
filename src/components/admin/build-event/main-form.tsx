@@ -2,7 +2,7 @@
 
 import { useBuildEventContext } from "@/lib/hooks/buildEvent.hook";
 import { useBuildFormStore } from "@/stores/admin/buildFormStore";
-import { Form } from "../ui/form";
+import { Form } from "../../ui/form";
 import FormStageButtons from "./form-stage-buttons";
 import FormFirstPage from "./form-first-page";
 import FormSecondPage from "./form-second-page";

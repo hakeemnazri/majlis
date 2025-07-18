@@ -14,9 +14,9 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
-} from "../ui/form";
-import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
+} from "../../ui/form";
+import { Input } from "../../ui/input";
+import { Textarea } from "../../ui/textarea";
 import { useBuildEventContext } from "@/lib/hooks/buildEvent.hook";
 
 function EventDetails() {

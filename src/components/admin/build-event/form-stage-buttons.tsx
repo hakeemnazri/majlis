@@ -1,6 +1,6 @@
 import { useBuildFormStore } from "@/stores/admin/buildFormStore";
 import React from "react";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import { useBuildEventContext } from "@/lib/hooks/buildEvent.hook";
 import { formSchema2 } from "@/lib/schemas";
 import {
@@ -13,7 +13,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "../ui/alert-dialog";
+} from "../../ui/alert-dialog";
 import { addEvent } from "@/actions/adminBuildEvent.action";
 import { toast } from "sonner";
 import { ServerActionError } from "@/lib/types";

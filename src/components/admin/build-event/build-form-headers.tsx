@@ -3,9 +3,9 @@
 import React from "react";
 import { BUILD_FORM_HEADERS } from "@/lib/constants/admin.constant";
 import { useBuildFormStore } from "@/stores/admin/buildFormStore";
-import { CardTitle, CardDescription } from "../ui/card";
+import { CardTitle, CardDescription } from "../../ui/card";
 import { useBuildEventContext } from "@/lib/hooks/buildEvent.hook";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import AnimContainer from "./anim-container";
 
 function BuildFormHeaders() {

@@ -163,6 +163,6 @@ export const INPUT_TICKETS: TInputTickets[] = [
 export const QUESTION_TYPES = [
   "short_answer",
   "paragraph",
-  "mutliple choice",
+  "multiple_choice",
   "checkboxes",
 ];

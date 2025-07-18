@@ -6,14 +6,14 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
-} from "../ui/form";
+} from "../../ui/form";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
+} from "../../ui/select";
 import { useBuildEventContext } from "@/lib/hooks/buildEvent.hook";
 
 function FormFirstPage() {

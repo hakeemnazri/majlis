@@ -1,20 +1,20 @@
 import { useBuildEventContext } from "@/lib/hooks/buildEvent.hook";
 import { cn } from "@/lib/utils";
 import React from "react";
-import { FormField, FormItem, FormControl, FormMessage } from "../ui/form";
+import { FormField, FormItem, FormControl, FormMessage } from "../../ui/form";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Card, CardContent } from "../ui/card";
-import { Label } from "../ui/label";
-import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import { Checkbox } from "../ui/checkbox";
+} from "../../ui/select";
+import { Button } from "../../ui/button";
+import { Input } from "../../ui/input";
+import { Card, CardContent } from "../../ui/card";
+import { Label } from "../../ui/label";
+import { RadioGroup, RadioGroupItem } from "../../ui/radio-group";
+import { Checkbox } from "../../ui/checkbox";
 import { QUESTION_TYPES } from "@/lib/constants/admin.constant";
 import { TSurveyQuestion } from "@/lib/types";
 
@@ -33,7 +33,7 @@ function FormThirdPage() {
     <>
       {surveyDetails.map((question, index) => (
         <SurveyQuestion
-          key={question.id}
+          key={question.question}
           surveyDetails={surveyDetails}
           question={question}
           index={index}
@@ -162,7 +162,7 @@ const SurveyQuestion = ({
       </Card>
     );
   }
-  if (question.type === "checkboxes" || question.type === "mutliple choice") {
+  if (question.type === "checkboxes" || question.type === "multiple_choice") {
     return (
       <Card>
         <CardContent className="space-y-4">
