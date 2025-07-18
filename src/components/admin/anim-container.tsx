@@ -4,10 +4,10 @@ import { AnimatePresence } from "framer-motion";
 
 type AnimContainerProps = {
   children: React.ReactNode;
-  key: number;
+  page: number;
 };
 
-function AnimContainer({ children, key }: AnimContainerProps) {
+function AnimContainer({ children, page }: AnimContainerProps) {
   return (
     <motion.div
       layout
@@ -16,7 +16,7 @@ function AnimContainer({ children, key }: AnimContainerProps) {
     >
       <AnimatePresence mode="wait">
         <motion.div
-          key={key}
+          key={page}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}

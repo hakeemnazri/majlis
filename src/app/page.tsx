@@ -1,15 +1,15 @@
-import FormStage from "@/components/admin/form-stage";
-import FormCard from "@/components/admin/form-card";
-import { BuildEventContextProvider } from "@/contexts/build-event-context-provider";
+import { Button } from '@/components/ui/button'
+import React from 'react'
 
-export default function Home() {
-  
+const PLACEHOLDER_ID = "cmd5i02lx0000ty0kq9qinsxo"
+
+function Home() {
   return (
-    <main className="flex flex-col h-full gap-4 w-full">
-      <BuildEventContextProvider>
-        <FormStage />
-        <FormCard />
-      </BuildEventContextProvider>
+    <main className='flex justify-center items-center h-screen'>
+        
+        <Button>edit me boi</Button>
     </main>
-  );
+  )
 }
+
+export default Home

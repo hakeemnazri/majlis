@@ -11,7 +11,7 @@ import AnimContainer from "./anim-container";
 function BuildFormHeaders() {
   const { formPage } = useBuildFormStore((state) => state);
   return (
-    <AnimContainer key={formPage}>
+    <AnimContainer page={formPage}>
       <div className="flex justify-between">
         <CardHeader formPage={formPage} />
         {formPage === 2 && <AddSurveyQuestion />}

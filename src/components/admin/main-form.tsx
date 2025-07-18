@@ -19,7 +19,7 @@ function MainForm() {
     <div className="flex flex-col gap-8 transition-all">
       <Form {...form}>
         <form onSubmit={(e) => e.preventDefault()}>
-          <AnimContainer key={formPage}>
+          <AnimContainer page={formPage}>
             {formPage === 0 && <FormFirstPage />}
             {formPage === 1 && <FormSecondPage />}
             {formPage === 2 && <FormThirdPage />}
