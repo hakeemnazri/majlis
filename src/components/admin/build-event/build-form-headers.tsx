@@ -7,13 +7,25 @@ import { CardTitle, CardDescription } from "../../ui/card";
 import { useBuildEventContext } from "@/lib/hooks/buildEvent.hook";
 import { Button } from "../../ui/button";
 import AnimContainer from "./anim-container";
+import { DialogDescription, DialogTitle } from "@/components/ui/dialog";
 
-function BuildFormHeaders() {
+type TAction = "create" | "edit";
+
+type BuildFormHeadersProps = {
+  action?: TAction;
+};
+
+type HeaderTitleProps = {
+  action: TAction;
+  formPage: number;
+};
+
+function BuildFormHeaders({ action = "create" }: BuildFormHeadersProps) {
   const { formPage } = useBuildFormStore((state) => state);
   return (
     <AnimContainer page={formPage}>
       <div className="flex justify-between">
-        <CardHeader formPage={formPage} />
+        <HeaderTitle action={action} formPage={formPage} />
         {formPage === 2 && <AddSurveyQuestion />}
       </div>
     </AnimContainer>
@@ -24,13 +36,22 @@ export default BuildFormHeaders;
 
 // BuildFormHeaders Components
 
-const CardHeader = ({ formPage }: { formPage: number }) => {
+const HeaderTitle = ({ action, formPage }: HeaderTitleProps) => {
+  const title = BUILD_FORM_HEADERS[formPage].title;
+  const description = BUILD_FORM_HEADERS[formPage].description;
   return (
     <div className="flex flex-col">
-      <CardTitle>{BUILD_FORM_HEADERS[formPage].title}</CardTitle>
-      <CardDescription>
-        {BUILD_FORM_HEADERS[formPage].description}
-      </CardDescription>
+      {action === "create" ? (
+        <>
+          <CardTitle>{title}</CardTitle>
+          <CardDescription>{description}</CardDescription>
+        </>
+      ) : (
+        <>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
+        </>
+      )}
     </div>
   );
 };

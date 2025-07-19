@@ -4,6 +4,7 @@ type Store = {
   formPage: number;
   nextFormPage: () => void;
   prevFormPage: () => void;
+  resetFormPage: () => void;
 };
 
 export const useBuildFormStore = create<Store>((set) => ({
@@ -21,5 +22,8 @@ export const useBuildFormStore = create<Store>((set) => ({
 
       return { ...state, formPage: state.formPage - 1 };
     });
+  },
+  resetFormPage: () => {
+    set(() => ({ formPage: 0 }));
   },
 }));
