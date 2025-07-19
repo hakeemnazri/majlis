@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { EVENT_FIRST_PAGE_FORM_QUESTIONS } from "@/lib/constants/admin.constant";
 import {

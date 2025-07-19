@@ -3,7 +3,6 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import MainContainer from "@/components/admin/build-event/main-container";
 import { Toaster } from "@/components/ui/sonner";
-import { BuildEventContextProvider } from "@/contexts/build-event-context-provider";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -25,9 +24,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${poppins.variable} antialiased min-h-screen w-full`}>
-        <BuildEventContextProvider>
           <MainContainer>{children}</MainContainer>
-        </BuildEventContextProvider>
         <Toaster />
       </body>
     </html>

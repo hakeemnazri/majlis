@@ -13,7 +13,15 @@ type ErrorWithCode = {
   message?: string;
 };
 
-export function handleServerActionError(error: unknown, action: string) {
+export type ErrorResponse = {
+    success: false;
+    error: string;
+    code: string;
+    field?: unknown;
+    details?: string;
+  };
+
+export function handleServerActionError(error: unknown, action: string): ErrorResponse {
   if (process.env.NODE_ENV === "development") {
     console.error("Server Action Error:", {
       error,
