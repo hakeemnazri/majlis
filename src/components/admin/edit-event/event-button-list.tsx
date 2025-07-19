@@ -1,11 +1,9 @@
 "use client";
 
-import React from "react";
-import { Event } from "../../../../generated/prisma";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -21,21 +19,30 @@ import FormFourthPage from "../build-event/form-fourth-page";
 import { Form } from "@/components/ui/form";
 import { useBuildEventContext } from "@/lib/hooks/buildEvent.hook";
 import AnimContainer from "../build-event/anim-container";
+import { EventWithRelations } from "@/lib/types";
 
 type EventButtonList = {
-  events: Event[];
+  events: EventWithRelations[];
 };
 
 function EventButtonList({ events }: EventButtonList) {
+  const [isOpen, setIsOpen] = useState(false);
   const { formPage } = useBuildFormStore((state) => state);
   const { form } = useBuildEventContext();
+
+  const handleClick = (formData: EventWithRelations) => {
+    form.reset(formData);
+    setIsOpen(true);
+  };
   return (
     <>
       {events.map((event) => (
-        <Dialog key={event.id}>
-          <DialogTrigger asChild>
-            <Button key={event.id}>{`edit me boi for ${event.title}`}</Button>
-          </DialogTrigger>
+          <Button key={event.id}
+            onClick={() => handleClick(event)}
+          >{`edit me boi for ${event.title}`}</Button>)
+      )}
+      
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Edit Event</DialogTitle>
@@ -58,7 +65,6 @@ function EventButtonList({ events }: EventButtonList) {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-      ))}
     </>
   );
 }
