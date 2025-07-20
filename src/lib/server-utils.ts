@@ -8,8 +8,16 @@ export const getAdminDashboardEvents = async () : Promise<TGetAdminDashboardEven
   try {
     const events = await prisma.event.findMany({
       include: {
-        tickets: true,
-        survey: true,
+        tickets: {
+          orderBy: {
+            order: "asc"
+          }
+        },
+        survey: {
+          orderBy: {
+            order: "asc"
+          }
+        },
       },
       orderBy: {
         createdAt: "desc"

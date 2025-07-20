@@ -26,7 +26,7 @@ type FormStageButtonsProps = {
 
 function FormStageButtons({ action = "create"} : FormStageButtonsProps) {
   const { validatePageFields, form } = useBuildEventContext();
-  const { nextFormPage, prevFormPage, formPage } = useBuildFormStore(
+  const { nextFormPage, prevFormPage, formPage, resetFormPage, handleOnDialogClose } = useBuildFormStore(
     (state) => state
   );
 
@@ -53,11 +53,13 @@ function FormStageButtons({ action = "create"} : FormStageButtonsProps) {
     const { getValues } = form;
     const formData = getValues();
     const parsedFormData = formSchema2(false).safeParse(formData);
+    console.log(parsedFormData)
     if (!parsedFormData.success) return;
     toast.promise(action === "create" ? addEvent(parsedFormData.data) : editEvent(parsedFormData.data), {
       loading: `${action === "create" ? "Adding" : "Editing"} event...`,
       success: (data) => {
         if (data.success && "message" in data) {
+          resetFormPage();
           return data.message;
         } else if (!data.success && "error" in data) {
           throw new Error(data.error);
@@ -66,6 +68,7 @@ function FormStageButtons({ action = "create"} : FormStageButtonsProps) {
       },
       error: (error: ServerActionError) => error.error || "Failed to add event",
     });
+    handleOnDialogClose(form);
   };
 
   return (

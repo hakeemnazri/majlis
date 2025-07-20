@@ -42,6 +42,7 @@ export const EVENT_FIRST_PAGE_FORM_QUESTIONS: EventQuestion[] = [
 
 export const EVENT_FORM_SECOND_PAGE_DEFAULT_VALUES = [
   {
+    id: crypto.randomUUID(),
     name: undefined,
     description: undefined,
     price: undefined,

@@ -26,6 +26,7 @@ model Event {
 
 model Ticket {
   id          String   @id @default(cuid())
+  order       Int
   name        String?
   price       Int?
   quantity    Int?
@@ -33,11 +34,12 @@ model Ticket {
   eventId     String?
   updatedAt   DateTime @updatedAt
   createdAt   DateTime @default(now())
-  Event       Event?  @relation(fields: [eventId], references: [id])
+  Event       Event?   @relation(fields: [eventId], references: [id])
 }
 
 model Survey {
   id        String     @id @default(cuid())
+  order     Int
   type      SurveyType
   question  String
   options   String[]

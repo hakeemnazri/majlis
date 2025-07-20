@@ -22,18 +22,20 @@ export async function addEvent(event: unknown) {
       data: {
         ...rest,
         tickets: {
-          create: tickets?.filter((ticket) => ({
+          create: tickets?.map((ticket, index) => ({
             name: ticket.name,
             price: ticket.price,
             quantity: ticket.quantity,
             description: ticket.description,
+            order: index + 1,
           })),
         },
         survey: {
-          create: survey.map((item) => {
+          create: survey.map((item, index) => {
             const base = {
               type: item.type,
               question: item.question,
+              order: index + 1,
             };
             const options = item.options.map((option) => {
               if (option === undefined || option === null) {
@@ -77,7 +79,7 @@ export async function editEvent(event: unknown) {
       data: {
         ...parsedEvent.data,
         survey: {
-          update: parsedEvent.data.survey.map((item) => {
+          upsert: parsedEvent.data.survey.map((item, index) => {
             const options = item.options.map((option) => {
               if (option === undefined || option === null) {
                 return "";
@@ -89,26 +91,41 @@ export async function editEvent(event: unknown) {
               where: {
                 id: item.id,
               },
-              data: {
+              create:{
+                order: index + 1,
                 type: item.type,
                 question: item.question,
                 options,
               },
+              update: {
+                order: index + 1,
+                type: item.type,
+                question: item.question,
+                options,
+              }
             };
           }),
         },
         tickets: {
-          update: parsedEvent.data.tickets?.map((ticket) => {
+          upsert: parsedEvent.data.tickets?.map((ticket, index) => {
             return {
               where: {
                 id: ticket.id,
               },
-              data: {
+              update: {
+                order: index + 1,
                 name: ticket.name,
                 price: ticket.price,
                 quantity: ticket.quantity,
                 description: ticket.description,
               },
+              create: {
+                order: index + 1,
+                name: ticket.name,
+                price: ticket.price,
+                quantity: ticket.quantity,
+                description: ticket.description,
+              }
             };
           }),
         },

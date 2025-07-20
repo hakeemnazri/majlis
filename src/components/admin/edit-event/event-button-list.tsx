@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -26,38 +26,33 @@ type EventButtonList = {
 };
 
 function EventButtonList({ events }: EventButtonList) {
-  const [isOpen, setIsOpen] = useState(false);
-  const { formPage, resetFormPage } = useBuildFormStore((state) => state);
+  const { formPage, isDialogOpen, setIsDialogOpen, handleEditEvent, handleOnDialogClose } = useBuildFormStore((state) => state);
   const { form } = useBuildEventContext();
 
-  const handleClick = (formData: EventWithRelations) => {
-    form.reset(formData);
-    setIsOpen(true);
-  };
-
-  const handleOpenClose = (open: boolean) => {
-    setIsOpen(open);
-    resetFormPage();
-  };
   return (
     <>
+      <Button onClick={()=> setIsDialogOpen(true)}>Create Event</Button>
+
       {events.map((event) => (
         <Button
           key={event.id}
-          onClick={() => handleClick(event)}
+          onClick={() => handleEditEvent(form, event)}
         >{`edit me boi for ${event.title}`}</Button>
       ))}
 
-      <Dialog open={isOpen} onOpenChange={(open) => handleOpenClose(open)}>
+      <Dialog open={isDialogOpen} onOpenChange={() => handleOnDialogClose(form)}>
         <DialogContent className="flex flex-col max-h-2/3">
-          <DialogHeader className="">
+          <DialogHeader>
             <BuildFormHeaders action="edit" />
           </DialogHeader>
 
           <Separator />
 
           <Form {...form}>
-            <form onSubmit={(e) => e.preventDefault()}className="flex-1 overflow-scroll custom-scrollbar-dark">
+            <form
+              onSubmit={(e) => e.preventDefault()}
+              className="flex-1 overflow-scroll custom-scrollbar-dark"
+            >
               <AnimContainer page={formPage}>
                 {formPage === 0 && <FormFirstPage />}
                 {formPage === 1 && <FormSecondPage />}
@@ -69,8 +64,8 @@ function EventButtonList({ events }: EventButtonList) {
 
           <Separator />
 
-          <DialogFooter className="">
-            <FormStageButtons action="edit"/>
+          <DialogFooter>
+            <FormStageButtons action="edit" />
           </DialogFooter>
         </DialogContent>
       </Dialog>

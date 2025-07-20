@@ -28,6 +28,7 @@ const TicketHeader = ({ append }: { append: UseFieldArrayAppend<TForm> }) => {
   //handler
   const handleAddTicketForm = () => {
     append({
+      id: crypto.randomUUID(),
       name: "",
       description: "",
       price: 0,
