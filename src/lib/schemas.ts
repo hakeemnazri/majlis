@@ -180,9 +180,6 @@ export const formSchema2 = (isStrict: boolean) =>
     .extend({
       tickets: z
         .array(isStrict ? strictTicketSchema : looseTicketSchema)
-        .min(1, {
-          message: "Tickets must be at least 1.",
-        })
         .nullable(),
       survey: z
         .array(

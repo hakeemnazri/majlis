@@ -58,3 +58,17 @@ export async function addEvent(event: unknown) {
     return handleServerActionError(error, "addEvent");
   }
 }
+
+export async function editEvent(event: unknown) {
+  try {
+    console.log(event)
+
+    return {
+      success: false,
+      message: "Invalid event data.",
+    }
+    
+  } catch (error) {
+    return handleServerActionError(error, "editEvent");
+  }
+}

@@ -48,3 +48,5 @@ export type TGetAdminDashboardEvents = {
     message: string,
     data: EventWithRelations[]
 }
+
+export type TAction = "create" | "edit";

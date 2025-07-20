@@ -8,8 +8,7 @@ import { useBuildEventContext } from "@/lib/hooks/buildEvent.hook";
 import { Button } from "../../ui/button";
 import AnimContainer from "./anim-container";
 import { DialogDescription, DialogTitle } from "@/components/ui/dialog";
-
-type TAction = "create" | "edit";
+import { TAction } from "@/lib/types";
 
 type BuildFormHeadersProps = {
   action?: TAction;
@@ -20,7 +19,7 @@ type HeaderTitleProps = {
   formPage: number;
 };
 
-function BuildFormHeaders({ action = "create" }: BuildFormHeadersProps) {
+function BuildFormHeaders({ action = "create" } : BuildFormHeadersProps) {
   const { formPage } = useBuildFormStore((state) => state);
   return (
     <AnimContainer page={formPage}>

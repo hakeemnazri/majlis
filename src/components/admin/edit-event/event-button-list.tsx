@@ -19,6 +19,7 @@ import { useBuildEventContext } from "@/lib/hooks/buildEvent.hook";
 import AnimContainer from "../build-event/anim-container";
 import { EventWithRelations } from "@/lib/types";
 import BuildFormHeaders from "../build-event/build-form-headers";
+import { Separator } from "@/components/ui/separator";
 
 type EventButtonList = {
   events: EventWithRelations[];
@@ -48,13 +49,15 @@ function EventButtonList({ events }: EventButtonList) {
       ))}
 
       <Dialog open={isOpen} onOpenChange={(open) => handleOpenClose(open)}>
-        <DialogContent className="max-h-2/3 overflow-scroll custom-scrollbar-dark">
-          <DialogHeader>
+        <DialogContent className="flex flex-col max-h-2/3">
+          <DialogHeader className="">
             <BuildFormHeaders action="edit" />
           </DialogHeader>
 
+          <Separator />
+
           <Form {...form}>
-            <form onSubmit={(e) => e.preventDefault()}>
+            <form onSubmit={(e) => e.preventDefault()}className="flex-1 overflow-scroll custom-scrollbar-dark">
               <AnimContainer page={formPage}>
                 {formPage === 0 && <FormFirstPage />}
                 {formPage === 1 && <FormSecondPage />}
@@ -64,8 +67,10 @@ function EventButtonList({ events }: EventButtonList) {
             </form>
           </Form>
 
-          <DialogFooter>
-            <FormStageButtons />
+          <Separator />
+
+          <DialogFooter className="">
+            <FormStageButtons action="edit"/>
           </DialogFooter>
         </DialogContent>
       </Dialog>

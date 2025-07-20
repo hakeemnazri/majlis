@@ -16,11 +16,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../../ui/alert-dialog";
-import { addEvent } from "@/actions/adminBuildEvent.action";
+import { addEvent, editEvent } from "@/actions/adminBuildEvent.action";
 import { toast } from "sonner";
-import { ServerActionError } from "@/lib/types";
+import { ServerActionError, TAction } from "@/lib/types";
 
-function FormStageButtons() {
+type FormStageButtonsProps = {
+  action: TAction;
+}
+
+function FormStageButtons({ action = "create"} : FormStageButtonsProps) {
   const { validatePageFields, form } = useBuildEventContext();
   const { nextFormPage, prevFormPage, formPage } = useBuildFormStore(
     (state) => state
@@ -50,15 +54,15 @@ function FormStageButtons() {
     const formData = getValues();
     const parsedFormData = formSchema2(false).safeParse(formData);
     if (!parsedFormData.success) return;
-    toast.promise(addEvent(parsedFormData.data), {
-      loading: "Adding event...",
+    toast.promise(action === "create" ? addEvent(parsedFormData.data) : editEvent(parsedFormData.data), {
+      loading: `${action === "create" ? "Adding" : "Editing"} event...`,
       success: (data) => {
         if (data.success && "message" in data) {
           return data.message;
         } else if (!data.success && "error" in data) {
           throw new Error(data.error);
         }
-        return "Event added successfully!";
+        return `Event ${action === "create" ? "added" : "edited"} successfully!`;
       },
       error: (error: ServerActionError) => error.error || "Failed to add event",
     });
