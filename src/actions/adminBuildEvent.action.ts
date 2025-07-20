@@ -3,6 +3,7 @@
 import { handleServerActionError } from "@/lib/error";
 import prisma from "@/lib/prisma";
 import { formSchema2 } from "@/lib/schemas";
+import { revalidatePath } from "next/cache";
 
 export async function addEvent(event: unknown) {
   const schema = formSchema2(false);
@@ -53,7 +54,6 @@ export async function addEvent(event: unknown) {
       message: "Event added successfully",
       data: newEvent,
     };
-    
   } catch (error: unknown) {
     return handleServerActionError(error, "addEvent");
   }
@@ -61,13 +61,67 @@ export async function addEvent(event: unknown) {
 
 export async function editEvent(event: unknown) {
   try {
-    console.log(event)
+    const schema = formSchema2(false);
+    const parsedEvent = schema.safeParse(event);
+    if (!parsedEvent.success) {
+      return {
+        success: false,
+        message: "Invalid event data.",
+      };
+    }
+
+    const editedEvent = await prisma.event.update({
+      where: {
+        id: parsedEvent.data.id,
+      },
+      data: {
+        ...parsedEvent.data,
+        survey: {
+          update: parsedEvent.data.survey.map((item) => {
+            const options = item.options.map((option) => {
+              if (option === undefined || option === null) {
+                return "";
+              }
+              return option;
+            });
+
+            return {
+              where: {
+                id: item.id,
+              },
+              data: {
+                type: item.type,
+                question: item.question,
+                options,
+              },
+            };
+          }),
+        },
+        tickets: {
+          update: parsedEvent.data.tickets?.map((ticket) => {
+            return {
+              where: {
+                id: ticket.id,
+              },
+              data: {
+                name: ticket.name,
+                price: ticket.price,
+                quantity: ticket.quantity,
+                description: ticket.description,
+              },
+            };
+          }),
+        },
+      },
+    });
+
+    revalidatePath("/");
 
     return {
-      success: false,
-      message: "Invalid event data.",
-    }
-    
+      success: true,
+      message: "Edit event successfully",
+      data: editedEvent,
+    };
   } catch (error) {
     return handleServerActionError(error, "editEvent");
   }

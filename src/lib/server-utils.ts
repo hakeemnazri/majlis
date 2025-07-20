@@ -11,10 +11,12 @@ export const getAdminDashboardEvents = async () : Promise<TGetAdminDashboardEven
         tickets: true,
         survey: true,
       },
+      orderBy: {
+        createdAt: "desc"
+      }
     });
     await sleep(2000);
 
-    console.log(events);
     return {
         success: true,
         message: "Events pulled successfully",

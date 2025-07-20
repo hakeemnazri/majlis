@@ -53,21 +53,25 @@ export const EVENT_FORM_THIRD_PAGE_DEFAULT_VALUES: z.infer<
   typeof strictSurveyQuestionSchema
 >[] = [
   {
+    id: crypto.randomUUID(),
     type: "short_answer",
     question: "Nama",
     options: [""],
   },
   {
+    id: crypto.randomUUID(),
     type: "short_answer",
     question: "Emel",
     options: [""],
   },
   {
+    id: crypto.randomUUID(),
     type: "short_answer",
     question: "No. Telefon",
     options: [""],
   },
   {
+    id: crypto.randomUUID(),
     type: "short_answer",
     question: "Tempat tinggatl (Cth: Kota Damansara)",
     options: [""],

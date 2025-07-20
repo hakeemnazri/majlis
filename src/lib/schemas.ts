@@ -104,6 +104,7 @@ export const formSchema = z
 // -----------------------------------------------
 
 const baseFormSchema = z.object({
+  id: z.string().optional(),
   title: z.string().min(2, {
     message: "Title must be at least 2 characters.",
   }),
@@ -130,6 +131,7 @@ const baseFormSchema = z.object({
 });
 
 export const strictTicketSchema = z.object({
+  id: z.string().optional(),
   name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
   }),
@@ -146,6 +148,7 @@ export const strictTicketSchema = z.object({
 
 const strictTicketShape = strictTicketSchema.shape;
 const looseTicketSchema = z.object({
+  id: strictTicketShape.id,
   name: strictTicketShape.name.nullish(),
   description: strictTicketShape.description.nullish(),
   price: strictTicketShape.price.nullish(),
@@ -153,6 +156,7 @@ const looseTicketSchema = z.object({
 });
 
 export const strictSurveyQuestionSchema = z.object({
+  id: z.string().optional(),
   type: z.enum(["short_answer", "paragraph", "multiple_choice", "checkboxes"]),
   question: z.string().min(2, {
     message: "Question must be at least 2 characters.",
@@ -170,6 +174,7 @@ export const strictSurveyQuestionSchema = z.object({
 
 const strictSurveyShape = strictSurveyQuestionSchema.shape;
 const looseSurveyQuestionSchema = z.object({
+  id: strictSurveyShape.id,
   type: strictSurveyShape.type,
   question: strictSurveyShape.question,
   options: z.array(z.string().nullish()),
@@ -178,6 +183,7 @@ const looseSurveyQuestionSchema = z.object({
 export const formSchema2 = (isStrict: boolean) =>
   baseFormSchema
     .extend({
+      id: z.string().optional(),
       tickets: z
         .array(isStrict ? strictTicketSchema : looseTicketSchema)
         .nullable(),

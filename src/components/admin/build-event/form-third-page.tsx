@@ -32,13 +32,13 @@ function FormThirdPage() {
   return (
     <>
       {surveyDetails.map((question, index) => (
-        <SurveyQuestion
-          key={question.question}
-          surveyDetails={surveyDetails}
-          question={question}
-          index={index}
-        />
-      ))}
+      <SurveyQuestion
+        key={question.id}
+        surveyDetails={surveyDetails}
+        question={question}
+        index={index}
+      />
+    ))}
     </>
   );
 }

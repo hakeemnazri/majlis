@@ -19,7 +19,7 @@ type HeaderTitleProps = {
   formPage: number;
 };
 
-function BuildFormHeaders({ action = "create" } : BuildFormHeadersProps) {
+function BuildFormHeaders({ action = "create" }: BuildFormHeadersProps) {
   const { formPage } = useBuildFormStore((state) => state);
   return (
     <AnimContainer page={formPage}>
@@ -62,6 +62,7 @@ const AddSurveyQuestion = () => {
 
   const handleAddSurveyQuestion = () => {
     append({
+      id: crypto.randomUUID(),
       type: "short_answer",
       question: "",
       options: [""],
