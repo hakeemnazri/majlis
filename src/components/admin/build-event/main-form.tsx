@@ -9,6 +9,7 @@ import FormSecondPage from "./form-second-page";
 import FormThirdPage from "./form-third-page";
 import FormFourthPage from "./form-fourth-page";
 import AnimContainer from "./anim-container";
+import { Separator } from "@/components/ui/separator";
 
 function MainForm() {
   // store
@@ -16,7 +17,7 @@ function MainForm() {
   const { form } = useBuildEventContext();
 
   return (
-    <div className="flex flex-col gap-8 transition-all">
+    <div className="flex flex-col gap-4 transition-all">
       <Form {...form}>
         <form onSubmit={(e) => e.preventDefault()}>
           <AnimContainer page={formPage}>
@@ -28,7 +29,9 @@ function MainForm() {
         </form>
       </Form>
 
-      <FormStageButtons />
+      <Separator />
+
+      <FormStageButtons action="create"/>
     </div>
   );
 }

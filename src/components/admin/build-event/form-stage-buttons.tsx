@@ -21,7 +21,7 @@ import { toast } from "sonner";
 import { ServerActionError, TAction } from "@/lib/types";
 
 type FormStageButtonsProps = {
-  action: TAction;
+  action?: TAction;
 }
 
 function FormStageButtons({ action = "create"} : FormStageButtonsProps) {
