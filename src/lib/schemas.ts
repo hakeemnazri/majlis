@@ -41,7 +41,7 @@ export const formSchema = z
     mainImage: z.string().min(2, {
       message: "Image must be at least 2 characters.",
     }),
-    category: z.enum(["premium", "general", "infaq", "preview"]),
+    category: z.enum(["PREMIUM", "GENERAL", "INFAQ", "PREVIEW"]),
     frequency: z.string().nullable(),
     targetDonation: z.coerce
       .number()
@@ -60,21 +60,21 @@ export const formSchema = z
       .nullable(),
   })
   .refine((data) => {
-    if (data.category === "infaq") {
+    if (data.category === "INFAQ") {
       data.frequency = null;
     }
-    if (data.category !== "infaq") {
+    if (data.category !== "INFAQ") {
       data.targetDonation = null;
     }
 
-    if (data.category !== "premium") {
+    if (data.category !== "PREMIUM") {
       data.tickets = null;
     }
     return true;
   })
   .superRefine((data, ctx) => {
     if (
-      data.category !== "infaq" &&
+      data.category !== "INFAQ" &&
       (!data.frequency || data.frequency.trim() === "")
     ) {
       ctx.addIssue({
@@ -85,7 +85,7 @@ export const formSchema = z
     }
 
     if (
-      data.category === "infaq" &&
+      data.category === "INFAQ" &&
       (!data.targetDonation || data.targetDonation < 1)
     ) {
       ctx.addIssue({
@@ -117,7 +117,7 @@ const baseFormSchema = z.object({
   mainImage: z.string().min(2, {
     message: "Image must be at least 2 characters.",
   }),
-  category: z.enum(["premium", "general", "infaq", "preview"]),
+  category: z.enum(["PREMIUM", "GENERAL", "INFAQ", "PREVIEW"]),
   frequency: z.string().nullish(),
   targetDonation: z.coerce
     .number()
@@ -157,7 +157,7 @@ const looseTicketSchema = z.object({
 
 export const strictSurveyQuestionSchema = z.object({
   id: z.string().optional(),
-  type: z.enum(["short_answer", "paragraph", "multiple_choice", "checkboxes"]),
+  type: z.enum(["SHORT_ANSWER", "PARAGRAPH", "MULTIPLE_CHOICE", "CHECKBOXES"]),
   question: z.string().min(2, {
     message: "Question must be at least 2 characters.",
   }),
@@ -196,15 +196,15 @@ export const formSchema2 = (isStrict: boolean) =>
         }),
     })
     .refine((data) => {
-      if (data.category === "infaq") {
+      if (data.category === "INFAQ") {
         data.frequency = null;
         data.tickets = null;
       }
-      if (data.category !== "infaq") {
+      if (data.category !== "INFAQ") {
         data.targetDonation = null;
       }
 
-      if (data.category !== "premium") {
+      if (data.category !== "PREMIUM") {
         data.tickets = null;
       }
 

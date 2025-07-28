@@ -27,7 +27,7 @@ export const EVENT_FIRST_PAGE_FORM_QUESTIONS: EventQuestion[] = [
     title: "Category",
     placeholder: "Select category",
     type: "select",
-    options: ["premium", "general", "infaq", "preview"],
+    options: ["PREMIUM", "GENERAL", "INFAQ", "PREVIEW"],
     className: "",
   },
   {
@@ -55,25 +55,25 @@ export const EVENT_FORM_THIRD_PAGE_DEFAULT_VALUES: z.infer<
 >[] = [
   {
     id: crypto.randomUUID(),
-    type: "short_answer",
+    type: "SHORT_ANSWER",
     question: "Nama",
     options: [""],
   },
   {
     id: crypto.randomUUID(),
-    type: "short_answer",
+    type: "SHORT_ANSWER",
     question: "Emel",
     options: [""],
   },
   {
     id: crypto.randomUUID(),
-    type: "short_answer",
+    type: "SHORT_ANSWER",
     question: "No. Telefon",
     options: [""],
   },
   {
     id: crypto.randomUUID(),
-    type: "short_answer",
+    type: "SHORT_ANSWER",
     question: "Tempat tinggatl (Cth: Kota Damansara)",
     options: [""],
   },
@@ -166,8 +166,8 @@ export const INPUT_TICKETS: TInputTickets[] = [
 ];
 
 export const QUESTION_TYPES = [
-  "short_answer",
-  "paragraph",
-  "multiple_choice",
-  "checkboxes",
+  "SHORT_ANSWER",
+  "PARAGRAPH",
+  "MULTIPLE_CHOICE",
+  "CHECKBOXES",
 ];

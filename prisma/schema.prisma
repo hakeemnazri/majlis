@@ -50,15 +50,15 @@ model Survey {
 }
 
 enum SurveyType {
-  short_answer
-  paragraph
-  multiple_choice
-  checkboxes
+  SHORT_ANSWER
+  PARAGRAPH
+  MULTIPLE_CHOICE
+  CHECKBOXES
 }
 
 enum CategoryType {
-  premium
-  general
-  infaq
-  preview
+  PREMIUM
+  GENERAL
+  INFAQ
+  PREVIEW
 }

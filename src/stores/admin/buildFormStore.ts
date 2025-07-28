@@ -1,4 +1,7 @@
-import { EVENT_FORM_SECOND_PAGE_DEFAULT_VALUES, EVENT_FORM_THIRD_PAGE_DEFAULT_VALUES } from "@/lib/constants/admin.constant";
+import {
+  EVENT_FORM_SECOND_PAGE_DEFAULT_VALUES,
+  EVENT_FORM_THIRD_PAGE_DEFAULT_VALUES,
+} from "@/lib/constants/admin.constant";
 import { EventWithRelations, TForm } from "@/lib/types";
 import { UseFormReturn } from "react-hook-form";
 import { create } from "zustand";
@@ -6,10 +9,11 @@ import { create } from "zustand";
 type Store = {
   formPage: number;
   isDialogOpen: boolean;
-  nextFormPage: () => void;
-  prevFormPage: () => void;
-  resetFormPage: () => void;
-  setIsDialogOpen: (open: boolean) => void;
+  formAction: "create" | "edit";
+  handleNextFormPage: () => void;
+  handlePrevFormPage: () => void;
+  handleResetFormPage: () => void;
+  handleCreateEvent: () => void;
   handleEditEvent: (
     form: UseFormReturn<TForm>,
     formData: EventWithRelations
@@ -20,12 +24,13 @@ type Store = {
 export const useBuildFormStore = create<Store>((set) => ({
   formPage: 0,
   isDialogOpen: false,
-  nextFormPage: () => {
+  formAction: "create",
+  handleNextFormPage: () => {
     set((state) => ({
       formPage: state.formPage + 1,
     }));
   },
-  prevFormPage: () => {
+  handlePrevFormPage: () => {
     set((state) => {
       if (state.formPage === 0) {
         return state;
@@ -34,13 +39,14 @@ export const useBuildFormStore = create<Store>((set) => ({
       return { ...state, formPage: state.formPage - 1 };
     });
   },
-  resetFormPage: () => {
+  handleResetFormPage: () => {
     set(() => ({ formPage: 0 }));
   },
-  setIsDialogOpen: (open: boolean) => {
+  handleCreateEvent: () => {
     set((state) => ({
       ...state,
-      isDialogOpen: open,
+      isDialogOpen: true,
+      formAction: "create",
     }));
   },
   handleEditEvent: (

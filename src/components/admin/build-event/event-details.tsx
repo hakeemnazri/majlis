@@ -27,14 +27,14 @@ function EventDetails() {
     <>
       {EVENT_SECOND_PAGE_FORM_QUESTIONS.map((question) => {
         if (
-          category === "infaq" &&
+          category === "INFAQ" &&
           question.label === "frequency" &&
           question.type === "select"
         )
           return null;
 
         if (
-          category !== "infaq" &&
+          category !== "INFAQ" &&
           question.label === "targetDonation" &&
           question.type === "text"
         ) {

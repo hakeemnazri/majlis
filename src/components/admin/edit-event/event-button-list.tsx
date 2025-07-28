@@ -26,12 +26,12 @@ type EventButtonList = {
 };
 
 function EventButtonList({ events }: EventButtonList) {
-  const { formPage, isDialogOpen, setIsDialogOpen, handleEditEvent, handleOnDialogClose } = useBuildFormStore((state) => state);
+  const { formPage, isDialogOpen, formAction, handleCreateEvent, handleEditEvent, handleOnDialogClose } = useBuildFormStore((state) => state);
   const { form } = useBuildEventContext();
 
   return (
     <>
-      <Button onClick={()=> setIsDialogOpen(true)}>Create Event</Button>
+      <Button onClick={handleCreateEvent}>Create Event</Button>
 
       {events.map((event) => (
         <Button
@@ -43,7 +43,7 @@ function EventButtonList({ events }: EventButtonList) {
       <Dialog open={isDialogOpen} onOpenChange={() => handleOnDialogClose(form)}>
         <DialogContent className="flex flex-col max-h-2/3">
           <DialogHeader>
-            <BuildFormHeaders action="edit" />
+            <BuildFormHeaders />
           </DialogHeader>
 
           <Separator />
@@ -65,7 +65,7 @@ function EventButtonList({ events }: EventButtonList) {
           <Separator />
 
           <DialogFooter>
-            <FormStageButtons action="edit" />
+            <FormStageButtons action={formAction} />
           </DialogFooter>
         </DialogContent>
       </Dialog>

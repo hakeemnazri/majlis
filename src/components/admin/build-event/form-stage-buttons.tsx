@@ -22,13 +22,17 @@ import { ServerActionError, TAction } from "@/lib/types";
 
 type FormStageButtonsProps = {
   action?: TAction;
-}
+};
 
-function FormStageButtons({ action = "create"} : FormStageButtonsProps) {
+function FormStageButtons({ action = "create" }: FormStageButtonsProps) {
   const { validatePageFields, form } = useBuildEventContext();
-  const { nextFormPage, prevFormPage, formPage, resetFormPage, handleOnDialogClose } = useBuildFormStore(
-    (state) => state
-  );
+  const {
+    handleNextFormPage,
+    handlePrevFormPage,
+    formPage,
+    handleResetFormPage,
+    handleOnDialogClose,
+  } = useBuildFormStore((state) => state);
 
   const handleNextPage = async () => {
     let isFieldValid = false;
@@ -42,32 +46,39 @@ function FormStageButtons({ action = "create"} : FormStageButtonsProps) {
       isFieldValid = await validatePageFields("thirdPage");
     }
     if (!isFieldValid) return;
-    nextFormPage();
+    handleNextFormPage();
   };
 
   const handlePrevPage = () => {
-    prevFormPage();
+    handlePrevFormPage();
   };
 
   const handleFormSubmit = async () => {
     const { getValues } = form;
     const formData = getValues();
     const parsedFormData = formSchema2(false).safeParse(formData);
-    console.log(parsedFormData)
     if (!parsedFormData.success) return;
-    toast.promise(action === "create" ? addEvent(parsedFormData.data) : editEvent(parsedFormData.data), {
-      loading: `${action === "create" ? "Adding" : "Editing"} event...`,
-      success: (data) => {
-        if (data.success && "message" in data) {
-          resetFormPage();
-          return data.message;
-        } else if (!data.success && "error" in data) {
-          throw new Error(data.error);
-        }
-        return `Event ${action === "create" ? "added" : "edited"} successfully!`;
-      },
-      error: (error: ServerActionError) => error.error || "Failed to add event",
-    });
+    toast.promise(
+      action === "create"
+        ? addEvent(parsedFormData.data)
+        : editEvent(parsedFormData.data),
+      {
+        loading: `${action === "create" ? "Adding" : "Editing"} event...`,
+        success: (data) => {
+          if (data.success && "message" in data) {
+            handleResetFormPage();
+            return data.message;
+          } else if (!data.success && "error" in data) {
+            throw new Error(data.error);
+          }
+          return `Event ${
+            action === "create" ? "added" : "edited"
+          } successfully!`;
+        },
+        error: (error: ServerActionError) =>
+          error.error || "Failed to add event",
+      }
+    );
     handleOnDialogClose(form);
   };
 

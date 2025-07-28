@@ -27,20 +27,20 @@ export const firstPageFieldsValidation = () => {
 export const secondPageFieldsValidation = (category: TCategory) => {
   let secondPageFieldsValidation: TValidatePageFields = VALIDATE_SECOND_PAGE;
 
-  if (category === "infaq") {
+  if (category === "INFAQ") {
     const exclude: TValidatePageFields = ["frequency", "tickets"];
     secondPageFieldsValidation = secondPageFieldsValidation.filter(
       (field) => !exclude.includes(field)
     );
   }
-  if (category !== "infaq" && category !== "premium") {
+  if (category !== "INFAQ" && category !== "PREMIUM") {
     const exclude: TValidatePageFields = ["targetDonation", "tickets"];
     secondPageFieldsValidation = secondPageFieldsValidation.filter(
       (field) => !exclude.includes(field)
     );
   }
 
-  if (category === "premium") {
+  if (category === "PREMIUM") {
     secondPageFieldsValidation = secondPageFieldsValidation.filter(
       (field) => field !== "targetDonation"
     );
@@ -51,11 +51,11 @@ export const secondPageFieldsValidation = (category: TCategory) => {
 
 export const thirdPageFieldsValidation = (survey: TSurveyQuestion[]) => {
   const thirdPageFieldsValidation = survey.flatMap((question, index) => {
-    if (question.type === "short_answer" || question.type === "paragraph") {
+    if (question.type === "SHORT_ANSWER" || question.type === "PARAGRAPH") {
       return ["survey." + index + ".question", "survey." + index + ".type"];
     }
 
-    if (question.type === "multiple_choice" || question.type === "checkboxes") {
+    if (question.type === "MULTIPLE_CHOICE" || question.type === "CHECKBOXES") {
       const validateSurveyQuestionOptions = question.options?.map((_, i) => {
         return "survey." + index + ".options." + i;
       });
@@ -78,8 +78,8 @@ export const thirdPageFieldsValidation = (survey: TSurveyQuestion[]) => {
   return thirdPageFieldsValidation;
 };
 
-export const sleep = (ms: number) =>{
+export const sleep = (ms: number) => {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
-}
+};

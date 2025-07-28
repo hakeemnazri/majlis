@@ -32,13 +32,13 @@ function FormThirdPage() {
   return (
     <>
       {surveyDetails.map((question, index) => (
-      <SurveyQuestion
-        key={question.id}
-        surveyDetails={surveyDetails}
-        question={question}
-        index={index}
-      />
-    ))}
+        <SurveyQuestion
+          key={question.id}
+          surveyDetails={surveyDetails}
+          question={question}
+          index={index}
+        />
+      ))}
     </>
   );
 }
@@ -84,7 +84,7 @@ const SurveyQuestion = ({
     });
   };
 
-  if (question.type === "short_answer" || question.type === "paragraph") {
+  if (question.type === "SHORT_ANSWER" || question.type === "PARAGRAPH") {
     return (
       <Card>
         <CardContent className="space-y-4">
@@ -162,7 +162,7 @@ const SurveyQuestion = ({
       </Card>
     );
   }
-  if (question.type === "checkboxes" || question.type === "multiple_choice") {
+  if (question.type === "CHECKBOXES" || question.type === "MULTIPLE_CHOICE") {
     return (
       <Card>
         <CardContent className="space-y-4">
@@ -244,7 +244,7 @@ const SurveyQuestion = ({
             <section className="space-y-4">
               {question.options?.map((_, i) => (
                 <div key={i} className="flex items-center gap-3 w-full">
-                  {question.type === "checkboxes" ? (
+                  {question.type === "CHECKBOXES" ? (
                     <>
                       <Checkbox disabled className="w-6 h-6" />
                     </>

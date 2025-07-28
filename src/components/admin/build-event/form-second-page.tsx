@@ -13,7 +13,7 @@ function FormSecondPage() {
     <>
       {/* TODO: check if each tikcet has an id field */}
       <EventDetails />
-      {category === "premium" && <TicketDetails />}
+      {category === "PREMIUM" && <TicketDetails />}
     </>
   );
 }
