@@ -94,7 +94,7 @@ function EventDetails() {
                     <SelectContent>
                       {question.options?.map((item, index) => (
                         <SelectItem key={index} value={item}>
-                          {item === "pkam"
+                          {item === "PKAM"
                             ? item.toUpperCase()
                             : item.charAt(0).toUpperCase() + item.slice(1)}
                         </SelectItem>

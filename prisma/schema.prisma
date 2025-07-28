@@ -14,7 +14,7 @@ model Event {
   description    String
   frequency      String?
   category       CategoryType
-  host           String
+  host           HostType
   reference      String
   targetDonation Int?
   mainImage      String
@@ -47,6 +47,11 @@ model Survey {
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   Event     Event      @relation(fields: [eventId], references: [id])
+}
+
+enum HostType {
+  PKAM
+  TURATH
 }
 
 enum SurveyType {

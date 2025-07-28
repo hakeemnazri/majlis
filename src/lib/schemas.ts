@@ -111,9 +111,7 @@ const baseFormSchema = z.object({
   description: z.string().min(2, {
     message: "Description must be at least 2 characters.",
   }),
-  host: z.string().min(2, {
-    message: "Host must be at least 2 characters.",
-  }),
+  host: z.enum(["PKAM","TURATH"]),
   mainImage: z.string().min(2, {
     message: "Image must be at least 2 characters.",
   }),

@@ -42,9 +42,10 @@ function FormFirstPage() {
                 <SelectContent>
                   {question.options?.map((item, index) => (
                     <SelectItem key={index} value={item}>
-                      {item === "pkam"
-                        ? item.toUpperCase()
-                        : item.charAt(0).toUpperCase() + item.slice(1)}
+                      {item === "PKAM"
+                        ? item
+                        : item.charAt(0).toUpperCase() +
+                          item.slice(1).toLowerCase()}
                     </SelectItem>
                   ))}
                 </SelectContent>

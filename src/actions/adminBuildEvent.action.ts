@@ -51,6 +51,8 @@ export async function addEvent(event: unknown) {
       },
     });
 
+    revalidatePath("/")
+
     return {
       success: true,
       message: "Event added successfully",

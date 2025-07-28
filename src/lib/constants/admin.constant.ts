@@ -35,7 +35,7 @@ export const EVENT_FIRST_PAGE_FORM_QUESTIONS: EventQuestion[] = [
     title: "Event Host",
     placeholder: "Select host",
     type: "select",
-    options: ["pkam", "turath"],
+    options: ["PKAM", "TURATH"],
     className: "",
   },
 ];
