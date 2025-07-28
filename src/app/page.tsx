@@ -1,4 +1,5 @@
 import EditFormWrapper from "@/components/admin/edit-event/edit-form-wrapper";
+import SurveyQuestionWrapper from "@/components/checkout/survey-question-wrapper";
 import React, { Suspense } from "react";
 
 async function Home() {
@@ -7,6 +8,7 @@ async function Home() {
       <p>kikiki</p>
       <Suspense fallback={<div>Loading...</div>}>
         <EditFormWrapper />
+        <SurveyQuestionWrapper />
       </Suspense>
     </main>
   );
