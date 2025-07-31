@@ -42,6 +42,8 @@ export const BuildEventContextProvider = ({
     //TForm
     resolver: zodResolver(formSchema2(isStrict)), //formSchema
     defaultValues: {
+      frequency: null,
+      targetDonation: null,
       tickets: EVENT_FORM_SECOND_PAGE_DEFAULT_VALUES,
       survey: EVENT_FORM_THIRD_PAGE_DEFAULT_VALUES,
     },

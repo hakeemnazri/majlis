@@ -116,13 +116,13 @@ const baseFormSchema = z.object({
     message: "Image must be at least 2 characters.",
   }),
   category: z.enum(["PREMIUM", "GENERAL", "INFAQ", "PREVIEW"]),
-  frequency: z.string().nullish(),
+  frequency: z.string().nullable(),
   targetDonation: z.coerce
     .number()
     .min(1, {
       message: "Donation target must be at least RM1.",
-    })
-    .nullish(),
+    }).nullable()
+    ,
   reference: z.string().min(2, {
     message: "Reference must be at least 2 characters.",
   }),

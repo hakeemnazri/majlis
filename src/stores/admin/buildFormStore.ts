@@ -57,6 +57,7 @@ export const useBuildFormStore = create<Store>((set) => ({
     set((state) => ({
       ...state,
       isDialogOpen: true,
+      formAction: "edit",
     }));
   },
   handleOnDialogClose: (form: UseFormReturn<TForm>) => {

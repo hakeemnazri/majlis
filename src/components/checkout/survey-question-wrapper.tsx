@@ -3,21 +3,26 @@ import React from 'react'
 import SurveyQuestions from './survey-questions'
 
 async function SurveyQuestionWrapper() {
-    const eventSurveyQuestions = await prisma.event.findUnique({
+    const event = await prisma.event.findUnique({
         where: {
-            id: "cmdn4a6870000tyyva2flg4uj"
+            id: "cmdp3kt6a0005tyyv2ofm9rzf"
         },
         include: {
             survey: true,
         }
     })
 
-    if(!eventSurveyQuestions) {
+    if(!event) {
         return null
+    }
+
+    const eventWithSurvey = {
+        id: event.id,
+        survey: event.survey
     }
     
   return (
-    <SurveyQuestions surveyQuestions={eventSurveyQuestions.survey} />
+    <SurveyQuestions event={eventWithSurvey} />
   )
 }
 

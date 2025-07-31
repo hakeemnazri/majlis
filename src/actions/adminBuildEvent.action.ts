@@ -50,6 +50,7 @@ export async function addEvent(event: unknown) {
         },
       },
     });
+    console.log(newEvent);
 
     revalidatePath("/")
 
@@ -74,14 +75,16 @@ export async function editEvent(event: unknown) {
       };
     }
 
+    const { tickets, survey, ...rest} = parsedEvent.data;
+
     const editedEvent = await prisma.event.update({
       where: {
-        id: parsedEvent.data.id,
+        id: rest.id,
       },
       data: {
         ...parsedEvent.data,
         survey: {
-          upsert: parsedEvent.data.survey.map((item, index) => {
+          upsert: survey.map((item, index) => {
             const options = item.options.map((option) => {
               if (option === undefined || option === null) {
                 return "";
@@ -109,7 +112,7 @@ export async function editEvent(event: unknown) {
           }),
         },
         tickets: {
-          upsert: parsedEvent.data.tickets?.map((ticket, index) => {
+          upsert: tickets?.map((ticket, index) => {
             return {
               where: {
                 id: ticket.id,
