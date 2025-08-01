@@ -1,6 +1,8 @@
 "use server";
 
-import { surveyQuestionsSchema } from "@/components/checkout/survey-questions";
+import prisma from "@/lib/prisma";
+import { surveyQuestionsSchema } from "@/lib/schemas";
+import { revalidatePath } from "next/cache";
 
 export const submitEventSurveyForm = async(response : unknown) => {
     const parsedResponse = surveyQuestionsSchema.safeParse(response);
@@ -12,5 +14,21 @@ export const submitEventSurveyForm = async(response : unknown) => {
         }
     }
 
-    console.log(parsedResponse.data);
+  const newResponse = await prisma.response.create({
+    data:{
+      eventId: parsedResponse.data.eventId,
+      answer: {
+        create: parsedResponse.data.responses.map((response) => ({
+          surveyId: response.id,
+          input: response.answer.input,
+          checkbox: response.answer.checkbox,
+        }))
+      }
+    },
+    include: {
+      answer: true
+    }
+  })
+
+  revalidatePath("/")
 }

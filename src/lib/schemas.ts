@@ -111,7 +111,7 @@ const baseFormSchema = z.object({
   description: z.string().min(2, {
     message: "Description must be at least 2 characters.",
   }),
-  host: z.enum(["PKAM","TURATH"]),
+  host: z.enum(["PKAM", "TURATH"]),
   mainImage: z.string().min(2, {
     message: "Image must be at least 2 characters.",
   }),
@@ -121,8 +121,8 @@ const baseFormSchema = z.object({
     .number()
     .min(1, {
       message: "Donation target must be at least RM1.",
-    }).nullable()
-    ,
+    })
+    .nullable(),
   reference: z.string().min(2, {
     message: "Reference must be at least 2 characters.",
   }),
@@ -208,3 +208,18 @@ export const formSchema2 = (isStrict: boolean) =>
 
       return true;
     });
+
+const surveyInputSchema = z.object({
+  input: z.string(),
+  checkbox: z.array(z.string()),
+})
+
+export const surveyQuestionsSchema = z.object({
+  eventId: z.string(),
+  responses: z.array(
+    z.object({
+      id: z.string(),
+      answer: surveyInputSchema,
+    })
+  ),
+});

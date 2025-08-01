@@ -50,7 +50,6 @@ export async function addEvent(event: unknown) {
         },
       },
     });
-    console.log(newEvent);
 
     revalidatePath("/")
 
