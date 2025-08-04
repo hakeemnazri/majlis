@@ -29,23 +29,24 @@ async function SurveyQuestionWrapper() {
   return (
     <div>
       <SurveyQuestions event={eventWithSurvey} />
-      {event.response.map((response, index) =>{
-
-        return (
-          <div key={response.id}>
-            <p>Question {index + 1}</p>
-            <p>{response.submissionId}</p>
-            {response.answer.map((answer) => {
-              return (
-                <div key={answer.id}>
-                  <p>{answer.input}</p>
-                  <p>{answer.checkbox}</p>
-                </div>
-              );
-            })}
-          </div>
-        )
-      })}
+      <div className="flex flex-col gap-4">
+        {event.response.map((response, index) => {
+          return (
+            <div key={response.id}>
+              <p>Question {index + 1}</p>
+              <p>{response.submissionId}</p>
+              {response.answer.map((answer) => {
+                return (
+                  <div key={answer.id}>
+                    <p>{answer.input}</p>
+                    <p>{answer.checkbox}</p>
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

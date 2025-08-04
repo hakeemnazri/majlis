@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 
 export const submitEventSurveyForm = async(response : unknown) => {
     const parsedResponse = surveyQuestionsSchema.safeParse(response);
-
+    console.log(parsedResponse.success);
     if(!parsedResponse.success) {
         return {
           success: false,

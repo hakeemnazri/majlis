@@ -210,8 +210,8 @@ export const formSchema2 = (isStrict: boolean) =>
     });
 
 const surveyInputSchema = z.object({
-  input: z.string(),
-  checkbox: z.array(z.string()),
+  input: z.string().min(1, "Required"),
+  checkbox: z.array(z.string()).min(1, "Required"),
 })
 
 export const surveyQuestionsSchema = z.object({
@@ -221,5 +221,5 @@ export const surveyQuestionsSchema = z.object({
       id: z.string(),
       answer: surveyInputSchema,
     })
-  ),
+  )
 });

@@ -1,7 +1,7 @@
 "use client";
 
 import { Survey } from "../../../generated/prisma";
-import { useForm } from "react-hook-form";
+import { FieldPath, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -37,23 +37,45 @@ function SurveyQuestions({ event }: SurveyQuestionsProps) {
       responses: event.survey.map((question) => ({
         id: question.id,
         answer: {
-          input: "",
+          input: undefined,
           checkbox: [],
         },
       })),
     },
   });
 
-  function onSubmit(values: z.infer<typeof surveyQuestionsSchema>) {
-    console.log(values);
+  async function onSubmit() {
+    const values = form.watch();
+    const formProps = [
+      "eventId",
+      ...event.survey.map((question, index) => {
+        if (question.type === "CHECKBOXES") {
+          return "responses." + index + ".answer.checkbox";
+        } else {
+          return "responses." + index + ".answer.input";
+        }
+      }),
+    ] as FieldPath<z.infer<typeof surveyQuestionsSchema>>[];
+    const validateForm = await form.trigger(formProps);
+    if (!validateForm) return;
+
     submitEventSurveyForm(values);
-    form.reset();
+    form.reset({
+      eventId: event.id,
+      responses: event.survey.map((question) => ({
+        id: question.id,
+        answer: {
+          input: undefined,
+          checkbox: [],
+        },
+      })),
+    });
   }
 
   return (
     <>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={(e) => e.preventDefault()} className="space-y-8">
           {event.survey.map((question, index) => {
             if (question.type === "SHORT_ANSWER") {
               return (
@@ -160,18 +182,23 @@ function SurveyQuestions({ event }: SurveyQuestionsProps) {
                                 <FormLabel>{option}</FormLabel>
                               </div>
                             </FormControl>
-                            <FormMessage />
                           </FormItem>
                         )}
                       />
                     ))}
+                    <FormMessage>
+                      {
+                        form.formState.errors?.responses?.[index]?.answer
+                          ?.checkbox?.message
+                      }
+                    </FormMessage>
                   </div>
                 </div>
               );
             }
           })}
-          <Button type="submit">Submit</Button>
         </form>
+        <Button onClick={onSubmit}>Submit</Button>
       </Form>
     </>
   );
