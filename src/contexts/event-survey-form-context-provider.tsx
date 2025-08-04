@@ -1,9 +1,30 @@
-import React from 'react'
+import { createContext } from "react";
 
-function EventSurveyFormContextProvider() {
+type EventSurveyFormContextProviderProps = {
+  children: React.ReactNode;
+};
+
+type TEventSurveyFormContext = {
+  meow: string;
+};
+
+export const EventSurveyFormContext =
+  createContext<TEventSurveyFormContext | null>(null);
+
+function EventSurveyFormContextProvider({
+  children,
+}: EventSurveyFormContextProviderProps) {
+  const meow = "";
+
   return (
-    <div>EventSurveyFormContextProvider</div>
-  )
+    <EventSurveyFormContext.Provider
+      value={{
+        meow,
+      }}
+    >
+      {children}
+    </EventSurveyFormContext.Provider>
+  );
 }
 
-export default EventSurveyFormContextProvider
+export default EventSurveyFormContextProvider;

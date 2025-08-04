@@ -15,7 +15,7 @@ import FormSecondPage from "../build-event/form-second-page";
 import FormThirdPage from "../build-event/form-third-page";
 import FormFourthPage from "../build-event/form-fourth-page";
 import { Form } from "@/components/ui/form";
-import { useBuildEventContext } from "@/lib/hooks/buildEvent.hook";
+import { useBuildEventContext } from "@/lib/hooks/contexts.hook";
 import AnimContainer from "../build-event/anim-container";
 import { EventWithRelations } from "@/lib/types";
 import BuildFormHeaders from "../build-event/build-form-headers";
@@ -26,7 +26,14 @@ type EventButtonList = {
 };
 
 function EventButtonList({ events }: EventButtonList) {
-  const { formPage, isDialogOpen, formAction, handleCreateEvent, handleEditEvent, handleOnDialogClose } = useBuildFormStore((state) => state);
+  const {
+    formPage,
+    isDialogOpen,
+    formAction,
+    handleCreateEvent,
+    handleEditEvent,
+    handleOnDialogClose,
+  } = useBuildFormStore((state) => state);
   const { form } = useBuildEventContext();
 
   return (
@@ -40,7 +47,10 @@ function EventButtonList({ events }: EventButtonList) {
         >{`edit me boi for ${event.title}`}</Button>
       ))}
 
-      <Dialog open={isDialogOpen} onOpenChange={() => handleOnDialogClose(form)}>
+      <Dialog
+        open={isDialogOpen}
+        onOpenChange={() => handleOnDialogClose(form)}
+      >
         <DialogContent className="flex flex-col max-h-2/3">
           <DialogHeader>
             <BuildFormHeaders />

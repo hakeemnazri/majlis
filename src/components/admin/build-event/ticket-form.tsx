@@ -10,7 +10,7 @@ import {
 } from "../../ui/form";
 import { cn } from "@/lib/utils";
 import { Input } from "../../ui/input";
-import { useBuildEventContext } from "@/lib/hooks/buildEvent.hook";
+import { useBuildEventContext } from "@/lib/hooks/contexts.hook";
 import { Card, CardContent } from "../../ui/card";
 import { Label } from "../../ui/label";
 

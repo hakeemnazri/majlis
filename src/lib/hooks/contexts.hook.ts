@@ -1,4 +1,5 @@
 import { BuildEventContext } from "@/contexts/build-event-context-provider";
+import { EventSurveyFormContext } from "@/contexts/event-survey-form-context-provider";
 import { useContext } from "react";
 
 
@@ -13,3 +14,17 @@ export const useBuildEventContext = () => {
 
   return context;
 };
+
+export const useEventSurveyFormContext = () => {
+  const context = useContext(EventSurveyFormContext);
+
+  if (!context) {
+    throw new Error(
+      "useEventSurveyFormContext must be used within a EventSurveyFormContextProvider"
+    );
+  }
+
+  return context;
+};
+
+

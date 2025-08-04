@@ -1,7 +1,7 @@
 import React from "react";
 import EventDetails from "./event-details";
 import TicketDetails from "./ticket-details";
-import { useBuildEventContext } from "@/lib/hooks/buildEvent.hook";
+import { useBuildEventContext } from "@/lib/hooks/contexts.hook";
 
 function FormSecondPage() {
   const {
