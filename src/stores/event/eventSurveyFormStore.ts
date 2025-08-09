@@ -1,11 +1,34 @@
-import { create } from "zustand";
+"use client";
 
-type Store = {
-  meow: string;
-  setMeow: (meow: string) => void;
+import { TEventSurveyForm } from "@/lib/types";
+import { FieldPath } from "react-hook-form";
+import { create } from "zustand";
+import { Event, Survey } from "../../../generated/prisma";
+
+type TEvent = Event & {
+  survey: Survey[];
 };
 
-export const useEventSurveyFormStore = create<Store>((set) => ({
-  meow: "",
-  setMeow: (meow: string) => set({ meow }),
+type Store = {
+  event: TEvent | null;
+  formProps: () => FieldPath<TEventSurveyForm>[];
+  setEvent: (event: TEvent) => void;
+};
+
+export const useEventSurveyFormStore = create<Store>((set, get) => ({
+  event: null,
+  formProps: () => {
+    const event = get().event;
+    return [
+      "eventId",
+      ...(event?.survey ?? []).map((question, index) => {
+        if (question.type === "CHECKBOXES") {
+          return "responses." + index + ".answer.checkbox";
+        } else {
+          return "responses." + index + ".answer.input";
+        }
+      }),
+    ] as FieldPath<TEventSurveyForm>[];
+  },
+  setEvent: (event: TEvent) => set({ event }),
 }));

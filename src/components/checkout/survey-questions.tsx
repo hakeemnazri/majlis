@@ -1,8 +1,6 @@
 "use client";
 
-import { Survey } from "../../../generated/prisma";
-import { FieldPath, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Event, Survey } from "../../../generated/prisma";
 import {
   Form,
   FormControl,
@@ -14,14 +12,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
 import { submitEventSurveyForm } from "@/actions/eventFormSubmit";
-import z from "zod";
-import { surveyQuestionsSchema } from "@/lib/schemas";
 import { Textarea } from "../ui/textarea";
 import { Checkbox } from "../ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { useEventSurveyFormStore } from "@/stores/event/eventSurveyFormStore";
+import { useEventSurveyFormContext } from "@/lib/hooks/contexts.hook";
+import { useEffect } from "react";
 
-type EventProp = {
-  id: string;
+type EventProp = Event & {
   survey: Survey[];
 };
 
@@ -30,33 +28,16 @@ type SurveyQuestionsProps = {
 };
 
 function SurveyQuestions({ event }: SurveyQuestionsProps) {
-  const form = useForm<z.infer<typeof surveyQuestionsSchema>>({
-    resolver: zodResolver(surveyQuestionsSchema),
-    defaultValues: {
-      eventId: event.id,
-      responses: event.survey.map((question) => ({
-        id: question.id,
-        answer: {
-          input: undefined,
-          checkbox: [],
-        },
-      })),
-    },
-  });
+  const { formProps, setEvent } = useEventSurveyFormStore((state) => state);
+  const {form} = useEventSurveyFormContext();
+  
+  useEffect(() => {
+    setEvent(event);
+  }, [event, setEvent]);
 
   async function onSubmit() {
     const values = form.watch();
-    const formProps = [
-      "eventId",
-      ...event.survey.map((question, index) => {
-        if (question.type === "CHECKBOXES") {
-          return "responses." + index + ".answer.checkbox";
-        } else {
-          return "responses." + index + ".answer.input";
-        }
-      }),
-    ] as FieldPath<z.infer<typeof surveyQuestionsSchema>>[];
-    const validateForm = await form.trigger(formProps);
+    const validateForm = await form.trigger(formProps());
     if (!validateForm) return;
 
     submitEventSurveyForm(values);

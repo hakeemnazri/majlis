@@ -15,7 +15,7 @@ export const submitEventSurveyForm = async (response: unknown) => {
     };
   }
   try {
-    const newResponse = await prisma.response.create({
+    await prisma.response.create({
       data: {
         eventId: parsedResponse.data.eventId,
         answer: {

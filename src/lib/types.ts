@@ -3,6 +3,7 @@ import {
   formSchema2,
   strictTicketSchema,
   strictSurveyQuestionSchema,
+  surveyQuestionsSchema,
 } from "./schemas";
 import { handleServerActionError } from "./error";
 import { Event as EventModel, Survey as SurveyModel, Ticket as TicketModel } from "../../generated/prisma";
@@ -50,3 +51,5 @@ export type TGetAdminDashboardEvents = {
 }
 
 export type TAction = "create" | "edit";
+
+export type TEventSurveyForm = z.infer<typeof surveyQuestionsSchema>
