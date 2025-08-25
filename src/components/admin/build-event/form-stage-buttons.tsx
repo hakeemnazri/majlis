@@ -19,6 +19,10 @@ import {
 import { addEvent, editEvent } from "@/actions/adminBuildEvent.action";
 import { toast } from "sonner";
 import { ServerActionError, TAction } from "@/lib/types";
+import {
+  EVENT_FORM_SECOND_PAGE_DEFAULT_VALUES,
+  EVENT_FORM_THIRD_PAGE_DEFAULT_VALUES,
+} from "@/lib/constants/admin.constant";
 
 type FormStageButtonsProps = {
   action?: TAction;
@@ -68,7 +72,11 @@ function FormStageButtons({ action = "create" }: FormStageButtonsProps) {
           if (data.success && "message" in data) {
             handleResetFormPage();
             return data.message;
-          } else if (!data.success && "error" in data) {
+          }
+          if (!data.success && "message" in data) {
+            return data.message;
+          }
+          if ("error" in data) {
             throw new Error(data.error);
           }
           return `Event ${
@@ -79,7 +87,11 @@ function FormStageButtons({ action = "create" }: FormStageButtonsProps) {
           error.error || "Failed to add event",
       }
     );
-    handleOnDialogClose(form);
+    handleOnDialogClose();
+    form.reset({
+      tickets: EVENT_FORM_SECOND_PAGE_DEFAULT_VALUES,
+      survey: EVENT_FORM_THIRD_PAGE_DEFAULT_VALUES,
+    });
   };
 
   return (

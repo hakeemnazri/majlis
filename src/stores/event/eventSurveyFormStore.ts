@@ -5,7 +5,7 @@ import { FieldPath } from "react-hook-form";
 import { create } from "zustand";
 import { Event, Survey } from "../../../generated/prisma";
 
-type TEvent = Event & {
+type TEvent = Pick<Event, "id"> & {
   survey: Survey[];
 };
 
@@ -20,7 +20,7 @@ export const useEventSurveyFormStore = create<Store>((set, get) => ({
   formProps: () => {
     const event = get().event;
     return [
-      "eventId",
+      // "eventId",
       ...(event?.survey ?? []).map((question, index) => {
         if (question.type === "CHECKBOXES") {
           return "responses." + index + ".answer.checkbox";

@@ -6,7 +6,7 @@ import EventSurveyFormContextProvider from "@/contexts/event-survey-form-context
 async function SurveyQuestionWrapper() {
   const event = await prisma.event.findUnique({
     where: {
-      id: "cmdquu9400000ty1zwi0a2sbw",
+      id: "cmeqqttnp000mty7z634hxz38",
     },
     include: {
       survey: true,

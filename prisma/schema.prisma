@@ -64,7 +64,7 @@ model Answer {
   id         String   @id @default(cuid())
   responseId String
   surveyId   String
-  input      String
+  input      String?
   checkbox   String[]
 
   response Response @relation(fields: [responseId], references: [id], onDelete: Cascade)

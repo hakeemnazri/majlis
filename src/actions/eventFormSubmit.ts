@@ -2,13 +2,13 @@
 
 import { handleServerActionError } from "@/lib/error";
 import prisma from "@/lib/prisma";
-import { surveyQuestionsSchema } from "@/lib/schemas";
+import { strictSurveyQuestionInputSchema } from "@/lib/schemas";
 import { revalidatePath } from "next/cache";
 
 export const submitEventSurveyForm = async (response: unknown) => {
-  const parsedResponse = surveyQuestionsSchema.safeParse(response);
+  const parsedResponse = strictSurveyQuestionInputSchema(false).safeParse(response);
+
   if (!parsedResponse.success) {
-    // TODO: Add toast
     return {
       success: false,
       message: "Invalid event data.",
@@ -21,7 +21,7 @@ export const submitEventSurveyForm = async (response: unknown) => {
         answer: {
           create: parsedResponse.data.responses.map((response) => ({
             surveyId: response.id,
-            input: response.answer.input,
+            input: response.answer.input === "" ? null : response.answer.input,
             checkbox: response.answer.checkbox,
           })),
         },
@@ -29,9 +29,23 @@ export const submitEventSurveyForm = async (response: unknown) => {
       include: {
         answer: true,
       },
+
     });
 
+    const meow = await prisma.event.findMany({
+      include: {
+        response: true,
+      }
+    })
+
+    console.log(meow)
+
     revalidatePath("/");
+
+    return {
+      success: true,
+      message: "Survey submitted successfully!",
+    }
   } catch (error: unknown) {
     return handleServerActionError(error, "submitEventSurveyForm");
   }

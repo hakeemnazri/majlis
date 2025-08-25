@@ -18,8 +18,9 @@ import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { useEventSurveyFormStore } from "@/stores/event/eventSurveyFormStore";
 import { useEventSurveyFormContext } from "@/lib/hooks/contexts.hook";
 import { useEffect } from "react";
+import { toast } from "sonner";
 
-type EventProp = Event & {
+type EventProp = Pick<Event, "id"> & {
   survey: Survey[];
 };
 
@@ -29,27 +30,37 @@ type SurveyQuestionsProps = {
 
 function SurveyQuestions({ event }: SurveyQuestionsProps) {
   const { formProps, setEvent } = useEventSurveyFormStore((state) => state);
-  const {form} = useEventSurveyFormContext();
-  
+  const { form } = useEventSurveyFormContext();
+
   useEffect(() => {
-    setEvent(event);
+    if (event) {
+      setEvent(event);
+    }
   }, [event, setEvent]);
 
   async function onSubmit() {
-    const values = form.watch();
+    const values = form.getValues();
     const validateForm = await form.trigger(formProps());
     if (!validateForm) return;
 
-    submitEventSurveyForm(values);
-    form.reset({
-      eventId: event.id,
-      responses: event.survey.map((question) => ({
-        id: question.id,
-        answer: {
-          input: undefined,
-          checkbox: [],
-        },
-      })),
+    toast.promise(submitEventSurveyForm(values), {
+      loading: "Submitting response...",
+      success: (data) => {
+        if ("error" in data) {
+          throw new Error(data.error);
+        }
+        if (!data.success) {
+          throw new Error(data.message);
+        }
+        if (data.success) {
+          form.reset();
+          return data.message;
+        }
+        return "Response submitted successfully!";
+      },
+      error: (error) => {
+        return error.message || "Failed to submit response";
+      },
     });
   }
 
@@ -152,7 +163,12 @@ function SurveyQuestions({ event }: SurveyQuestionsProps) {
                                   checked={field.value?.includes(option)}
                                   onCheckedChange={(checked) => {
                                     return checked
-                                      ? field.onChange([...field.value, option])
+                                      ? field.onChange([
+                                          ...(Array.isArray(field.value)
+                                            ? field.value
+                                            : []),
+                                          option,
+                                        ])
                                       : field.onChange(
                                           field.value?.filter(
                                             (value) => value !== option
