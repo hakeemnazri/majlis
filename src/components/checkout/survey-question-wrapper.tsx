@@ -1,11 +1,12 @@
 import prisma from "@/lib/prisma";
 import React from "react";
 import SurveyQuestions from "./survey-questions";
+import EventSurveyFormContextProvider from "@/contexts/event-survey-form-context-provider";
 
 async function SurveyQuestionWrapper() {
   const event = await prisma.event.findUnique({
     where: {
-      id: "cmds2p7au0000ty0nz160a0se",
+      id: "cmdquu9400000ty1zwi0a2sbw",
     },
     include: {
       survey: true,
@@ -28,7 +29,9 @@ async function SurveyQuestionWrapper() {
 
   return (
     <div>
-      <SurveyQuestions event={eventWithSurvey} />
+      <EventSurveyFormContextProvider>
+        <SurveyQuestions event={eventWithSurvey} />
+      </EventSurveyFormContextProvider>
       <div className="flex flex-col gap-4">
         {event.response.map((response, index) => {
           return (

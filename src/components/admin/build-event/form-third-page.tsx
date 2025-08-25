@@ -1,3 +1,5 @@
+"use client";
+
 import { useBuildEventContext } from "@/lib/hooks/contexts.hook";
 import { cn } from "@/lib/utils";
 import React from "react";
