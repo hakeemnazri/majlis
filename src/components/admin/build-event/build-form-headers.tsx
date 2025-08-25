@@ -6,7 +6,7 @@ import { useBuildFormStore } from "@/stores/admin/buildFormStore";
 import { useBuildEventContext } from "@/lib/hooks/contexts.hook";
 import { Button } from "../../ui/button";
 import AnimContainer from "./anim-container";
-import { Dialog, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { DialogDescription, DialogTitle } from "@/components/ui/dialog";
 
 type HeaderTitleProps = {
   formPage: number;
@@ -33,10 +33,8 @@ const HeaderTitle = ({ formPage }: HeaderTitleProps) => {
   const description = BUILD_FORM_HEADERS[formPage].description;
   return (
     <div className="flex flex-col">
-      <Dialog>
         <DialogTitle>{title}</DialogTitle>
         <DialogDescription>{description}</DialogDescription>
-      </Dialog>
     </div>
   );
 };
