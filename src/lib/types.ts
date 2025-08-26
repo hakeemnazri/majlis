@@ -42,7 +42,7 @@ export type TInputTickets = {
 
 export type EventWithRelations = EventModel & {
     survey: SurveyModel[];
-    tickets: TicketModel[]
+    ticket: TicketModel[]
 }
 export type TGetAdminDashboardEvents = {
     success: true,

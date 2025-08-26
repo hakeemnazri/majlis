@@ -19,7 +19,7 @@ model Event {
   targetDonation Int?
   frequency      String?
   survey         Survey[]
-  tickets        Ticket[]
+  ticket         Ticket[]
   response       Response[]
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
@@ -36,6 +36,8 @@ model Ticket {
   event       Event?   @relation(fields: [eventId], references: [id], onDelete: Cascade)
   updatedAt   DateTime @updatedAt
   createdAt   DateTime @default(now())
+
+  @@index([eventId])
 }
 
 model Survey {
@@ -49,18 +51,52 @@ model Survey {
   event     Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
+
+  @@index([eventId])
 }
 
 model Response {
-  id           String   @id @default(cuid())
+  id           String       @id @default(cuid())
   order        Int
   eventId      String
-  submissionId String   @default(cuid()) //TODO:Replace with OrderId
+  submissionId String       @default(cuid()) //TODO:Replace with OrderId
+  remark       Remark[]
+  upload       Upload[]
+  validation   Validation[]
   answer       Answer[]
 
   event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([eventId])
+}
+
+model Upload {
+  id         String @id @default(cuid())
+  link       String
+  note       String
+  responseId String
+
+  response Response @relation(fields: [responseId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([responseId])
+}
+
+model Remark {
+  id         String @id @default(cuid())
+  note       String
+  responseId String
+
+  response Response @relation(fields: [responseId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([responseId])
 }
 
 model Answer {
@@ -73,6 +109,20 @@ model Answer {
 
   response  Response @relation(fields: [responseId], references: [id], onDelete: Cascade)
   survey    Survey   @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([surveyId])
+  @@index([responseId])
+}
+
+model Validation {
+  id         String  @id @default(cuid())
+  responseId String
+  type       String
+  isCheck    Boolean
+
+  response  Response @relation(fields: [responseId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

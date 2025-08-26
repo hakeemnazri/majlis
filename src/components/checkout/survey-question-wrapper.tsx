@@ -6,7 +6,7 @@ import EventSurveyFormContextProvider from "@/contexts/event-survey-form-context
 async function SurveyQuestionWrapper() {
   const event = await prisma.event.findUnique({
     where: {
-      id: "cmerx2xoc0000tydqf10uyk1v",
+      id: "cmes66pas0002ty8hdypcshrt",
     },
     include: {
       survey: true,
@@ -32,14 +32,24 @@ async function SurveyQuestionWrapper() {
   };
 
   //for table
-  const allQuestions: string[] = [];
+
+  type THeader = {
+    id: string;
+    question: string;
+  };
+
+  const answerHeaders: THeader[] = [];
   const questionSet = new Set();
 
   event.response.forEach((response) => {
     response.answer?.forEach((answer) => {
       if (!questionSet.has(answer.survey.question)) {
         questionSet.add(answer.survey.question);
-        allQuestions.push(answer.survey.question);
+        const header: THeader = {
+          id: answer.survey.id,
+          question: answer.survey.question,
+        };
+        answerHeaders.push(header);
       }
     });
   });
@@ -66,17 +76,20 @@ async function SurveyQuestionWrapper() {
             <th>Response ID</th>
             <th>Submission ID</th>
             {/* <th>Timestamp</th> */}
-            {allQuestions.map((question) => (
-              <th key={question}>{question}</th>
+            {answerHeaders.map((header) => (
+              <th key={header.id}>{header.question}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {event.response.map((response, index) => {
             // Create a map of question to answer for this response
-            const answerMap = {};
+            type TAnswerMap = {
+              [key: string]: string | string[];
+            };
+            const answerMap: TAnswerMap = {};
             response.answer?.forEach((answer) => {
-              const key = answer.survey.question;
+              const key = answer.survey.id;
               const value = answer.input || answer.checkbox || "";
               answerMap[key] = value;
             });
@@ -85,9 +98,8 @@ async function SurveyQuestionWrapper() {
               <tr key={response.id}>
                 <td>Response {index + 1}</td>
                 <td>{response.submissionId}</td>
-                {/* <td>{response}</td> */}
-                {allQuestions.map((question) => (
-                  <td key={question}>{answerMap[question] || ""}</td>
+                {answerHeaders.map((header) => (
+                  <td key={header.id}>{answerMap[header.id] || ""}</td>
                 ))}
               </tr>
             );

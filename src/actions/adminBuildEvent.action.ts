@@ -21,7 +21,7 @@ export async function addEvent(event: unknown) {
     const newEvent = await prisma.event.create({
       data: {
         ...rest,
-        tickets: {
+        ticket: {
           create: tickets?.map((ticket, index) => ({
             name: ticket.name,
             price: ticket.price,
@@ -110,7 +110,7 @@ export async function editEvent(event: unknown) {
             };
           }),
         },
-        tickets: {
+        ticket: {
           upsert: tickets?.map((ticket, index) => {
             return {
               where: {
