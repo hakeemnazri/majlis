@@ -18,11 +18,11 @@ model Event {
   mainImage      String
   targetDonation Int?
   frequency      String?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
   survey         Survey[]
   tickets        Ticket[]
   response       Response[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }
 
 model Ticket {
@@ -33,9 +33,9 @@ model Ticket {
   eventId     String?
   name        String?
   description String?
+  event       Event?   @relation(fields: [eventId], references: [id], onDelete: Cascade)
   updatedAt   DateTime @updatedAt
   createdAt   DateTime @default(now())
-  event       Event?   @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
 model Survey {
@@ -45,30 +45,36 @@ model Survey {
   type      SurveyType
   question  String
   options   String[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
   answer    Answer[]
   event     Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }
 
 model Response {
   id           String   @id @default(cuid())
+  order        Int
   eventId      String
   submissionId String   @default(cuid()) //TODO:Replace with OrderId
   answer       Answer[]
 
-  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Answer {
   id         String   @id @default(cuid())
+  order      Int
   responseId String
   surveyId   String
   input      String?
   checkbox   String[]
 
-  response Response @relation(fields: [responseId], references: [id], onDelete: Cascade)
-  survey   Survey   @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  response  Response @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  survey    Survey   @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum HostType {
