@@ -22,6 +22,9 @@ export const submitEventSurveyForm = async (response: unknown) => {
         where: {
           eventId: parsedResponse.data.eventId,
         },
+        include:{
+          validation: true
+        },
         orderBy: {
           createdAt: "desc",
         },
@@ -31,6 +34,12 @@ export const submitEventSurveyForm = async (response: unknown) => {
         data: {
           eventId: parsedResponse.data.eventId,
           order: lastResponse ? lastResponse.order + 1 : 1,
+          validation:{
+            create: {
+              isCheck: false,
+              
+            }
+          }
           answer: {
             create: parsedResponse.data.responses.map((response, index) => ({
               surveyId: response.id,
