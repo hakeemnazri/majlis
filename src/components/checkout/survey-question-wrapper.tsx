@@ -5,7 +5,7 @@ import EventSurveyFormContextProvider from "@/contexts/event-survey-form-context
 import TestTable from "../test/test-table";
 
 async function SurveyQuestionWrapper() {
-  const id = "cmes66pas0002ty8hdypcshrt";
+  const id = "cmetl8tdk0006tyymqjgpy745";
   const event = await prisma.event.findUnique({
     where: {
       id,
@@ -19,7 +19,11 @@ async function SurveyQuestionWrapper() {
               survey: true,
             },
           },
-          validation: true,
+          checklist: {
+            include: {
+              Validation: true,
+            }
+          },
         },
       },
     },

@@ -1,32 +1,42 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 
 export async function addValidation(id: string) {
- try {
-    const eventResponses = await prisma.response.findMany({
-        where:{
-            eventId: id
+  try {
+    const [eventTotalResponses, newValidation] = await Promise.all([
+      prisma.response.findMany({
+        where: {
+          eventId: id,
         },
         select: {
-            id: true
-        }
-    })
+          id: true,
+        },
+      }),
+      prisma.validation.create({
+        data: {
+          type: "meow",
+          eventId: id,
+        },
+        select: {
+          id: true,
+        },
+      }),
+    ]);
 
-    const newValidations = eventResponses.map((response) => {
-        return {
-            responseId: response.id,
-            type: "VALIDATION",
-            isCheck: false
-        }
-    })
+    eventTotalResponses.forEach(async (response) => {
+      await prisma.checklist.create({
+        data: {
+          isCheck: false,
+          validationId: newValidation.id,
+          responseId: response.id,
+        },
+      });
+    });
 
-    await prisma.validation.createMany({
-        data: newValidations
-    })
-
-    
- } catch (error) {
-    console.log(error)
- }
+    revalidatePath("/");
+  } catch (error) {
+    console.log(error);
+  }
 }

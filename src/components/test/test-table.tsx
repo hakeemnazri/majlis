@@ -15,7 +15,11 @@ type TestTableProps = {
               survey: true;
             };
           };
-          validation: true;
+          checklist: {
+            include: {
+              Validation: true;
+            };
+          };
         };
       };
     };
@@ -27,7 +31,6 @@ function TestTable({ event, id }: TestTableProps) {
   type TValidationHeader = {
     id: string;
     title: string;
-    isCheck: boolean;
   };
   type THeader = {
     id: string;
@@ -37,11 +40,13 @@ function TestTable({ event, id }: TestTableProps) {
   const answerHeaders: THeader[] = [];
   const validationHeaders: TValidationHeader[] = [];
   const questionSet = new Set();
+  const validationSet = new Set();
 
   event.response.forEach((response) => {
+
     response.answer?.forEach((answer) => {
-      if (!questionSet.has(answer.survey.question)) {
-        questionSet.add(answer.survey.question);
+      if (!questionSet.has(answer.survey.id)) {
+        questionSet.add(answer.survey.id);
         const header: THeader = {
           id: answer.survey.id,
           question: answer.survey.question,
@@ -50,13 +55,16 @@ function TestTable({ event, id }: TestTableProps) {
       }
     });
 
-    response.validation?.forEach((validation) => {
-      const header: TValidationHeader = {
-        id: validation.id,
-        title: validation.type,
-        isCheck: validation.isCheck,
-      };
-      validationHeaders.push(header);
+    response.checklist?.forEach((checklist) => {
+      if (!validationSet.has(checklist.Validation.id)) {
+        validationSet.add(checklist.Validation.id);
+        const validation = checklist.Validation;
+        const header: TValidationHeader = {
+          id: validation.id,
+          title: validation.type,
+        };
+        validationHeaders.push(header);
+      }
     });
   });
 
@@ -70,7 +78,8 @@ function TestTable({ event, id }: TestTableProps) {
         <thead>
           <tr>
             <th>Response ID</th>
-            <th>Submission ID</th>
+            <th>Delete</th>
+            <th>Edit</th>
             {validationHeaders.map((header) => (
               <th key={header.id}>{header.title}</th>
             ))}
@@ -85,19 +94,29 @@ function TestTable({ event, id }: TestTableProps) {
             type TAnswerMap = {
               [key: string]: string | string[];
             };
+            type TValidationMap = {
+              [key: string]: boolean;
+            }
             const answerMap: TAnswerMap = {};
             response.answer?.forEach((answer) => {
               const key = answer.survey.id;
               const value = answer.input || answer.checkbox || "";
               answerMap[key] = value;
             });
+            const validationMap: TValidationMap = {}
+            response.checklist?.forEach((checklist) => {
+              const key = checklist.Validation.id;
+              const value = checklist.isCheck;
+              validationMap[key] = value;
+            })
 
             return (
               <tr key={response.id}>
                 <td>Response {response.order}</td>
-                <td>{response.submissionId}</td>
+                <td><Button onClick={() => console.log(response.id + "delete")}>dlt</Button></td>
+                <td><Button onClick={() => console.log(response.id + "edit")}>edit</Button></td>
                 {validationHeaders.map((header) => (
-                  <td key={header.id}>{header.isCheck.toString()}</td>
+                  <td key={header.id}>{validationMap[header.id].toString()}</td>
                 ))}
                 {answerHeaders.map((header) => (
                   <td key={header.id}>{answerMap[header.id] || ""}</td>
