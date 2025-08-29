@@ -36,7 +36,6 @@ export const BuildEventContext = createContext<TBuildEventContext | null>(null);
 export const BuildEventContextProvider = ({
   children
 }: BuildEventContextProviderProps) => {
-  //React-hook-form
   const isStrict = true;
   const form = useForm<TForm>({
     //TForm
