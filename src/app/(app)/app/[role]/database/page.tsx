@@ -1,9 +1,8 @@
 import React from 'react'
 
-function page({params}) {
+function page() {
   return (
     <div className=''>
-      {params.role} + dashboard
     </div>
   )
 }

@@ -1,34 +1,15 @@
 import React from "react";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "../ui/sidebar";
+import { Sidebar } from "../ui/sidebar";
+import SideBarHeader from "./side-bar-header";
+import SideBarBody from "./side-bar-body";
+import SideBarFooter from "./SideBarFooter";
 
-function AppSidebar() {
+function AppSidebar({...props} : React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar>
-      <SidebarHeader>Header</SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Menu</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-                <SidebarMenuItem>
-                    <SidebarMenuButton>Item1</SidebarMenuButton>
-                </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-      <SidebarFooter>Footer</SidebarFooter>
+    <Sidebar collapsible="offcanvas" {...props}>
+      <SideBarHeader />
+      <SideBarBody />
+      <SideBarFooter />
     </Sidebar>
   );
 }

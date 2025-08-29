@@ -1,6 +1,7 @@
 import { EventQuestion, TInputTickets, TValidatePageFields } from "../types";
 import z from "zod";
 import { strictSurveyQuestionSchema } from "../schemas";
+import { Database, LayoutDashboard } from "lucide-react";
 
 export const BUILD_FORM_HEADERS = [
   {
@@ -171,3 +172,16 @@ export const QUESTION_TYPES = [
   "MULTIPLE_CHOICE",
   "CHECKBOXES",
 ];
+
+export const SIDEBAR_NAVIGATION = [
+  {
+    title: "Dashboard",
+    link: "dashboard",
+    icon: LayoutDashboard
+  },
+  {
+    title: "Database",
+    link: "database",
+    icon: Database
+  }
+]

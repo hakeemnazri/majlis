@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import "../../globals.css";
 import MainAdminContainer from "@/components/admin/build-event/main-admin-container";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import AppSidebar from "@/components/sidebar/app-sidebar";
+import Navbar from "@/components/admin/navbar/navbar";
 
 export const metadata: Metadata = {
   title: "",
@@ -13,9 +16,14 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <MainAdminContainer>
-      <p>header</p>
-      {children}
-    </MainAdminContainer>
+    <SidebarProvider>
+      <AppSidebar variant="inset" />
+      <SidebarInset>
+        <MainAdminContainer>
+          <Navbar />
+          {children}
+        </MainAdminContainer>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
