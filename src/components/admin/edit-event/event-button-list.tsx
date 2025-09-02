@@ -64,6 +64,7 @@ function EventButtonList({ events }: EventButtonList) {
           });
         }}
       >
+        
         <DialogContent className="flex flex-col max-h-2/3">
           <DialogHeader>
             <BuildFormHeaders />
