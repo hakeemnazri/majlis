@@ -15,10 +15,10 @@ async function page({ params }: ParamsProps) {
   console.log(resolvedParams.role);
   const events = await prisma.event.findMany();
   return (
-    <section className="">
+    <section>
       <DashboardTableContextProvider data={events}>
         <BuildEventContextProvider>
-          <DashboardTable eventsData={events} />
+          <DashboardTable />
         </BuildEventContextProvider>
       </DashboardTableContextProvider>
     </section>
