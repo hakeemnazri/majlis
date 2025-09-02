@@ -1,5 +1,6 @@
 import DashboardTable from "@/components/admin/dashboard/dashboard-table";
 import { BuildEventContextProvider } from "@/contexts/build-event-context-provider";
+import DashboardTableContextProvider from "@/contexts/dashboard-table-context";
 import prisma from "@/lib/prisma";
 import React from "react";
 
@@ -15,9 +16,11 @@ async function page({ params }: ParamsProps) {
   const events = await prisma.event.findMany();
   return (
     <section className="">
-      <BuildEventContextProvider>
-        <DashboardTable eventsData={events} />
-      </BuildEventContextProvider>
+      <DashboardTableContextProvider data={events}>
+        <BuildEventContextProvider>
+          <DashboardTable eventsData={events} />
+        </BuildEventContextProvider>
+      </DashboardTableContextProvider>
     </section>
   );
 }
