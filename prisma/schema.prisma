@@ -17,6 +17,7 @@ model Event {
   reference      String
   mainImage      String
   targetDonation Int?
+  currentDonation Int? 
   frequency      String?
   survey         Survey[]
   tickets        Tickets[]

@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { Event } from "../../../../generated/prisma";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -12,6 +14,11 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import DrawerContentEventImage from "./drawer-content-event-image";
+import DrawerContentDonationTarget from "./drawer-content-donation-target";
+import DrawerContentEventDetails from "./drawer-content-event-details";
+import DrawerContentEventDescription from "./drawer-content-event-description";
 
 type TableCellViewerProps = {
   item: Event;
@@ -26,14 +33,34 @@ function TableCellViewer({ item }: TableCellViewerProps) {
           {item.title}
         </Button>
       </DrawerTrigger>
-      <DrawerContent>
+      <DrawerContent className="rounded-tl-2xl rounded-bl-2xl data-[vaul-drawer-direction=right]:sm:max-w-md">
         <DrawerHeader className="gap-1">
           <DrawerTitle>{item.title}</DrawerTitle>
           <DrawerDescription>Showing details of event</DrawerDescription>
         </DrawerHeader>
+
+        <Separator />
+
+        <section className="h-600 overflow-y-auto p-6 space-y-6">
+          {/* Image */}
+          <DrawerContentEventImage image={item.mainImage} />
+
+          {/* Donations if its exist */}
+          <DrawerContentDonationTarget
+            current={item?.currentDonation}
+            target={item?.targetDonation}
+          />
+
+          {/* Details */}
+          <DrawerContentEventDetails details={item} />
+
+          {/* Description */}
+          <DrawerContentEventDescription description={item.description} />
+        </section>
+
         <DrawerFooter>
           <DrawerClose asChild>
-            <Button>Back</Button>
+            <Button>Close</Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>

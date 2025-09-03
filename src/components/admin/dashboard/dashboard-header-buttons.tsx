@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { useBuildFormStore } from "@/stores/admin/buildFormStore";
 import { Plus } from "lucide-react";

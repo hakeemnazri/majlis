@@ -44,6 +44,20 @@ function DashboardTableContextProvider({
       cell: ({ row }) => <TableCellViewer item={row.original} />,
     },
     {
+      id: "createdAt",
+      header: "Created On",
+      cell: ({ row }) => (
+        <Badge variant="outline" className="text-muted-foreground px-1.5">
+          <Calendar />
+          {new Date(row.original.createdAt).toLocaleDateString("en-MY", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
+        </Badge>
+      ),
+    },
+    {
       id: "category",
       header: "Category",
       accessorKey: "category",
@@ -68,20 +82,6 @@ function DashboardTableContextProvider({
         <Badge variant="outline" className="text-muted-foreground px-1.5">
           <Loader />
           In Progress
-        </Badge>
-      ),
-    },
-    {
-      id: "createdAt",
-      header: "Created On",
-      cell: ({ row }) => (
-        <Badge variant="outline" className="text-muted-foreground px-1.5">
-          <Calendar />
-          {new Date(row.original.createdAt).toLocaleDateString("en-MY", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}
         </Badge>
       ),
     },

@@ -93,6 +93,7 @@ export async function editEvent(event: unknown) {
           survey: true,
         },
       });
+      
       const existingEventSurveyId = existingEvent?.survey.map(
         (survey) => survey.id
       );
