@@ -56,6 +56,11 @@ function TableCellViewer({ item }: TableCellViewerProps) {
 
           {/* Description */}
           <DrawerContentEventDescription description={item.description} />
+
+          {/* Survey Questions */}
+
+
+          {/* Tickets */}
         </section>
 
         <DrawerFooter>
