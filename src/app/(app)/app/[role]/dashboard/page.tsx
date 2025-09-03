@@ -13,7 +13,13 @@ type ParamsProps = {
 async function page({ params }: ParamsProps) {
   const resolvedParams = await params;
   console.log(resolvedParams.role);
-  const events = await prisma.event.findMany();
+  const events = await prisma.event.findMany(
+    {
+      orderBy: {
+        createdAt: "desc"
+      }
+    },
+  );
   return (
     <section>
       <DashboardTableContextProvider data={events}>

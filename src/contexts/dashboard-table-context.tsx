@@ -14,9 +14,10 @@ import {
   Table,
   useReactTable,
 } from "@tanstack/react-table";
-import { EllipsisVertical, Loader } from "lucide-react";
+import { Calendar, EllipsisVertical, Loader } from "lucide-react";
 import React, { createContext } from "react";
 import { Event } from "../../generated/prisma";
+import TableCellViewer from "@/components/admin/dashboard/table-cell-viewer";
 
 type DashboardTableContextProviderProps = {
   data: Event[];
@@ -40,7 +41,7 @@ function DashboardTableContextProvider({
       id: "title",
       header: "Event",
       accessorKey: "title",
-      cell: ({ row }) => <p>{row.original.title}</p>,
+      cell: ({ row }) => <TableCellViewer item={row.original} />,
     },
     {
       id: "category",
@@ -71,6 +72,20 @@ function DashboardTableContextProvider({
       ),
     },
     {
+      id: "createdAt",
+      header: "Created On",
+      cell: ({ row }) => (
+        <Badge variant="outline" className="text-muted-foreground px-1.5">
+          <Calendar />
+          {new Date(row.original.createdAt).toLocaleDateString("en-MY", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
+        </Badge>
+      ),
+    },
+    {
       id: "actions",
       header: () => null,
       cell: () => (
@@ -87,8 +102,6 @@ function DashboardTableContextProvider({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-32">
             <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DropdownMenuItem>Make a copy</DropdownMenuItem>
-            <DropdownMenuItem>Favorite</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
           </DropdownMenuContent>

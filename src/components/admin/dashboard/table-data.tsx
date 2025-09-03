@@ -23,7 +23,7 @@ function TableData() {
                   <TableHead
                     key={header.id}
                     colSpan={header.colSpan}
-                    className={header.column.id === "actions" ? "w-12" : ""}
+                    className = {`${header.column.id === "actions" ? "w-12" : ""} px-4`}
                   >
                     {header.isPlaceholder
                       ? null
@@ -45,7 +45,7 @@ function TableData() {
                   className="relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="px-4">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

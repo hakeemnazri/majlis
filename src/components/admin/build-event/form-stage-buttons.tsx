@@ -58,8 +58,8 @@ function FormStageButtons({ action = "create" }: FormStageButtonsProps) {
   };
 
   const handleFormSubmit = async () => {
-    const { watch } = form;
-    const formData = watch();
+    const { getValues } = form;
+    const formData = getValues();
     const parsedFormData = formSchema2(false).safeParse(formData);
     if (!parsedFormData.success) return;
     toast.promise(
