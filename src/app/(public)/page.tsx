@@ -1,5 +1,3 @@
-import EditFormWrapper from "@/components/admin/edit-event/edit-form-wrapper";
-import SurveyQuestionWrapper from "@/components/checkout/survey-question-wrapper";
 import React, { Suspense } from "react";
 
 async function Home() {
