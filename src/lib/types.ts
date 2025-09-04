@@ -58,3 +58,10 @@ export type TEventPayload = Prisma.EventGetPayload<{ include:{
   survey: true;
   tickets: true
 }}>
+
+export type PaginatedEvents = {
+  data: TEventPayload[];
+  totalCount: number;
+  totalPages: number;
+  isFinalPage: boolean;
+};

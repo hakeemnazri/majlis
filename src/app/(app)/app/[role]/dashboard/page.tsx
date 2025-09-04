@@ -13,8 +13,8 @@ type ParamsProps = {
 async function page({ params }: ParamsProps) {
   const resolvedParams = await params;
   console.log(resolvedParams.role);
-  const page = parseInt('1');
-  const pageSize = parseInt('2');
+  const page = parseInt("1");
+  const pageSize = parseInt("10");
   const skip = (page - 1) * pageSize;
 
   const fetched = await prisma.$transaction(async (tx) => {
@@ -38,7 +38,7 @@ async function page({ params }: ParamsProps) {
           createdAt: "desc",
         },
       }),
-      tx.event.count()
+      tx.event.count(),
     ]);
 
     const totalPages = Math.ceil(totalCount / pageSize);
@@ -48,18 +48,15 @@ async function page({ params }: ParamsProps) {
       data: paginatedEvents,
       totalCount,
       totalPages,
-      isFinalPage
+      isFinalPage,
     };
-  })
+  });
 
   return (
     <section>
       <BuildEventContextProvider>
-        <DashboardTableContextProvider data={fetched.data}>
+        <DashboardTableContextProvider fetchedData={fetched}>
           <DashboardTable />
-          <p>{fetched.totalCount}</p>
-          <p>{fetched.totalPages}</p>
-          <p>{fetched.isFinalPage.toString()}</p>
         </DashboardTableContextProvider>
       </BuildEventContextProvider>
     </section>

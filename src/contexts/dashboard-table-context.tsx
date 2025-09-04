@@ -1,55 +1,38 @@
 "use client";
+
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   ColumnDef,
   getCoreRowModel,
   Table,
   useReactTable,
 } from "@tanstack/react-table";
-import { Calendar, EllipsisVertical, Loader } from "lucide-react";
-import React, { createContext } from "react";
+import { Calendar, Loader } from "lucide-react";
+import React, { createContext, useState } from "react";
 import TableCellViewer from "@/components/admin/dashboard/table-cell-viewer";
-import { TEventPayload } from "@/lib/types";
-import DashboardAlertDialogActionButton from "@/components/admin/dashboard/dashboard-alert-dialog-delete-button";
-import { Dialog, DialogContent, DialogFooter, DialogHeader } from "@/components/ui/dialog";
-import { useBuildFormStore } from "@/stores/admin/buildFormStore";
-import { useBuildEventContext } from "@/lib/hooks/contexts.hook";
-import { EVENT_FORM_SECOND_PAGE_DEFAULT_VALUES, EVENT_FORM_THIRD_PAGE_DEFAULT_VALUES } from "@/lib/constants/admin.constant";
-import BuildFormHeaders from "@/components/admin/build-event/build-form-headers";
-import { Separator } from "@/components/ui/separator";
-import { Form } from "@/components/ui/form";
-import AnimContainer from "@/components/admin/build-event/anim-container";
-import FormFirstPage from "@/components/admin/build-event/form-first-page";
-import FormSecondPage from "@/components/admin/build-event/form-second-page";
-import FormThirdPage from "@/components/admin/build-event/form-third-page";
-import FormFourthPage from "@/components/admin/build-event/form-fourth-page";
-import FormStageButtons from "@/components/admin/build-event/form-stage-buttons";
+import { PaginatedEvents, TEventPayload } from "@/lib/types";
 import ActionCell from "@/components/admin/dashboard/action-cell";
 
 type DashboardTableContextProviderProps = {
-  data: TEventPayload[];
+  fetchedData: PaginatedEvents;
   children: React.ReactNode;
 };
 
 type TDashboardTableContext = {
   table: Table<TEventPayload>;
   columns: ColumnDef<TEventPayload>[];
+  setData: React.Dispatch<React.SetStateAction<PaginatedEvents>>;
+  data: PaginatedEvents;
 };
 
 export const DashboardTableContext =
   createContext<TDashboardTableContext | null>(null);
 
 function DashboardTableContextProvider({
-  data,
+  fetchedData,
   children,
 }: DashboardTableContextProviderProps) {
+  const [data, setData] = useState(fetchedData);
 
   const columns: ColumnDef<TEventPayload>[] = [
     {
@@ -103,20 +86,25 @@ function DashboardTableContextProvider({
     {
       id: "actions",
       header: () => null,
-      cell: ({ row }) => (
-          <ActionCell row={row} />
-      ),
+      cell: ({ row }) => <ActionCell row={row} />,
     },
   ];
 
   const table = useReactTable({
-    data,
+    data: data.data,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
   return (
-    <DashboardTableContext.Provider value={{ table, columns }}>
+    <DashboardTableContext.Provider
+      value={{
+        table,
+        columns,
+        data,
+        setData,
+      }}
+    >
       {children}
     </DashboardTableContext.Provider>
   );

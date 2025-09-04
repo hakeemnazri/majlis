@@ -1,15 +1,32 @@
+import { TEventPayload } from "@/lib/types";
 import { create } from "zustand";
 
+type SetPaginationData = {
+  data: TEventPayload[];
+  totalCount: number;
+  totalPages: number;
+  isFinalPage: boolean;
+}
+
 type Store = {
-  isDrawerOpen: boolean;
-  isAlertOpen: boolean;
-  setIsDrawerOpen: (status: boolean) => void;
-  setIsAlertOpen: (status: boolean) => void;
+  data: TEventPayload[];
+  paginationTotalCount: number;
+  paginationTotalPages: number;
+  paginationIsFinalPage: boolean;
+  setPagination: (data: SetPaginationData) => void;
 };
 
 export const useDashboardStore = create<Store>((set) => ({
-  isDrawerOpen: false,
-  isAlertOpen: false,
-  setIsDrawerOpen: (status: boolean) => set({ isDrawerOpen: status }),
-  setIsAlertOpen: (status: boolean) => set({ isAlertOpen: status }),
+  data: [],
+  paginationTotalCount: 0,
+  paginationTotalPages: 0,
+  paginationIsFinalPage: false,
+  setPagination: (data: SetPaginationData) => {
+    set({
+      data: data.data,
+      paginationTotalCount: data.totalCount,
+      paginationTotalPages: data.totalPages,
+      paginationIsFinalPage: data.isFinalPage,
+    });
+  }
 }));
