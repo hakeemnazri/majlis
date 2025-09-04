@@ -5,7 +5,7 @@ import React, { useEffect } from "react";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { useHeaderStore } from "@/stores/admin/header";
+import { useHeaderStore } from "@/stores/admin/headerStore";
 
 function SideBarMenuItems() {
   const admin = "admin"; //TODO: put admin here

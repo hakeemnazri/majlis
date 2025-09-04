@@ -13,30 +13,55 @@ type ParamsProps = {
 async function page({ params }: ParamsProps) {
   const resolvedParams = await params;
   console.log(resolvedParams.role);
-  const events = await prisma.event.findMany({
-    include: {
-      survey: {
-        orderBy : {
-          order: "asc"
-        }
-      },
-      tickets: {
+  const page = parseInt('1');
+  const pageSize = parseInt('2');
+  const skip = (page - 1) * pageSize;
+
+  const fetched = await prisma.$transaction(async (tx) => {
+    const [paginatedEvents, totalCount] = await Promise.all([
+      prisma.event.findMany({
+        skip,
+        take: pageSize,
+        include: {
+          survey: {
+            orderBy: {
+              order: "asc",
+            },
+          },
+          tickets: {
+            orderBy: {
+              order: "asc",
+            },
+          },
+        },
         orderBy: {
-          order: "asc"
-        }
-      }
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+          createdAt: "desc",
+        },
+      }),
+      tx.event.count()
+    ]);
+
+    const totalPages = Math.ceil(totalCount / pageSize);
+    const isFinalPage = page >= totalPages;
+
+    return {
+      data: paginatedEvents,
+      totalCount,
+      totalPages,
+      isFinalPage
+    };
+  })
+
   return (
     <section>
-      <DashboardTableContextProvider data={events}>
-        <BuildEventContextProvider>
+      <BuildEventContextProvider>
+        <DashboardTableContextProvider data={fetched.data}>
           <DashboardTable />
-        </BuildEventContextProvider>
-      </DashboardTableContextProvider>
+          <p>{fetched.totalCount}</p>
+          <p>{fetched.totalPages}</p>
+          <p>{fetched.isFinalPage.toString()}</p>
+        </DashboardTableContextProvider>
+      </BuildEventContextProvider>
     </section>
   );
 }

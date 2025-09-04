@@ -208,3 +208,21 @@ export async function editEvent(event: unknown) {
     return handleServerActionError(error, "editEvent");
   }
 }
+
+export async function deleteEvent(eventId: string) {
+  try {
+    const deletedEvent = await prisma.event.delete({
+      where: {
+        id: eventId,
+      },
+    });
+    revalidatePath("/");
+    return {
+      success: true,
+      message: "Event deleted successfully",
+      data: deletedEvent,
+    };
+  } catch (error) {
+    return handleServerActionError(error, "deleteEvent");
+  }
+}

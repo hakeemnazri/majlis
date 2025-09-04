@@ -15,7 +15,7 @@ import React from "react";
 function TableData() {
   const { table, columns } = useDashboardTableContext();
   return (
-    <div className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
+    <div className="relative flex flex-col gap-4 overflow-auto">
       <div className="overflow-hidden rounded-lg border">
         <Table>
           <TableHeader className="bg-muted sticky top-0 z-10">

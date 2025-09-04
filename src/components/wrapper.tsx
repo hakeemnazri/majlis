@@ -8,7 +8,8 @@ type WrapperProps = {
 
 function Wrapper({event}:WrapperProps ) {
   return (
-    <EventButtonList events={event} />
+    <p>meow</p>
+    // <EventButtonList events={event} />
   )
 }
 

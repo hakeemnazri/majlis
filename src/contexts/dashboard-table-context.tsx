@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -18,7 +17,21 @@ import { Calendar, EllipsisVertical, Loader } from "lucide-react";
 import React, { createContext } from "react";
 import TableCellViewer from "@/components/admin/dashboard/table-cell-viewer";
 import { TEventPayload } from "@/lib/types";
-
+import DashboardAlertDialogActionButton from "@/components/admin/dashboard/dashboard-alert-dialog-delete-button";
+import { Dialog, DialogContent, DialogFooter, DialogHeader } from "@/components/ui/dialog";
+import { useBuildFormStore } from "@/stores/admin/buildFormStore";
+import { useBuildEventContext } from "@/lib/hooks/contexts.hook";
+import { EVENT_FORM_SECOND_PAGE_DEFAULT_VALUES, EVENT_FORM_THIRD_PAGE_DEFAULT_VALUES } from "@/lib/constants/admin.constant";
+import BuildFormHeaders from "@/components/admin/build-event/build-form-headers";
+import { Separator } from "@/components/ui/separator";
+import { Form } from "@/components/ui/form";
+import AnimContainer from "@/components/admin/build-event/anim-container";
+import FormFirstPage from "@/components/admin/build-event/form-first-page";
+import FormSecondPage from "@/components/admin/build-event/form-second-page";
+import FormThirdPage from "@/components/admin/build-event/form-third-page";
+import FormFourthPage from "@/components/admin/build-event/form-fourth-page";
+import FormStageButtons from "@/components/admin/build-event/form-stage-buttons";
+import ActionCell from "@/components/admin/dashboard/action-cell";
 
 type DashboardTableContextProviderProps = {
   data: TEventPayload[];
@@ -37,6 +50,7 @@ function DashboardTableContextProvider({
   data,
   children,
 }: DashboardTableContextProviderProps) {
+
   const columns: ColumnDef<TEventPayload>[] = [
     {
       id: "title",
@@ -89,24 +103,8 @@ function DashboardTableContextProvider({
     {
       id: "actions",
       header: () => null,
-      cell: () => (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-              size="icon"
-            >
-              <EllipsisVertical />
-              <span className="sr-only">Open menu</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-32">
-            <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+      cell: ({ row }) => (
+          <ActionCell row={row} />
       ),
     },
   ];

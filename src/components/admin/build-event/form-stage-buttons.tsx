@@ -89,6 +89,8 @@ function FormStageButtons({ action = "create" }: FormStageButtonsProps) {
     );
     handleOnDialogClose();
     form.reset({
+      frequency: null,
+      targetDonation: null,
       tickets: EVENT_FORM_SECOND_PAGE_DEFAULT_VALUES,
       survey: EVENT_FORM_THIRD_PAGE_DEFAULT_VALUES,
     });
