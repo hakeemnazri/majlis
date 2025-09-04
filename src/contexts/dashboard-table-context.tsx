@@ -16,17 +16,18 @@ import {
 } from "@tanstack/react-table";
 import { Calendar, EllipsisVertical, Loader } from "lucide-react";
 import React, { createContext } from "react";
-import { Event } from "../../generated/prisma";
 import TableCellViewer from "@/components/admin/dashboard/table-cell-viewer";
+import { TEventPayload } from "@/lib/types";
+
 
 type DashboardTableContextProviderProps = {
-  data: Event[];
+  data: TEventPayload[];
   children: React.ReactNode;
 };
 
 type TDashboardTableContext = {
-  table: Table<Event>;
-  columns: ColumnDef<Event>[];
+  table: Table<TEventPayload>;
+  columns: ColumnDef<TEventPayload>[];
 };
 
 export const DashboardTableContext =
@@ -36,7 +37,7 @@ function DashboardTableContextProvider({
   data,
   children,
 }: DashboardTableContextProviderProps) {
-  const columns: ColumnDef<Event>[] = [
+  const columns: ColumnDef<TEventPayload>[] = [
     {
       id: "title",
       header: "Event",

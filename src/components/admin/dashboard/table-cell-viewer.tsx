@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { Event } from "../../../../generated/prisma";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Drawer,
@@ -19,9 +18,12 @@ import DrawerContentEventImage from "./drawer-content-event-image";
 import DrawerContentDonationTarget from "./drawer-content-donation-target";
 import DrawerContentEventDetails from "./drawer-content-event-details";
 import DrawerContentEventDescription from "./drawer-content-event-description";
+import DrawerContentSurveyQuestions from "./drawer-content-survey-questions";
+import { TEventPayload } from "@/lib/types";
+import DrawerContentEventTickets from "./drawer-content-event-tickets";
 
 type TableCellViewerProps = {
-  item: Event;
+  item: TEventPayload;
 };
 
 function TableCellViewer({ item }: TableCellViewerProps) {
@@ -33,7 +35,7 @@ function TableCellViewer({ item }: TableCellViewerProps) {
           {item.title}
         </Button>
       </DrawerTrigger>
-      <DrawerContent className="rounded-tl-2xl rounded-bl-2xl data-[vaul-drawer-direction=right]:sm:max-w-md">
+      <DrawerContent className="rounded-tl-2xl rounded-bl-2xl data-[vaul-drawer-direction=right]:sm:max-w-xl">
         <DrawerHeader className="gap-1">
           <DrawerTitle>{item.title}</DrawerTitle>
           <DrawerDescription>Showing details of event</DrawerDescription>
@@ -54,13 +56,14 @@ function TableCellViewer({ item }: TableCellViewerProps) {
           {/* Details */}
           <DrawerContentEventDetails details={item} />
 
-          {/* Description */}
-          <DrawerContentEventDescription description={item.description} />
+          {/* Tickets */}
+          <DrawerContentEventTickets tickets={item.tickets}/>
 
           {/* Survey Questions */}
+          <DrawerContentSurveyQuestions survey={item.survey} />
 
-
-          {/* Tickets */}
+          {/* Description */}
+          <DrawerContentEventDescription description={item.description} />
         </section>
 
         <DrawerFooter>

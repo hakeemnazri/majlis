@@ -21,14 +21,14 @@ function DrawerContentEventDetails({
   return (
     <Card className="flex flex-col gap-2">
       <CardHeader>
-        <CardTitle className="text-lg flex items-center gap-2">
-          <FileText className="h-6 w-6 text-blue-600" />
+        <CardTitle className="text-lg flex items-center gap-4">
+          <FileText className="h-8 w-8 text-blue-600" />
           Event Details
         </CardTitle>
       </CardHeader>
       <Separator />
       <CardContent className="pt-4 space-y-4">
-        <div className="flex justify-center gap-2 md:gap-6 text-sm h-12">
+        <div className="flex justify-evenly md:gap-6 text-sm h-12">
           <div className="flex items-center gap-3">
             <CalendarRange className="h-5 w-5 text-muted-foreground" />
             <div>
@@ -53,7 +53,7 @@ function DrawerContentEventDetails({
         <Separator />
 
         <div className="text-sm">
-          <span className="font-medium">Reference ID:</span>
+          <span className="font-medium">Bank reference:</span>
           <span className="ml-2 font-mono text-muted-foreground text-xs bg-muted px-2 py-1 rounded">
             {details.reference}
           </span>

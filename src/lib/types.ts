@@ -6,7 +6,7 @@ import {
   surveyQuestionsSchema,
 } from "./schemas";
 import { handleServerActionError } from "./error";
-import { Event as EventModel, Survey as SurveyModel, Tickets as TicketModel } from "../../generated/prisma";
+import { Event as EventModel, Prisma, Survey as SurveyModel, Tickets as TicketModel } from "../../generated/prisma";
 
 export type TRegistername = keyof z.infer<typeof strictTicketSchema>;
 
@@ -53,3 +53,8 @@ export type TGetAdminDashboardEvents = {
 export type TAction = "create" | "edit";
 
 export type TEventSurveyForm = z.infer<typeof surveyQuestionsSchema>
+
+export type TEventPayload = Prisma.EventGetPayload<{ include:{
+  survey: true;
+  tickets: true
+}}>

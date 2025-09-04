@@ -59,24 +59,28 @@ export const EVENT_FORM_THIRD_PAGE_DEFAULT_VALUES: z.infer<
     type: "SHORT_ANSWER",
     question: "Nama",
     options: [""],
+    isRequired: false,
   },
   {
     id: crypto.randomUUID(),
     type: "SHORT_ANSWER",
     question: "Emel",
     options: [""],
+    isRequired: false,
   },
   {
     id: crypto.randomUUID(),
     type: "SHORT_ANSWER",
     question: "No. Telefon",
     options: [""],
+    isRequired: false,
   },
   {
     id: crypto.randomUUID(),
     type: "SHORT_ANSWER",
     question: "Tempat tinggatl (Cth: Kota Damansara)",
     options: [""],
+    isRequired: false,
   },
 ];
 
@@ -177,11 +181,11 @@ export const SIDEBAR_NAVIGATION = [
   {
     title: "Dashboard",
     link: "dashboard",
-    icon: LayoutDashboard
+    icon: LayoutDashboard,
   },
   {
     title: "Database",
     link: "database",
-    icon: Database
-  }
-]
+    icon: Database,
+  },
+];

@@ -12,8 +12,8 @@ function DrawerContentEventImage({ image }: DrawerContentEventImageProps) {
   return (
     <Card className="flex flex-col gap-2">
       <CardHeader>
-        <CardTitle className="text-lg flex items-center gap-2">
-          <ImageIcon className="h-6 w-6 text-blue-600" />
+        <CardTitle className="text-lg flex items-center gap-4">
+          <ImageIcon className="h-8 w-8 text-blue-600" />
           Event Image
         </CardTitle>
       </CardHeader>

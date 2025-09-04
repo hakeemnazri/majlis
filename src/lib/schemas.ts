@@ -159,6 +159,7 @@ export const strictSurveyQuestionSchema = z.object({
   question: z.string().min(2, {
     message: "Question must be at least 2 characters.",
   }),
+  isRequired: z.boolean(),
   options: z
     .array(
       z.string().min(2, {
@@ -175,6 +176,7 @@ const looseSurveyQuestionSchema = z.object({
   id: strictSurveyShape.id,
   type: strictSurveyShape.type,
   question: strictSurveyShape.question,
+  isRequired: strictSurveyShape.isRequired,
   options: z.array(z.string().nullish()),
 });
 

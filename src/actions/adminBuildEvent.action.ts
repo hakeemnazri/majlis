@@ -36,6 +36,7 @@ export async function addEvent(event: unknown) {
               type: item.type,
               question: item.question,
               order: index + 1,
+              isRequired: item.isRequired,
             };
             const options = item.options.map((option) => {
               if (option === undefined || option === null) {
@@ -93,7 +94,7 @@ export async function editEvent(event: unknown) {
           survey: true,
         },
       });
-      
+
       const existingEventSurveyId = existingEvent?.survey.map(
         (survey) => survey.id
       );
@@ -151,12 +152,14 @@ export async function editEvent(event: unknown) {
                   type: item.type,
                   question: item.question,
                   options,
+                  isRequired: item.isRequired,
                 },
                 update: {
                   order: index + 1,
                   type: item.type,
                   question: item.question,
                   options,
+                  isRequired: item.isRequired,
                 },
               };
             }),
