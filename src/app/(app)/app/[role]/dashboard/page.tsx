@@ -42,12 +42,14 @@ async function page({ params }: ParamsProps) {
     ]);
 
     const totalPages = Math.ceil(totalCount / pageSize);
+    const canGetPreviousPage = page > 1;
     const isFinalPage = page >= totalPages;
 
     return {
       data: paginatedEvents,
       totalCount,
       totalPages,
+      canGetPreviousPage,
       isFinalPage,
     };
   });

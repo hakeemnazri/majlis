@@ -12,8 +12,7 @@ import {
 import { useDashboardTableContext } from "@/lib/hooks/contexts.hook";
 
 function PaginationRowsPerPage() {
-  const { table, setData, data } = useDashboardTableContext();
-  console.log(data)
+  const { table, setData } = useDashboardTableContext();
   const handleChangePageSize = async({page = 1, pageSize} : {page: number, pageSize: number}) => {
     const sendData = {
       page,

@@ -59,7 +59,7 @@ export async function addEvent(event: unknown) {
       },
     });
 
-    revalidatePath("/");
+    revalidatePath("/app/admin/dashboard"); //TODO: Make this Dynamic
 
     return {
       success: true,
@@ -71,7 +71,7 @@ export async function addEvent(event: unknown) {
   }
 }
 
-export async function editEvent(event: unknown) {
+ export async function editEvent(event: unknown) {
   try {
     const schema = formSchema2(false);
     const parsedEvent = schema.safeParse(event);
@@ -197,7 +197,7 @@ export async function editEvent(event: unknown) {
       return editedEvent;
     });
 
-    revalidatePath("/");
+    revalidatePath("/app/admin/dashboard"); //TODO: Make this Dynamic
 
     return {
       success: true,
@@ -216,7 +216,7 @@ export async function deleteEvent(eventId: string) {
         id: eventId,
       },
     });
-    revalidatePath("/");
+    revalidatePath("/app/admin/dashboard"); //TODO: Make this Dynamic
     return {
       success: true,
       message: "Event deleted successfully",

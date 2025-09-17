@@ -6,8 +6,9 @@ import AppSidebar from "@/components/sidebar/app-sidebar";
 import Navbar from "@/components/admin/navbar/navbar";
 
 export const metadata: Metadata = {
-  title: "",
-  description: "",
+  title: "Admin Console",
+  description: "Here is the admin console", 
+  // metadata for admin console
 };
 
 export default async function RootLayout({

@@ -37,17 +37,19 @@ export const setAdminDashboardPagination = async ({
     ]);
 
     const totalPages = Math.ceil(totalCount / pageSize);
+    const canGetPreviousPage = page > 1;
     const isFinalPage = page >= totalPages;
 
     return {
       data: paginatedEvents,
       totalCount,
       totalPages,
+      canGetPreviousPage,
       isFinalPage,
     };
   });
 
-  revalidatePath("/admin/dashboard");
+  revalidatePath("/admin/dashboard"); //TODO: Make this dynamic
 
   return fetched;
 };

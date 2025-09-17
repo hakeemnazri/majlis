@@ -63,5 +63,6 @@ export type PaginatedEvents = {
   data: TEventPayload[];
   totalCount: number;
   totalPages: number;
+  canGetPreviousPage: boolean;
   isFinalPage: boolean;
 };
