@@ -12,7 +12,7 @@ function DashboardHeaderButtons() {
     <div className="flex items-center justify-end">
       <Button onClick={handleCreateEvent} variant="outline" size="sm">
         <Plus />
-        <span className="hidden lg:inline">Add Section</span>
+        <span className="hidden lg:inline">Add Event</span>
       </Button>
     </div>
   );
