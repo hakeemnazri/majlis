@@ -22,6 +22,8 @@ type TDashboardTableContext = {
   table: Table<TEventPayload>;
   columns: ColumnDef<TEventPayload>[];
   setData: React.Dispatch<React.SetStateAction<PaginatedEvents>>;
+  isPaginationLoading: boolean;
+  setIsPaginatoinLoading: React.Dispatch<React.SetStateAction<boolean>>;
   data: PaginatedEvents;
 };
 
@@ -33,6 +35,7 @@ function DashboardTableContextProvider({
   children,
 }: DashboardTableContextProviderProps) {
   const [data, setData] = useState(fetchedData);
+  const [isPaginationLoading, setIsPaginatoinLoading] = useState(false);
 
   const columns: ColumnDef<TEventPayload>[] = [
     {
@@ -59,19 +62,28 @@ function DashboardTableContextProvider({
       id: "category",
       header: "Category",
       accessorKey: "category",
-      cell: ({ row }) => <p>{row.original.category}</p>,
+      cell: ({ row }) => <Badge variant="outline" className="text-muted-foreground px-1.5">
+      <Loader />
+      {row.original.category}
+    </Badge>,
     },
     {
       id: "host",
       header: "Host",
       accessorKey: "host",
-      cell: ({ row }) => <p>{row.original.host}</p>,
+      cell: ({ row }) => <Badge variant="outline" className="text-muted-foreground px-1.5">
+      <Loader />
+      {row.original.host}
+    </Badge>,
     },
     {
       id: "frequency",
       header: "Frequency",
       accessorKey: "frequency",
-      cell: ({ row }) => <p>{row.original.frequency}</p>,
+      cell: ({ row }) => <Badge variant="outline" className="text-muted-foreground px-1.5">
+      <Loader />
+      {row.original.frequency}
+    </Badge>,
     },
     {
       id: "status",
@@ -103,6 +115,8 @@ function DashboardTableContextProvider({
         columns,
         data,
         setData,
+        isPaginationLoading,
+        setIsPaginatoinLoading
       }}
     >
       {children}

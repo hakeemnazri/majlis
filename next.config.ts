@@ -3,7 +3,12 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   images: {
-    domains: ["placehold.co"], // allow this hostname
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "placehold.co",
+      },
+    ], // allow this hostname
     dangerouslyAllowSVG: true, // allow SVG images
   },
 };

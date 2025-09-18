@@ -12,23 +12,26 @@ import {
 import React from "react";
 
 function PaginationChevronButtons() {
-  const { data, table, setData } = useDashboardTableContext();
+  const { data, table, setData, isPaginationLoading, setIsPaginatoinLoading } =
+    useDashboardTableContext();
 
-  const handleChangePage = async(page: number) => {
+  const handleChangePage = async (page: number) => {
+    setIsPaginatoinLoading(true);
     const sendData = {
       page,
-      pageSize: table.getState().pagination.pageSize
-    }
+      pageSize: table.getState().pagination.pageSize,
+    };
     const data = await setAdminDashboardPagination(sendData);
     setData(data);
-  }
+    setIsPaginatoinLoading(false);
+  };
   return (
     <div className="ml-auto flex items-center gap-2 lg:ml-0">
       <Button
         variant="outline"
         className="hidden h-8 w-8 p-0 lg:flex"
         onClick={() => handleChangePage(1)}
-        disabled={!data.canGetPreviousPage}
+        disabled={!data.canGetPreviousPage || isPaginationLoading}
       >
         <span className="sr-only">Go to first page</span>
         <ChevronsLeft />
@@ -37,8 +40,10 @@ function PaginationChevronButtons() {
         variant="outline"
         className="size-8"
         size="icon"
-        onClick={() => handleChangePage(table.getState().pagination.pageIndex + 1)}
-        disabled={!data.canGetPreviousPage}
+        onClick={() =>
+          handleChangePage(table.getState().pagination.pageIndex + 1)
+        }
+        disabled={!data.canGetPreviousPage || isPaginationLoading}
       >
         <span className="sr-only">Go to previous page</span>
         <ChevronLeft />
@@ -47,9 +52,10 @@ function PaginationChevronButtons() {
         variant="outline"
         className="size-8"
         size="icon"
-        onClick={() => {handleChangePage(table.getState().pagination.pageIndex + 2);
+        onClick={() => {
+          handleChangePage(table.getState().pagination.pageIndex + 2);
         }}
-        disabled={data.isFinalPage}
+        disabled={data.isFinalPage || isPaginationLoading}
       >
         <span className="sr-only">Go to next page</span>
         <ChevronRight />
@@ -59,7 +65,7 @@ function PaginationChevronButtons() {
         className="hidden size-8 lg:flex"
         size="icon"
         onClick={() => handleChangePage(data.totalPages)}
-        disabled={data.isFinalPage}
+        disabled={data.isFinalPage || isPaginationLoading}
       >
         <span className="sr-only">Go to last page</span>
         <ChevronsRight />

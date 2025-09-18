@@ -7,7 +7,7 @@ import DashboardPaginationControl from "./dashboard-pagination-control";
 
 function DashboardTable() {
   return (
-    <section className="w-full flex flex-col justify-start gap-4 px-4 lg:px-6">
+    <section className="w-full flex flex-col justify-start gap-4">
       <DashboardHeaderButtons />
       <TableData />
       <EditOrCreateDialog />

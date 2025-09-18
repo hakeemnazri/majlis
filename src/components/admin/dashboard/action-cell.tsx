@@ -41,9 +41,19 @@ function ActionCell({ row }: ActionCellProps) {
             <span className="sr-only">Open menu</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-32">
+        <DropdownMenuContent align="end" className="w-42">
           <DropdownMenuItem onClick={() => {handleEditEventDashboard(row.original)}}>
-            Edit
+            Edit Event
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => {
+            // TODO: handle edit tickets
+          }}>
+            Add/Remove Tickets
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => {
+            // TODO: handle settings
+          }}>
+            Settings
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DashboardAlertDialogDeleteButton event={row.original} />

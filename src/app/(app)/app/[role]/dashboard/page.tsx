@@ -14,7 +14,7 @@ async function page({ params }: ParamsProps) {
   console.log(resolvedParams.role);
 
   return (
-    <section className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+    <section className="flex flex-col gap-4 py-4 px-4 md:gap-6 md:py-6 lg:px-6">
       {/* add loading animation skeleton for dashboard */}
       <Suspense fallback={<div>Loading...</div>}>
         <DashboardWrapper>
