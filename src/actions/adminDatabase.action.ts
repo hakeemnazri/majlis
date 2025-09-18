@@ -11,6 +11,7 @@ export type EventWithinTimeSelect = Prisma.EventGetPayload<{
     title: true;
     createdAt: true;
     category: true;
+    host: true;
   }
 }>;
 
@@ -47,6 +48,7 @@ export const searchEventByTime = async (data: unknown) : Promise<SuccessResponse
         title: true,
         createdAt: true,
         category: true,
+        host: true,
       }
     });
 

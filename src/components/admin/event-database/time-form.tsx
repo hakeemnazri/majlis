@@ -32,6 +32,10 @@ function TimeForm() {
   const {setSearchEvents} = useDatabaseStore((state) => state);
   const timeForm = useForm<TTimeFormSchema>({
     resolver: zodResolver(timeFormSchema),
+    defaultValues: {
+      month: "",
+      year: "",
+    },
   });
 
   async function onSubmitTime(data: TTimeFormSchema) {
@@ -104,7 +108,11 @@ function TimeForm() {
         </div>
 
         <div className="flex w-full justify-end gap-4">
-          <Button type="button" onClick={() => timeForm.reset()}
+          <Button type="button" onClick={() => {
+            setSearchEvents(null);
+            timeForm.reset()}
+          }
+            
             disabled={isLoading}>
             Reset
           </Button>

@@ -9,10 +9,7 @@ export async function addEvent(event: unknown) {
   const schema = formSchema2(false);
   const parsedEvent = schema.safeParse(event);
   if (!parsedEvent.success) {
-    return {
-      success: false,
-      message: "Invalid event data.",
-    };
+    throw new Error("Invalid event data.");
   }
 
   try {
@@ -21,6 +18,7 @@ export async function addEvent(event: unknown) {
     const newEvent = await prisma.event.create({
       data: {
         ...rest,
+        slug: createSlug(rest.title),
         tickets: {
           create: tickets?.map((ticket, index) => ({
             name: ticket.name,
@@ -134,6 +132,7 @@ export async function addEvent(event: unknown) {
         },
         data: {
           ...parsedEvent.data,
+          slug: createSlug(rest.title),
           survey: {
             upsert: survey.map((item, index) => {
               const options = item.options.map((option) => {
@@ -225,4 +224,58 @@ export async function deleteEvent(eventId: string) {
   } catch (error) {
     return handleServerActionError(error, "deleteEvent");
   }
+}
+
+function createSlug(str: string) {
+  const separator = "-";
+  const lowercase = true;
+  const strict = false;
+
+  if (!str || typeof str !== "string") {
+    return "";
+  }
+
+  let slug = str;
+
+  // Convert to lowercase if specified
+  if (lowercase) {
+    slug = slug.toLowerCase();
+  }
+
+  // Remove or replace Unicode characters (emojis, accented characters, etc.)
+  // This normalizes accented characters to their base form
+  slug = slug.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+  // Remove emojis and other Unicode symbols
+  slug = slug.replace(
+    /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu,
+    ""
+  );
+
+  if (strict) {
+    // Strict mode: only keep alphanumeric characters and spaces
+    slug = slug.replace(/[^a-zA-Z0-9\s]/g, "");
+  } else {
+    // Remove common punctuation and symbols
+    slug = slug.replace(/[.,;:!?@#$%^&*()_+={}[\]|\\/<>~`"']/g, "");
+  }
+
+  // Replace multiple spaces with single space
+  slug = slug.replace(/\s+/g, " ");
+
+  // Trim whitespace from beginning and end
+  slug = slug.trim();
+
+  // Replace spaces with separator
+  slug = slug.replace(/\s/g, separator);
+
+  // Remove multiple consecutive separators
+  const separatorRegex = new RegExp(`\\${separator}+`, "g");
+  slug = slug.replace(separatorRegex, separator);
+
+  // Remove separator from beginning and end
+  const trimRegex = new RegExp(`^\\${separator}+|\\${separator}+$`, "g");
+  slug = slug.replace(trimRegex, "");
+
+  return slug;
 }

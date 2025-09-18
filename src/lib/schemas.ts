@@ -248,6 +248,6 @@ export const strictSurveyQuestionInputSchema = (isStrict: boolean) =>
   });
 
 export const timeFormSchema = z.object({
-  month: z.string(),
-  year: z.string(),
+  month: z.string().min(1, "Required"),
+  year: z.string().min(1, "Required"),
 });
