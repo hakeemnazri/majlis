@@ -1,12 +1,12 @@
 "use client";
 
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import {
   Select,
@@ -18,32 +18,33 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { timeFormSchema } from "@/lib/schemas";
 import { TTimeFormSchema } from "@/lib/types";
 import { MONTHS, YEARS } from "@/lib/constants/admin.constant";
+import { searchEventByTime } from "@/actions/adminDatabase.action";
+
 
 function TimeForm() {
-
   const timeForm = useForm<TTimeFormSchema>({
     resolver: zodResolver(timeFormSchema),
   });
 
-  function onSubmitTime(data: TTimeFormSchema) {
-    toast("You submitted the following values", {
-      description: (
-        <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+  async function onSubmitTime(data: TTimeFormSchema) {
+    const result  = await searchEventByTime(data);
+    
+    if(!result.success){
+      return result.error
+    }
+
+    console.log(result.events);
+
   }
 
   return (
     <Form {...timeForm}>
       <form
-        onSubmit={timeForm.handleSubmit(onSubmitTime)}
+        onSubmit={(e) => e.preventDefault()}
         className="flex flex-col gap-4"
       >
         <div className="flex gap-4">
@@ -53,10 +54,7 @@ function TimeForm() {
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel>Month</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  value={field.value}
-                >
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select month" />
@@ -64,9 +62,7 @@ function TimeForm() {
                   </FormControl>
                   <SelectContent>
                     {MONTHS.map((month) => (
-                      <SelectItem 
-                      key={month.value} 
-                      value={month.value}>
+                      <SelectItem key={month.value} value={month.value}>
                         {month.label}
                       </SelectItem>
                     ))}
@@ -82,10 +78,7 @@ function TimeForm() {
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel>Year</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  value={field.value}
-                >
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select year" />
@@ -93,9 +86,7 @@ function TimeForm() {
                   </FormControl>
                   <SelectContent>
                     {YEARS.map((year) => (
-                      <SelectItem 
-                      key={year.value} 
-                      value={year.value}>
+                      <SelectItem key={year.value} value={year.value}>
                         {year.label}
                       </SelectItem>
                     ))}
@@ -108,8 +99,12 @@ function TimeForm() {
         </div>
 
         <div className="flex w-full justify-end gap-4">
-          <Button type="button" onClick={() => timeForm.reset()}>Reset</Button>
-          <Button type="submit">Find Events</Button>
+          <Button type="button" onClick={() => timeForm.reset()}>
+            Reset
+          </Button>
+          <Button type="button" onClick={timeForm.handleSubmit(onSubmitTime)}>
+            Find Events
+          </Button>
         </div>
       </form>
     </Form>

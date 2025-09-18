@@ -21,7 +21,7 @@ export type ErrorResponse = {
     details?: string;
   };
 
-export function handleServerActionError(error: unknown, action: string): ErrorResponse {
+export function handleServerActionError(error: unknown, action: string) : ErrorResponse {
   if (process.env.NODE_ENV === "development") {
     console.error("Server Action Error:", {
       error,
@@ -194,6 +194,15 @@ export function handleServerActionError(error: unknown, action: string): ErrorRe
     error: "An unexpected error occurred",
     code: "UNKNOWN_ERROR",
   };
+}
+
+export function meow(error: unknown): error is ErrorResponse {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "error" in error &&
+    "code" in error
+  );
 }
 
 // Type guard to check if an error has a code property. This will return a boolean if the shape of the error is ErrorWithCode

@@ -1,18 +1,31 @@
 "use server";
 
-import { handleServerActionError } from "@/lib/error";
+import { ErrorResponse, handleServerActionError } from "@/lib/error";
 import prisma from "@/lib/prisma";
 import { timeFormSchema } from "@/lib/schemas";
+import { Prisma } from "../../generated/prisma";
 
-export const searchEventByTime = async (data: unknown) => {
+type EventWithinTimeSelect = Prisma.EventGetPayload<{
+  select: {
+    id: true;
+    title: true;
+    createdAt: true;
+    category: true;
+  }
+}>;
+
+export type SuccessResponse = {
+  success: true;
+  message: string;
+  events: EventWithinTimeSelect[];
+};
+
+export const searchEventByTime = async (data: unknown) : Promise<SuccessResponse | ErrorResponse> => {
   try {
     const parsedData = timeFormSchema.safeParse(data);
 
     if (!parsedData.success) {
-      return {
-        success: false,
-        message: "Invalid data.",
-      };
+      throw new Error("Invalid data");
     }
 
     const { startDate, endDate } = createDateRange(
@@ -29,12 +42,20 @@ export const searchEventByTime = async (data: unknown) => {
           // Less than start of next month
         },
       },
+      select: {
+        id: true,
+        title: true,
+        createdAt: true,
+        category: true,
+      }
     });
 
     return {
       success: true,
+      message: "Events found!",
       events: eventsWithinTime,
     };
+
   } catch (error) {
     return handleServerActionError(error, "submitEventSurveyForm");
   }
