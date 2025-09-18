@@ -23,22 +23,27 @@ import { timeFormSchema } from "@/lib/schemas";
 import { TTimeFormSchema } from "@/lib/types";
 import { MONTHS, YEARS } from "@/lib/constants/admin.constant";
 import { searchEventByTime } from "@/actions/adminDatabase.action";
+import { toast } from "sonner";
+import { useDatabaseStore } from "@/stores/admin/databaseStore";
 
 
 function TimeForm() {
+  const [isLoading, setIsLoading] = React.useState(false);
+  const {setSearchEvents} = useDatabaseStore((state) => state);
   const timeForm = useForm<TTimeFormSchema>({
     resolver: zodResolver(timeFormSchema),
   });
 
   async function onSubmitTime(data: TTimeFormSchema) {
+    setIsLoading(true);
     const result  = await searchEventByTime(data);
     
+    setIsLoading(false);
     if(!result.success){
-      return result.error
+      return toast.error(result.error);
     }
-
-    console.log(result.events);
-
+    toast.success(result.message);
+    setSearchEvents(result.events);
   }
 
   return (
@@ -99,11 +104,13 @@ function TimeForm() {
         </div>
 
         <div className="flex w-full justify-end gap-4">
-          <Button type="button" onClick={() => timeForm.reset()}>
+          <Button type="button" onClick={() => timeForm.reset()}
+            disabled={isLoading}>
             Reset
           </Button>
-          <Button type="button" onClick={timeForm.handleSubmit(onSubmitTime)}>
-            Find Events
+          <Button type="button" onClick={timeForm.handleSubmit(onSubmitTime)}
+          disabled={isLoading}>
+            {isLoading ? "Loading..." : "Find Events"}
           </Button>
         </div>
       </form>

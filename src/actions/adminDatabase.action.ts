@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma";
 import { timeFormSchema } from "@/lib/schemas";
 import { Prisma } from "../../generated/prisma";
 
-type EventWithinTimeSelect = Prisma.EventGetPayload<{
+export type EventWithinTimeSelect = Prisma.EventGetPayload<{
   select: {
     id: true;
     title: true;
