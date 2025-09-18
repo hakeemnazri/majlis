@@ -6,6 +6,7 @@ async function EditFormWrapper() {
   if (!events.success) {
     throw new Error(events.error);
   }
+
   return (
     <Wrapper event={events.data} />
   );

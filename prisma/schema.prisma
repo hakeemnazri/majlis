@@ -9,66 +9,155 @@ datasource db {
 }
 
 model Event {
-  id             String       @id @default(cuid())
-  title          String
-  description    String
-  category       CategoryType
-  host           HostType
-  reference      String
-  mainImage      String
-  targetDonation Int?
-  frequency      String?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  survey         Survey[]
-  tickets        Ticket[]
-  response       Response[]
+  id              String       @id @default(cuid())
+  title           String
+  description     String
+  category        CategoryType
+  host            HostType
+  reference       String
+  mainImage       String
+  targetDonation  Int?
+  currentDonation Int?
+  frequency       String?
+  survey          Survey[]
+  tickets         Tickets[]
+  response        Response[]
+  validation      Validation[]
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
 }
 
-model Ticket {
+model Tickets {
   id          String   @id @default(cuid())
   order       Int
   price       Int?
   quantity    Int?
-  eventId     String?
   name        String?
   description String?
+  eventId     String?
+  event       Event? @relation(fields: [eventId], references: [id], onDelete: Cascade)
   updatedAt   DateTime @updatedAt
   createdAt   DateTime @default(now())
-  event       Event?   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
 }
 
 model Survey {
-  id        String     @id @default(cuid())
+  id         String     @id @default(cuid())
+  eventId    String
+  order      Int
+  type       SurveyType
+  question   String
+  options    String[]
+  isRequired Boolean 
+  answer     Answer[]
+  event      Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@index([eventId])
+}
+
+model Validation {
+  id        String      @id @default(cuid())
   eventId   String
-  order     Int
-  type      SurveyType
-  question  String
-  options   String[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  answer    Answer[]
-  event     Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  type      String
+  checklist Checklist[]
+
+  Event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([eventId])
 }
 
 model Response {
-  id           String   @id @default(cuid())
+  id           String      @id @default(cuid())
+  order        Int
   eventId      String
-  submissionId String   @default(cuid()) //TODO:Replace with OrderId
+  submissionId String      @default(cuid()) //TODO:Replace with OrderId
+  remark       Remark[]
+  upload       Upload[]
+  checklist    Checklist[]
   answer       Answer[]
+  tag          Tag[]
 
-  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([eventId])
+}
+
+model Tag {
+  id         String @id @default(cuid())
+  note       String
+  responseId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Response  Response @relation(fields: [responseId], references: [id])
+
+  @@index([responseId])
+}
+
+model Upload {
+  id         String @id @default(cuid())
+  link       String
+  note       String
+  responseId String
+
+  response Response @relation(fields: [responseId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([responseId])
+}
+
+model Remark {
+  id         String @id @default(cuid())
+  note       String
+  responseId String
+
+  response Response @relation(fields: [responseId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([responseId])
 }
 
 model Answer {
   id         String   @id @default(cuid())
+  order      Int
   responseId String
   surveyId   String
-  input      String
+  input      String?
   checkbox   String[]
 
-  response Response @relation(fields: [responseId], references: [id], onDelete: Cascade)
-  survey   Survey   @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  response  Response @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  survey    Survey   @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([surveyId])
+  @@index([responseId])
+}
+
+model Checklist {
+  id           String  @id @default(cuid())
+  responseId   String
+  validationId String
+  isCheck      Boolean
+
+  response   Response   @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  Validation Validation @relation(fields: [validationId], references: [id], onDelete: Cascade)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@index([responseId])
+  @@index([validationId])
 }
 
 enum HostType {

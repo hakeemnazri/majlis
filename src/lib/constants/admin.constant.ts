@@ -1,6 +1,7 @@
 import { EventQuestion, TInputTickets, TValidatePageFields } from "../types";
 import z from "zod";
 import { strictSurveyQuestionSchema } from "../schemas";
+import { Database, LayoutDashboard } from "lucide-react";
 
 export const BUILD_FORM_HEADERS = [
   {
@@ -58,24 +59,28 @@ export const EVENT_FORM_THIRD_PAGE_DEFAULT_VALUES: z.infer<
     type: "SHORT_ANSWER",
     question: "Nama",
     options: [""],
+    isRequired: false,
   },
   {
     id: crypto.randomUUID(),
     type: "SHORT_ANSWER",
     question: "Emel",
     options: [""],
+    isRequired: false,
   },
   {
     id: crypto.randomUUID(),
     type: "SHORT_ANSWER",
     question: "No. Telefon",
     options: [""],
+    isRequired: false,
   },
   {
     id: crypto.randomUUID(),
     type: "SHORT_ANSWER",
     question: "Tempat tinggatl (Cth: Kota Damansara)",
     options: [""],
+    isRequired: false,
   },
 ];
 
@@ -170,4 +175,17 @@ export const QUESTION_TYPES = [
   "PARAGRAPH",
   "MULTIPLE_CHOICE",
   "CHECKBOXES",
+];
+
+export const SIDEBAR_NAVIGATION = [
+  {
+    title: "Dashboard",
+    link: "dashboard",
+    icon: LayoutDashboard,
+  },
+  {
+    title: "Database",
+    link: "database",
+    icon: Database,
+  },
 ];

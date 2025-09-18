@@ -3,7 +3,7 @@
 import { useBuildEventContext } from "@/lib/hooks/contexts.hook";
 import { cn } from "@/lib/utils";
 import React from "react";
-import { FormField, FormItem, FormControl, FormMessage } from "../../ui/form";
+import { FormField, FormItem, FormControl, FormMessage, FormLabel } from "../../ui/form";
 import {
   Select,
   SelectContent,
@@ -158,6 +158,30 @@ const SurveyQuestion = ({
                   <FormMessage />
                 </FormItem>
               )}
+            />
+          </div>
+          <div>
+            <FormField
+              control={control}
+              name={`survey.${index}.isRequired`}
+              render={({ field }) => {
+                return (
+                  <FormItem
+                    className="flex flex-row items-center gap-2"
+                  >
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormLabel className="text-sm font-normal">
+                      Required
+                    </FormLabel>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
             />
           </div>
         </CardContent>

@@ -159,6 +159,7 @@ export const strictSurveyQuestionSchema = z.object({
   question: z.string().min(2, {
     message: "Question must be at least 2 characters.",
   }),
+  isRequired: z.boolean(),
   options: z
     .array(
       z.string().min(2, {
@@ -175,6 +176,7 @@ const looseSurveyQuestionSchema = z.object({
   id: strictSurveyShape.id,
   type: strictSurveyShape.type,
   question: strictSurveyShape.question,
+  isRequired: strictSurveyShape.isRequired,
   options: z.array(z.string().nullish()),
 });
 
@@ -214,6 +216,16 @@ const surveyInputSchema = z.object({
   checkbox: z.array(z.string()).min(1, "Required"),
 })
 
+const strictSurveyInputSchema = z.object({
+  input: z.string().min(1, "Required"),
+  checkbox: z.array(z.string()).min(1, "Required"),
+})
+
+const looseSurveyInputSchema = z.object({
+  input: z.string(),
+  checkbox: z.array(z.string()),
+})
+
 export const surveyQuestionsSchema = z.object({
   eventId: z.string(),
   responses: z.array(
@@ -223,3 +235,15 @@ export const surveyQuestionsSchema = z.object({
     })
   )
 });
+
+export const strictSurveyQuestionInputSchema = (isStrict: boolean) => (
+  z.object({
+    eventId: z.string(),
+    responses: z.array(
+      z.object({
+        id: z.string(),
+        answer: isStrict ? strictSurveyInputSchema : looseSurveyInputSchema,
+      })
+    )
+  })
+);

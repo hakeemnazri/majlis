@@ -2,17 +2,28 @@ import prisma from "@/lib/prisma";
 import React from "react";
 import SurveyQuestions from "./survey-questions";
 import EventSurveyFormContextProvider from "@/contexts/event-survey-form-context-provider";
+import TestTable from "../test/test-table";
 
 async function SurveyQuestionWrapper() {
+  const id = "cmetl8tdk0006tyymqjgpy745";
   const event = await prisma.event.findUnique({
     where: {
-      id: "cmdquu9400000ty1zwi0a2sbw",
+      id,
     },
     include: {
       survey: true,
       response: {
         include: {
-          answer: true,
+          answer: {
+            include: {
+              survey: true,
+            },
+          },
+          checklist: {
+            include: {
+              Validation: true,
+            }
+          },
         },
       },
     },
@@ -28,19 +39,45 @@ async function SurveyQuestionWrapper() {
   };
 
   return (
-    <div>
+    <div className="flex flex-col gap-20 overflow-x-auto w-full">
       <EventSurveyFormContextProvider>
         <SurveyQuestions event={eventWithSurvey} />
       </EventSurveyFormContextProvider>
+      {/*  */}
+      {/*  */}
+      {/*  */}
+      {/*  */}
+      {/*  */}
+      {/*  */}
+      {/*  */}
+      {/*  */}
+      {/*  */}
+      {/*  */}
+      {/*  */}
+      <TestTable event={event} id={id} />
+      {/*  */}
+      {/*  */}
+      {/*  */}
+      {/*  */}
+      {/*  */}
+      {/*  */}
+      {/*  */}
+      {/*  */}
+      {/*  */}
+      {/*  */}
+      {/*  */}
+      {/*  */}
+      {/*  */}
       <div className="flex flex-col gap-4">
         {event.response.map((response, index) => {
           return (
             <div key={response.id}>
-              <p>Question {index + 1}</p>
+              <p className="font-bold">Response {index + 1}</p>
               <p>{response.submissionId}</p>
               {response.answer.map((answer) => {
                 return (
                   <div key={answer.id}>
+                    <p className="font-bold">{answer.survey.question}</p>
                     <p>{answer.input}</p>
                     <p>{answer.checkbox}</p>
                   </div>

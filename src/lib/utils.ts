@@ -52,7 +52,7 @@ export const secondPageFieldsValidation = (category: TCategory) => {
 export const thirdPageFieldsValidation = (survey: TSurveyQuestion[]) => {
   const thirdPageFieldsValidation = survey.flatMap((question, index) => {
     if (question.type === "SHORT_ANSWER" || question.type === "PARAGRAPH") {
-      return ["survey." + index + ".question", "survey." + index + ".type"];
+      return ["survey." + index + ".question", "survey." + index + ".type", "survey." + index + ".isRequired"];
     }
 
     if (question.type === "MULTIPLE_CHOICE" || question.type === "CHECKBOXES") {
@@ -63,6 +63,7 @@ export const thirdPageFieldsValidation = (survey: TSurveyQuestion[]) => {
       const validateSurveyQuestion = [
         "survey." + index + ".question",
         "survey." + index + ".options",
+        "survey." + index + ".isRequired",
       ];
 
       const validateThirdPage = [

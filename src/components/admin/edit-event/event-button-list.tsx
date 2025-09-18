@@ -19,6 +19,10 @@ import AnimContainer from "../build-event/anim-container";
 import { EventWithRelations } from "@/lib/types";
 import BuildFormHeaders from "../build-event/build-form-headers";
 import { Separator } from "@/components/ui/separator";
+import {
+  EVENT_FORM_SECOND_PAGE_DEFAULT_VALUES,
+  EVENT_FORM_THIRD_PAGE_DEFAULT_VALUES,
+} from "@/lib/constants/admin.constant";
 
 type EventButtonList = {
   events: EventWithRelations[];
@@ -34,6 +38,7 @@ function EventButtonList({ events }: EventButtonList) {
     handleEditEvent,
     handleOnDialogClose,
   } = useBuildFormStore((state) => state);
+
   const { form } = useBuildEventContext();
 
   return (
@@ -43,14 +48,24 @@ function EventButtonList({ events }: EventButtonList) {
       {events.map((event) => (
         <Button
           key={event.id}
-          onClick={() => handleEditEvent(form, event)}
+          onClick={() => {
+            handleEditEvent();
+            form.reset(event);
+          }}
         >{`edit me boi for ${event.title}`}</Button>
       ))}
 
       <Dialog
         open={isDialogOpen}
-        onOpenChange={() => handleOnDialogClose(form)}
+        onOpenChange={() => {
+          handleOnDialogClose();
+          form.reset({
+            tickets: EVENT_FORM_SECOND_PAGE_DEFAULT_VALUES,
+            survey: EVENT_FORM_THIRD_PAGE_DEFAULT_VALUES,
+          });
+        }}
       >
+        
         <DialogContent className="flex flex-col max-h-2/3">
           <DialogHeader>
             <BuildFormHeaders />

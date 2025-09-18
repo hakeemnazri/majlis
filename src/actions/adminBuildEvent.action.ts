@@ -36,6 +36,7 @@ export async function addEvent(event: unknown) {
               type: item.type,
               question: item.question,
               order: index + 1,
+              isRequired: item.isRequired,
             };
             const options = item.options.map((option) => {
               if (option === undefined || option === null) {
@@ -48,10 +49,17 @@ export async function addEvent(event: unknown) {
             return newItem;
           }),
         },
+        validation: {
+          create: [
+            {
+              type: "register", //Default validation for each
+            },
+          ],
+        },
       },
     });
 
-    revalidatePath("/")
+    revalidatePath("/app/admin/dashboard"); //TODO: Make this Dynamic
 
     return {
       success: true,
@@ -63,7 +71,7 @@ export async function addEvent(event: unknown) {
   }
 }
 
-export async function editEvent(event: unknown) {
+ export async function editEvent(event: unknown) {
   try {
     const schema = formSchema2(false);
     const parsedEvent = schema.safeParse(event);
@@ -74,69 +82,122 @@ export async function editEvent(event: unknown) {
       };
     }
 
-    const { tickets, survey, ...rest} = parsedEvent.data;
+    const { tickets, survey, ...rest } = parsedEvent.data;
 
-    const editedEvent = await prisma.event.update({
-      where: {
-        id: rest.id,
-      },
-      data: {
-        ...parsedEvent.data,
-        survey: {
-          upsert: survey.map((item, index) => {
-            const options = item.options.map((option) => {
-              if (option === undefined || option === null) {
-                return "";
-              }
-              return option;
-            });
+    const editedEvent = await prisma.$transaction(async (tx) => {
+      const existingEvent = await tx.event.findFirst({
+        where: {
+          id: rest.id,
+        },
+        include: {
+          tickets: true,
+          survey: true,
+        },
+      });
 
-            return {
-              where: {
-                id: item.id,
-              },
-              create:{
-                order: index + 1,
-                type: item.type,
-                question: item.question,
-                options,
-              },
-              update: {
-                order: index + 1,
-                type: item.type,
-                question: item.question,
-                options,
-              }
-            };
-          }),
+      const existingEventSurveyId = existingEvent?.survey.map(
+        (survey) => survey.id
+      );
+      const absentSurveyIds = existingEventSurveyId?.filter(
+        (id) => !survey.map((survey) => survey.id).includes(id)
+      );
+
+      if (absentSurveyIds && absentSurveyIds?.length > 0) {
+        await tx.survey.deleteMany({
+          where: {
+            id: {
+              in: absentSurveyIds,
+            },
+          },
+        });
+      }
+
+      const existingEventTicketId = existingEvent?.tickets.map(
+        (ticket) => ticket.id
+      );
+      const absentTicketIds = existingEventTicketId?.filter(
+        (id) => !tickets?.map((ticket) => ticket.id).includes(id)
+      );
+
+      if (absentTicketIds && absentTicketIds?.length > 0) {
+        await tx.tickets.deleteMany({
+          where: {
+            id: {
+              in: absentTicketIds,
+            },
+          },
+        });
+      }
+      const editedEvent = await tx.event.update({
+        where: {
+          id: rest.id,
         },
-        tickets: {
-          upsert: tickets?.map((ticket, index) => {
-            return {
-              where: {
-                id: ticket.id,
-              },
-              update: {
-                order: index + 1,
-                name: ticket.name,
-                price: ticket.price,
-                quantity: ticket.quantity,
-                description: ticket.description,
-              },
-              create: {
-                order: index + 1,
-                name: ticket.name,
-                price: ticket.price,
-                quantity: ticket.quantity,
-                description: ticket.description,
-              }
-            };
-          }),
+        data: {
+          ...parsedEvent.data,
+          survey: {
+            upsert: survey.map((item, index) => {
+              const options = item.options.map((option) => {
+                if (option === undefined || option === null) {
+                  return "";
+                }
+                return option;
+              });
+
+              return {
+                where: {
+                  id: item.id,
+                },
+                create: {
+                  order: index + 1,
+                  type: item.type,
+                  question: item.question,
+                  options,
+                  isRequired: item.isRequired,
+                },
+                update: {
+                  order: index + 1,
+                  type: item.type,
+                  question: item.question,
+                  options,
+                  isRequired: item.isRequired,
+                },
+              };
+            }),
+          },
+          tickets: {
+            upsert: tickets?.map((ticket, index) => {
+              return {
+                where: {
+                  id: ticket.id,
+                },
+                update: {
+                  order: index + 1,
+                  name: ticket.name,
+                  price: ticket.price,
+                  quantity: ticket.quantity,
+                  description: ticket.description,
+                },
+                create: {
+                  order: index + 1,
+                  name: ticket.name,
+                  price: ticket.price,
+                  quantity: ticket.quantity,
+                  description: ticket.description,
+                },
+              };
+            }),
+          },
         },
-      },
+        include: {
+          tickets: true,
+          survey: true,
+        },
+      });
+
+      return editedEvent;
     });
 
-    revalidatePath("/");
+    revalidatePath("/app/admin/dashboard"); //TODO: Make this Dynamic
 
     return {
       success: true,
@@ -145,5 +206,23 @@ export async function editEvent(event: unknown) {
     };
   } catch (error) {
     return handleServerActionError(error, "editEvent");
+  }
+}
+
+export async function deleteEvent(eventId: string) {
+  try {
+    const deletedEvent = await prisma.event.delete({
+      where: {
+        id: eventId,
+      },
+    });
+    revalidatePath("/app/admin/dashboard"); //TODO: Make this Dynamic
+    return {
+      success: true,
+      message: "Event deleted successfully",
+      data: deletedEvent,
+    };
+  } catch (error) {
+    return handleServerActionError(error, "deleteEvent");
   }
 }

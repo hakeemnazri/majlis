@@ -33,10 +33,8 @@ const HeaderTitle = ({ formPage }: HeaderTitleProps) => {
   const description = BUILD_FORM_HEADERS[formPage].description;
   return (
     <div className="flex flex-col">
-      <Dialog>
         <DialogTitle>{title}</DialogTitle>
         <DialogDescription>{description}</DialogDescription>
-      </Dialog>
     </div>
   );
 };
