@@ -4,6 +4,7 @@ import {
   strictTicketSchema,
   strictSurveyQuestionSchema,
   surveyQuestionsSchema,
+  timeFormSchema,
 } from "./schemas";
 import { handleServerActionError } from "./error";
 import { Event as EventModel, Prisma, Survey as SurveyModel, Tickets as TicketModel } from "../../generated/prisma";
@@ -66,3 +67,6 @@ export type PaginatedEvents = {
   canGetPreviousPage: boolean;
   isFinalPage: boolean;
 };
+
+
+export type TTimeFormSchema = z.infer<typeof timeFormSchema>

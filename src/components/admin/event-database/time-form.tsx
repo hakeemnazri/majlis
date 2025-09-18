@@ -20,44 +20,17 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import z from "zod";
+import { timeFormSchema } from "@/lib/schemas";
+import { TTimeFormSchema } from "@/lib/types";
+import { MONTHS, YEARS } from "@/lib/constants/admin.constant";
 
 function TimeForm() {
 
-  const months = [
-    { value: "1", label: "January" },
-    { value: "2", label: "February" },
-    { value: "3", label: "March" },
-    { value: "4", label: "April" },
-    { value: "5", label: "May" },
-    { value: "6", label: "June" },
-    { value: "7", label: "July" },
-    { value: "8", label: "August" },
-    { value: "9", label: "September" },
-    { value: "10", label: "October" },
-    { value: "11", label: "November" },
-    { value: "12", label: "December" },
-  ];
-
-  const years = Array.from({ length: 2 }, (_, i) => {
-    const year = new Date().getFullYear() - i;
-    return { value: year.toString(), label: year.toString() };
-  });
-
-  const timeFormSchema = z.object({
-    month: z.string(),
-    year: z.string(),
-  });
-
-  const timeForm = useForm<z.infer<typeof timeFormSchema>>({
+  const timeForm = useForm<TTimeFormSchema>({
     resolver: zodResolver(timeFormSchema),
-    defaultValues: {
-      month: "",
-      year: "",
-    },
   });
 
-  function onSubmitTime(data: z.infer<typeof timeFormSchema>) {
+  function onSubmitTime(data: TTimeFormSchema) {
     toast("You submitted the following values", {
       description: (
         <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
@@ -90,8 +63,10 @@ function TimeForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {months.map((month) => (
-                      <SelectItem key={month.value} value={month.value}>
+                    {MONTHS.map((month) => (
+                      <SelectItem 
+                      key={month.value} 
+                      value={month.value}>
                         {month.label}
                       </SelectItem>
                     ))}
@@ -117,8 +92,10 @@ function TimeForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {years.map((year) => (
-                      <SelectItem key={year.value} value={year.value}>
+                    {YEARS.map((year) => (
+                      <SelectItem 
+                      key={year.value} 
+                      value={year.value}>
                         {year.label}
                       </SelectItem>
                     ))}

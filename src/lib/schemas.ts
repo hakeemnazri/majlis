@@ -214,17 +214,17 @@ export const formSchema2 = (isStrict: boolean) =>
 const surveyInputSchema = z.object({
   input: z.string().min(1, "Required"),
   checkbox: z.array(z.string()).min(1, "Required"),
-})
+});
 
 const strictSurveyInputSchema = z.object({
   input: z.string().min(1, "Required"),
   checkbox: z.array(z.string()).min(1, "Required"),
-})
+});
 
 const looseSurveyInputSchema = z.object({
   input: z.string(),
   checkbox: z.array(z.string()),
-})
+});
 
 export const surveyQuestionsSchema = z.object({
   eventId: z.string(),
@@ -233,10 +233,10 @@ export const surveyQuestionsSchema = z.object({
       id: z.string(),
       answer: surveyInputSchema,
     })
-  )
+  ),
 });
 
-export const strictSurveyQuestionInputSchema = (isStrict: boolean) => (
+export const strictSurveyQuestionInputSchema = (isStrict: boolean) =>
   z.object({
     eventId: z.string(),
     responses: z.array(
@@ -244,6 +244,10 @@ export const strictSurveyQuestionInputSchema = (isStrict: boolean) => (
         id: z.string(),
         answer: isStrict ? strictSurveyInputSchema : looseSurveyInputSchema,
       })
-    )
-  })
-);
+    ),
+  });
+
+export const timeFormSchema = z.object({
+  month: z.string(),
+  year: z.string(),
+});
