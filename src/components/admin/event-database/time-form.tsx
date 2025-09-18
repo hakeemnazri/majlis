@@ -1,6 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
 import {
   Select,
   SelectContent,
@@ -8,12 +15,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import React, { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import z from "zod";
 
 function TimeForm() {
-  const [selectedMonth, setSelectedMonth] = useState("");
-  const [selectedYear, setSelectedYear] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
   const months = [
     { value: "1", label: "January" },
@@ -34,55 +43,99 @@ function TimeForm() {
     const year = new Date().getFullYear() - i;
     return { value: year.toString(), label: year.toString() };
   });
+
+  const timeFormSchema = z.object({
+    month: z.string(),
+    year: z.string(),
+  });
+
+  const timeForm = useForm<z.infer<typeof timeFormSchema>>({
+    resolver: zodResolver(timeFormSchema),
+    defaultValues: {
+      month: "",
+      year: "",
+    },
+  });
+
+  function onSubmitTime(data: z.infer<typeof timeFormSchema>) {
+    toast("You submitted the following values", {
+      description: (
+        <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
+          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
+    });
+  }
+
   return (
-    <>
-      <div className="flex gap-4">
-        <div className="w-1/2">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Month
-          </label>
-          <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select month" />
-            </SelectTrigger>
-            <SelectContent>
-              {months.map((month) => (
-                <SelectItem key={month.value} value={month.value}>
-                  {month.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+    <Form {...timeForm}>
+      <form
+        onSubmit={timeForm.handleSubmit(onSubmitTime)}
+        className="flex flex-col gap-4"
+      >
+        <div className="flex gap-4">
+          <FormField
+            control={timeForm.control}
+            name="month"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Month</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select month" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {months.map((month) => (
+                      <SelectItem key={month.value} value={month.value}>
+                        {month.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={timeForm.control}
+            name="year"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Year</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select year" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {years.map((year) => (
+                      <SelectItem key={year.value} value={year.value}>
+                        {year.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
 
-        <div className="w-1/2">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Year
-          </label>
-          <Select value={selectedYear} onValueChange={setSelectedYear}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select year" />
-            </SelectTrigger>
-            <SelectContent>
-              {years.map((year) => (
-                <SelectItem key={year.value} value={year.value}>
-                  {year.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className="flex w-full justify-end gap-4">
+          <Button type="button" onClick={() => timeForm.reset()}>Reset</Button>
+          <Button type="submit">Find Events</Button>
         </div>
-      </div>
-
-      <div className="flex w-full justify-end">
-        <Button
-          disabled={!selectedMonth || !selectedYear || isLoading}
-          className="w-full xl:w-auto"
-        >
-          {isLoading ? "Searching..." : "Find Events"}
-        </Button>
-      </div>
-    </>
+      </form>
+    </Form>
   );
 }
 
