@@ -1,9 +1,9 @@
 import React from 'react'
 
 function NotFound() {
-    // TODO: add 404 page general
+    // TODO: add 404 page parent
   return (
-    <div>notfound general</div>
+    <div>notfound parent</div>
   )
 }
 
