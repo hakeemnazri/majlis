@@ -10,9 +10,9 @@ function DashboardTable() {
     <section className="w-full flex flex-col justify-start gap-4">
       <DashboardHeaderButtons />
       <TableData />
+      <DashboardPaginationControl />
       <EditOrCreateDialog />
       <DashboardEditEventDialog />
-      <DashboardPaginationControl />
     </section>
   );
 }

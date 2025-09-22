@@ -1,5 +1,4 @@
-
-import EventDatabaseTable from "@/components/admin/event-database/slug/EventDatabaseTable";
+import EventDatabaseTable from "@/components/admin/event-database/slug/event-database-table";
 import EventDatabaseTableContextProvider from "@/contexts/event-database-table-context";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
@@ -42,8 +41,8 @@ async function page({ params, searchParams }: pageProps) {
         remark: true,
         tag: {
           include: {
-            
-          }
+            AddedProps: true,
+          },
         },
         checklist: {
           include: {

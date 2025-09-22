@@ -29,25 +29,24 @@ export type EventResponse = Prisma.ResponseGetPayload<{
         survey: true;
       };
     };
-    upload: true;
-    remark: true;
-    tag: {
-      include: {
-        AddedProps: true;
-      };
-    };
     checklist: {
       include: {
         Validation: true;
       };
     };
+    tag: {
+      include: {
+        AddedProps: true;
+      };
+    };
+    upload: true;
+    remark: true;
   };
 }>;
 
-function EventDatabaseTable() {
+function TableData() {
   const { table, columns } = useEventDatabaseTableContext();
   return (
-    <section className="w-full flex flex-col justify-start gap-4">
       <div className="relative flex flex-col gap-4 overflow-auto">
         <div className="overflow-hidden rounded-lg border">
           <Table>
@@ -105,8 +104,7 @@ function EventDatabaseTable() {
           </Table>
         </div>
       </div>
-    </section>
   );
 }
 
-export default EventDatabaseTable;
+export default TableData;
