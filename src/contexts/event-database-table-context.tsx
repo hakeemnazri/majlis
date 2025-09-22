@@ -13,6 +13,7 @@ import {
   EventResponse,
 } from "@/components/admin/event-database/slug/EventDatabaseTable";
 import { Button } from "@/components/ui/button";
+import EventDatabaseActionCell from "@/components/admin/event-database/slug/event-database-action-cell";
 
 type EventDatabaseTableContextProviderProps = {
   fetchedData: EventData;
@@ -30,6 +31,13 @@ type TEventDatabaseTableContext = {
 
 type ChecklistType = EventResponse["checklist"][number];
 type AnswerType = EventResponse["answer"][number];
+type TagType = EventResponse["tag"][number];
+
+type TypeMap = {
+  validation: ChecklistType[];
+  answer: AnswerType[];
+  tag: TagType[];
+};
 
 export const EventDatabaseTableContext =
   createContext<TEventDatabaseTableContext | null>(null);
@@ -38,13 +46,14 @@ function EventDatabaseTableContextProvider({
   fetchedData,
   children,
 }: EventDatabaseTableContextProviderProps) {
+  console.log(fetchedData.responses);
   const [data, setData] = useState(fetchedData);
   const [isPaginationLoading, setIsPaginatoinLoading] = useState(false);
 
-  function getAllUniqueChecklists<T extends "validation" | "answer">(
+  function getAllUniqueChecklists<T extends keyof TypeMap>(
     responses: EventResponse[],
     action: T
-  ): T extends "validation" ? ChecklistType[] : AnswerType[] {
+  ): TypeMap[T] {
     const uniqueListMap = new Map();
 
     if (action === "validation") {
@@ -63,9 +72,15 @@ function EventDatabaseTableContextProvider({
       });
     }
 
-    return Array.from(uniqueListMap.values()) as T extends "validation"
-      ? ChecklistType[]
-      : AnswerType[];
+    if (action === "tag") {
+      responses.forEach((response) => {
+        response.tag.forEach((tag) => {
+          uniqueListMap.set(tag.id, tag);
+        });
+      });
+    }
+
+    return Array.from(uniqueListMap.values()) as TypeMap[T];
   }
 
   const checklistColumn: ColumnDef<EventResponse>[] = getAllUniqueChecklists(
@@ -100,6 +115,31 @@ function EventDatabaseTableContextProvider({
         // TODO: Add Checkbox type
       ),
     }));
+
+  const tagColumn: ColumnDef<EventResponse>[] = getAllUniqueChecklists(
+    data.responses,
+    "tag"
+  ).map((tag) => ({
+    id: tag.id,
+    header: () => <div className="text-center">{tag.AddedProps.type}</div>,
+    accessorKey: tag.id,
+    cell: ({ row }: CellContext<EventResponse, unknown>) => (
+      <p className="text-center">
+        {row.original.tag.find(
+          (item) => item.AddedProps.id === tag.AddedProps.id
+        )?.note || ""}
+      </p>
+    ),
+  }));
+
+  const actionColumn = {
+    id: "actions",
+    header: () => null,
+    accessorKey: "actions",
+    cell: ({ row }: CellContext<EventResponse, unknown>) => (
+      <EventDatabaseActionCell row={row} />
+    ),
+  };
 
   const remarkColumn = {
     id: "remark",
@@ -144,6 +184,8 @@ function EventDatabaseTableContextProvider({
     uploadsColumn,
     ...checklistColumn,
     ...responseAnswerColumn,
+    ...tagColumn,
+    actionColumn,
   ];
 
   const table = useReactTable({
