@@ -1,6 +1,7 @@
 
 import { BuildEventContext } from "@/contexts/build-event-context-provider";
 import { DashboardTableContext } from "@/contexts/dashboard-table-context";
+import { EventDatabaseTableContext } from "@/contexts/event-database-table-context";
 import { EventSurveyFormContext } from "@/contexts/event-survey-form-context-provider";
 import { useContext } from "react";
 
@@ -42,7 +43,7 @@ export const useDashboardTableContext = () => {
 };
 
 export const useEventDatabaseTableContext = () => {
-  const context = useContext(DashboardTableContext);
+  const context = useContext(EventDatabaseTableContext);
 
   if (!context) {
     throw new Error(

@@ -15,8 +15,6 @@ export const setAdminDashboardPagination = async ({
   const fetched: PaginatedEvents = await prisma.$transaction(async (tx) => {
     const [paginatedEvents, totalCount] = await Promise.all([
       prisma.event.findMany({
-        skip,
-        take: pageSize,
         include: {
           survey: {
             orderBy: {
@@ -32,6 +30,8 @@ export const setAdminDashboardPagination = async ({
         orderBy: {
           createdAt: "desc",
         },
+        skip,
+        take: pageSize,
       }),
       tx.event.count(),
     ]);

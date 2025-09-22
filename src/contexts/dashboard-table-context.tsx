@@ -40,13 +40,14 @@ function DashboardTableContextProvider({
   const columns: ColumnDef<TEventPayload>[] = [
     {
       id: "title",
-      header: "Event",
+      header: () => <div className="text-left">Event</div>,
       accessorKey: "title",
       cell: ({ row }) => <TableCellViewer item={row.original} />,
     },
     {
       id: "createdAt",
-      header: "Created On",
+      header: () => <div className="text-center">Created On</div>,
+      accessorKey: "createdAt",
       cell: ({ row }) => (
         <Badge variant="outline" className="text-muted-foreground px-1.5">
           <Calendar />
@@ -60,7 +61,7 @@ function DashboardTableContextProvider({
     },
     {
       id: "category",
-      header: "Category",
+      header: () => <div className="text-center">Category</div>,
       accessorKey: "category",
       cell: ({ row }) => <Badge variant="outline" className="text-muted-foreground px-1.5">
       <Loader />
@@ -69,7 +70,7 @@ function DashboardTableContextProvider({
     },
     {
       id: "host",
-      header: "Host",
+      header: () => <div className="text-center">Host</div>,
       accessorKey: "host",
       cell: ({ row }) => <Badge variant="outline" className="text-muted-foreground px-1.5">
       <Loader />
@@ -78,7 +79,7 @@ function DashboardTableContextProvider({
     },
     {
       id: "frequency",
-      header: "Frequency",
+      header: () => <div className="text-center">Frequency</div>,
       accessorKey: "frequency",
       cell: ({ row }) => <Badge variant="outline" className="text-muted-foreground px-1.5">
       <Loader />
@@ -87,7 +88,8 @@ function DashboardTableContextProvider({
     },
     {
       id: "status",
-      header: "Status",
+      header: () => <div className="text-center">Status</div>,
+      accessorKey: "status",
       cell: () => (
         <Badge variant="outline" className="text-muted-foreground px-1.5">
           <Loader />
@@ -98,6 +100,7 @@ function DashboardTableContextProvider({
     {
       id: "actions",
       header: () => null,
+      accessorKey: "actions",
       cell: ({ row }) => <ActionCell row={row} />,
     },
   ];

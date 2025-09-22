@@ -1,128 +1,171 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import {
+  CellContext,
   ColumnDef,
   getCoreRowModel,
   Table,
   useReactTable,
 } from "@tanstack/react-table";
-import { Calendar, Loader } from "lucide-react";
 import React, { createContext, useState } from "react";
-import TableCellViewer from "@/components/admin/dashboard/table-cell-viewer";
-import { PaginatedEvents, TEventPayload } from "@/lib/types";
-import ActionCell from "@/components/admin/dashboard/action-cell";
+import {
+  EventData,
+  EventResponse,
+} from "@/components/admin/event-database/slug/EventDatabaseTable";
+import { Button } from "@/components/ui/button";
 
 type EventDatabaseTableContextProviderProps = {
-  fetchedData: PaginatedEvents;
+  fetchedData: EventData;
   children: React.ReactNode;
 };
 
 type TEventDatabaseTableContext = {
-  table: Table<TEventPayload>;
-  columns: ColumnDef<TEventPayload>[];
-  setData: React.Dispatch<React.SetStateAction<PaginatedEvents>>;
-  data: PaginatedEvents;
-//   isPaginationLoading: boolean;
-//   setIsPaginatoinLoading: React.Dispatch<React.SetStateAction<boolean>>;
-// TODO: pagination
+  table: Table<EventResponse>;
+  columns: ColumnDef<EventResponse>[];
+  setData: React.Dispatch<React.SetStateAction<EventData>>;
+  data: EventData;
+  isPaginationLoading: boolean;
+  setIsPaginatoinLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const DashboardTableContext =
+type ChecklistType = EventResponse["checklist"][number];
+type AnswerType = EventResponse["answer"][number];
+
+export const EventDatabaseTableContext =
   createContext<TEventDatabaseTableContext | null>(null);
 
-function DashboardTableContextProvider({
+function EventDatabaseTableContextProvider({
   fetchedData,
   children,
 }: EventDatabaseTableContextProviderProps) {
   const [data, setData] = useState(fetchedData);
-//   const [isPaginationLoading, setIsPaginatoinLoading] = useState(false);
+  const [isPaginationLoading, setIsPaginatoinLoading] = useState(false);
 
-  const columns: ColumnDef<TEventPayload>[] = [
-    {
-      id: "title",
-      header: "Event",
-      accessorKey: "title",
-      cell: ({ row }) => <TableCellViewer item={row.original} />,
-    },
-    {
-      id: "createdAt",
-      header: "Created On",
-      cell: ({ row }) => (
-        <Badge variant="outline" className="text-muted-foreground px-1.5">
-          <Calendar />
-          {new Date(row.original.createdAt).toLocaleDateString("en-MY", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}
-        </Badge>
+  function getAllUniqueChecklists<T extends "validation" | "answer">(
+    responses: EventResponse[],
+    action: T
+  ): T extends "validation" ? ChecklistType[] : AnswerType[] {
+    const uniqueListMap = new Map();
+
+    if (action === "validation") {
+      responses.forEach((response) => {
+        response.checklist.forEach((checklist) => {
+          uniqueListMap.set(checklist.Validation.id, checklist);
+        });
+      });
+    }
+
+    if (action === "answer") {
+      responses.forEach((response) => {
+        response.answer.forEach((answer) => {
+          uniqueListMap.set(answer.survey.id, answer);
+        });
+      });
+    }
+
+    return Array.from(uniqueListMap.values()) as T extends "validation"
+      ? ChecklistType[]
+      : AnswerType[];
+  }
+
+  const checklistColumn: ColumnDef<EventResponse>[] = getAllUniqueChecklists(
+    data.responses,
+    "validation"
+  ).map((checklist) => ({
+    id: checklist.id,
+    header: () => (
+      <div className="text-center">{checklist.Validation.type}</div>
+    ),
+    accessorKey: checklist.id,
+    cell: ({ row }: CellContext<EventResponse, unknown>) => (
+      <p className="text-center">
+        {row.original.checklist
+          .find((item) => item.Validation.id === checklist.Validation.id)
+          ?.isCheck.toString() || ""}
+      </p>
+    ),
+  }));
+
+  const responseAnswerColumn: ColumnDef<EventResponse>[] =
+    getAllUniqueChecklists(data.responses, "answer").map((answer) => ({
+      id: answer.id,
+      header: () => <div className="text-center">{answer.survey.question}</div>,
+      accessorKey: answer.id,
+      cell: ({ row }: CellContext<EventResponse, unknown>) => (
+        <p className="text-center">
+          {row.original.answer.find(
+            (item) => item.survey.id === answer.survey.id
+          )?.input || ""}
+        </p>
+        // TODO: Add Checkbox type
       ),
-    },
-    {
-      id: "category",
-      header: "Category",
-      accessorKey: "category",
-      cell: ({ row }) => <Badge variant="outline" className="text-muted-foreground px-1.5">
-      <Loader />
-      {row.original.category}
-    </Badge>,
-    },
-    {
-      id: "host",
-      header: "Host",
-      accessorKey: "host",
-      cell: ({ row }) => <Badge variant="outline" className="text-muted-foreground px-1.5">
-      <Loader />
-      {row.original.host}
-    </Badge>,
-    },
-    {
-      id: "frequency",
-      header: "Frequency",
-      accessorKey: "frequency",
-      cell: ({ row }) => <Badge variant="outline" className="text-muted-foreground px-1.5">
-      <Loader />
-      {row.original.frequency}
-    </Badge>,
-    },
-    {
-      id: "status",
-      header: "Status",
-      cell: () => (
-        <Badge variant="outline" className="text-muted-foreground px-1.5">
-          <Loader />
-          In Progress
-        </Badge>
-      ),
-    },
-    {
-      id: "actions",
-      header: () => null,
-      cell: ({ row }) => <ActionCell row={row} />,
-    },
+    }));
+
+  const remarkColumn = {
+    id: "remark",
+    header: () => <div className="text-center">Remarks</div>,
+    accessorKey: "remark",
+    cell: ({ row }: CellContext<EventResponse, unknown>) => (
+      <Button
+        variant={"secondary"}
+        onClick={() => console.log(row.original.remark)}
+      >
+        View
+      </Button>
+    ),
+  };
+
+  const uploadsColumn = {
+    id: "uploads",
+    header: () => <div className="text-center">Uploads</div>,
+    accessorKey: "uploads",
+    cell: ({ row }: CellContext<EventResponse, unknown>) => (
+      <Button
+        variant={"secondary"}
+        onClick={() => console.log(row.original.upload)}
+      >
+        View
+      </Button>
+    ),
+  };
+
+  const indexColumn = {
+    id: "no.",
+    header: () => <div className="text-center">No.</div>,
+    accessorKey: "no.",
+    cell: ({ row }: CellContext<EventResponse, unknown>) => (
+      <p className="text-center">{row.index + 1}</p>
+    ),
+  };
+
+  const columns: ColumnDef<EventResponse>[] = [
+    indexColumn,
+    remarkColumn,
+    uploadsColumn,
+    ...checklistColumn,
+    ...responseAnswerColumn,
   ];
 
   const table = useReactTable({
-    data: data.data,
+    data: data.responses,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
   return (
-    <DashboardTableContext.Provider
+    <EventDatabaseTableContext.Provider
       value={{
         table,
         columns,
         data,
         setData,
-        // isPaginationLoading,
-        // setIsPaginatoinLoading
+        isPaginationLoading,
+        setIsPaginatoinLoading,
       }}
     >
       {children}
-    </DashboardTableContext.Provider>
+    </EventDatabaseTableContext.Provider>
   );
 }
 
-export default DashboardTableContextProvider;
+export default EventDatabaseTableContextProvider;
