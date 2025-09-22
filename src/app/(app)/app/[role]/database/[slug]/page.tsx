@@ -9,11 +9,15 @@ type pageProps = {
   params: Promise<{
     slug: string;
   }>;
+  searchParams: Promise<{
+    pageNumber: string;
+  }>;
 };
 
-async function page({ params }: pageProps) {
+async function page({ params, searchParams }: pageProps) {
   const resolvedParams = await params;
-  const page = 1;
+  const resolvedSearchParams = await searchParams;
+  const page = parseInt(resolvedSearchParams.pageNumber) || 1;
   const pageSize = 10;
   const skip = (page - 1) * pageSize;
 
@@ -36,7 +40,11 @@ async function page({ params }: pageProps) {
         },
         upload: true,
         remark: true,
-        tag: true,
+        tag: {
+          include: {
+            
+          }
+        },
         checklist: {
           include: {
             Validation: true,

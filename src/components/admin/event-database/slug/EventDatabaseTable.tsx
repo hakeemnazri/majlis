@@ -31,7 +31,11 @@ export type EventResponse = Prisma.ResponseGetPayload<{
     };
     upload: true;
     remark: true;
-    tag: true;
+    tag: {
+      include: {
+        AddedProps: true;
+      };
+    };
     checklist: {
       include: {
         Validation: true;

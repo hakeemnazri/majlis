@@ -24,6 +24,7 @@ model Event {
   tickets         Tickets[]
   response        Response[]
   validation      Validation[]
+  Props           AddedProps[]
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
 }
@@ -72,6 +73,19 @@ model Validation {
   @@index([eventId])
 }
 
+model AddedProps {
+  id      String @id @default(cuid())
+  eventId String
+  type    String
+  tags    Tag[]
+
+  Event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([eventId])
+}
+
 model Response {
   id           String      @id @default(cuid())
   order        Int
@@ -93,13 +107,16 @@ model Response {
 model Tag {
   id         String @id @default(cuid())
   note       String
+  propsId     String
   responseId String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   Response  Response @relation(fields: [responseId], references: [id])
+  AddedProps     AddedProps   @relation(fields: [propsId], references: [id])
 
   @@index([responseId])
+  @@index([propsId])
 }
 
 model Upload {
