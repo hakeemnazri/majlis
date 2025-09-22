@@ -10,6 +10,7 @@ type pageProps = {
   }>;
   searchParams: Promise<{
     pageNumber: string;
+    pageSize: string;
   }>;
 };
 
@@ -17,7 +18,7 @@ async function page({ params, searchParams }: pageProps) {
   const resolvedParams = await params;
   const resolvedSearchParams = await searchParams;
   const page = parseInt(resolvedSearchParams.pageNumber) || 1;
-  const pageSize = 10;
+  const pageSize = parseInt(resolvedSearchParams.pageSize) || 10;
   const skip = (page - 1) * pageSize;
 
   const fetchedData = await prisma.$transaction(async (tx) => {
