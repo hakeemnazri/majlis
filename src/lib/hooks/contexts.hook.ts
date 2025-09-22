@@ -41,4 +41,16 @@ export const useDashboardTableContext = () => {
   return context;
 };
 
+export const useEventDatabaseTableContext = () => {
+  const context = useContext(DashboardTableContext);
+
+  if (!context) {
+    throw new Error(
+      "useEventDatabaseTableContext must be used within a EventSurveyFormContextProvider"
+    );
+  }
+
+  return context;
+};
+
 
