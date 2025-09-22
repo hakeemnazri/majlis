@@ -11,7 +11,7 @@ import SelectedTimeCard from "@/components/admin/event-database/selected-time-ca
 
 function page() {
   return (
-    <section className="flex flex-col gap-4 py-4 px-4 md:gap-6 md:py-6 lg:px-6">
+    <section className="flex flex-col gap-4 py-4 px-4 md:gap-6 md:py-6 lg:px-6 flex-1">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -27,7 +27,7 @@ function page() {
         </CardContent>
       </Card>
 
-    <SelectedTimeCard />
+      <SelectedTimeCard />
     </section>
   );
 }

@@ -4,7 +4,7 @@ import React from "react";
 
 function NoEventsCard() {
   return (
-    <Card>
+    <Card className="flex-grow flex flex-col justify-center items-center">
       <CardContent className="text-center py-12">
         <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
         <h3 className="text-lg font-semibold mb-2">No events found</h3>

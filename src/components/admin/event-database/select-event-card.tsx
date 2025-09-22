@@ -4,7 +4,7 @@ import React from "react";
 
 function SelectEventCard() {
   return (
-    <Card>
+    <Card className="flex-grow flex flex-col justify-center items-center">
       <CardContent className="text-center py-12">
         <Search className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
         <h3 className="text-lg font-semibold mb-2">Search Event</h3>
