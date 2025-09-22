@@ -1,5 +1,4 @@
-
-import EventDatabaseTable from "@/components/admin/event-database/slug/EventDatabaseTable";
+import EventDatabaseTable from "@/components/admin/event-database/slug/event-database-table";
 import EventDatabaseTableContextProvider from "@/contexts/event-database-table-context";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
@@ -11,6 +10,7 @@ type pageProps = {
   }>;
   searchParams: Promise<{
     pageNumber: string;
+    pageSize: string;
   }>;
 };
 
@@ -18,7 +18,7 @@ async function page({ params, searchParams }: pageProps) {
   const resolvedParams = await params;
   const resolvedSearchParams = await searchParams;
   const page = parseInt(resolvedSearchParams.pageNumber) || 1;
-  const pageSize = 10;
+  const pageSize = parseInt(resolvedSearchParams.pageSize) || 10;
   const skip = (page - 1) * pageSize;
 
   const fetchedData = await prisma.$transaction(async (tx) => {
@@ -42,8 +42,8 @@ async function page({ params, searchParams }: pageProps) {
         remark: true,
         tag: {
           include: {
-            
-          }
+            AddedProps: true,
+          },
         },
         checklist: {
           include: {

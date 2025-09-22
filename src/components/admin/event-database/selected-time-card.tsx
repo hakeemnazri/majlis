@@ -29,7 +29,7 @@ function SelectedTimeCard() {
             <div className="flex flex-col gap-4">
               {searchEvents.map((event) => (
                 <Link
-                  href={`/app/admin/database/${event.slug}?pageNumber=1`}
+                  href={`/app/admin/database/${event.slug}?pageNumber=1&pageSize=10`}
                   key={event.id}
                 >
                   <div                   className="p-4 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">

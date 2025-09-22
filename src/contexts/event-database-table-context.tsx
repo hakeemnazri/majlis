@@ -11,7 +11,7 @@ import React, { createContext, useState } from "react";
 import {
   EventData,
   EventResponse,
-} from "@/components/admin/event-database/slug/EventDatabaseTable";
+} from "@/components/admin/event-database/slug/table-data";
 import { Button } from "@/components/ui/button";
 import EventDatabaseActionCell from "@/components/admin/event-database/slug/event-database-action-cell";
 

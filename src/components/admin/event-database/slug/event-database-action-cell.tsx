@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { EllipsisVertical } from "lucide-react";
 import { Row } from "@tanstack/react-table";
-import { EventResponse } from "./EventDatabaseTable";
+import { EventResponse } from "./table-data";
 
 type ActionCellProps = {
   row: Row<EventResponse>;
