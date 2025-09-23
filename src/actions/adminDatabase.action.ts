@@ -137,10 +137,6 @@ export const setAdminEventDatabasePagination = async (
         },
       });
 
-      if(fetchedData.event === null) {
-        throw new Error("Event not found");
-      }
-
       const totalPages = Math.ceil(totalResponsesCount / pageSize);
       const canGetPreviousPage = page > 1;
       const isFinalPage = page >= totalPages;

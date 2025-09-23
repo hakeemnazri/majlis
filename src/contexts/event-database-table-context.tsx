@@ -17,6 +17,7 @@ import EventDatabaseActionCell from "@/components/admin/event-database/slug/even
 import { useSearchParams } from "next/navigation";
 import { setAdminEventDatabasePagination } from "@/actions/adminDatabase.action";
 import { toast } from "sonner";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type EventDatabaseTableContextProviderProps = {
   fetchedData: EventData;
@@ -98,11 +99,23 @@ function EventDatabaseTableContextProvider({
     ),
     accessorKey: checklist.id,
     cell: ({ row }: CellContext<EventResponse, unknown>) => (
-      <p className="text-center">
-        {row.original.checklist
-          .find((item) => item.Validation.id === checklist.Validation.id)
-          ?.isCheck.toString() || ""}
-      </p>
+      <div className="flex justify-center">
+        <Checkbox
+          className="h-8 w-8"
+          // checked={
+          //   row.original.checklist.find(
+          //     (item) => item.Validation.id === checklist.Validation.id
+          //   )?.isCheck || false
+          // }
+          onCheckedChange={() => {
+            console.log(
+              row.original.checklist.find(
+                (item) => item.Validation.id === checklist.Validation.id
+              )?.id
+            );
+          }}
+        />
+      </div>
     ),
   }));
 
