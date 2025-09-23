@@ -21,10 +21,12 @@ type DashboardTableContextProviderProps = {
 type TDashboardTableContext = {
   table: Table<TEventPayload>;
   columns: ColumnDef<TEventPayload>[];
-  setData: React.Dispatch<React.SetStateAction<PaginatedEvents>>;
   isPaginationLoading: boolean;
   setIsPaginatoinLoading: React.Dispatch<React.SetStateAction<boolean>>;
   data: PaginatedEvents;
+  setData: React.Dispatch<React.SetStateAction<PaginatedEvents>>;
+  page: number;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
 };
 
 export const DashboardTableContext =
@@ -35,6 +37,7 @@ function DashboardTableContextProvider({
   children,
 }: DashboardTableContextProviderProps) {
   const [data, setData] = useState(fetchedData);
+  const [page, setPage] = useState(1);
   const [isPaginationLoading, setIsPaginatoinLoading] = useState(false);
 
   const columns: ColumnDef<TEventPayload>[] = [
@@ -119,7 +122,9 @@ function DashboardTableContextProvider({
         data,
         setData,
         isPaginationLoading,
-        setIsPaginatoinLoading
+        setIsPaginatoinLoading,
+        page,
+        setPage,
       }}
     >
       {children}

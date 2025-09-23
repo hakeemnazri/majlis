@@ -18,6 +18,7 @@ export type EventData = {
   responses: EventResponse[];
   totalResponsesCount: number;
   totalPages: number;
+  currentPage: number;
   canGetPreviousPage: boolean;
   isFinalPage: boolean;
 };

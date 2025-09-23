@@ -5,13 +5,13 @@ import PaginationChevronButtons from "./pagination-chevron-buttons";
 import PaginationRowsPerPage from "./pagination-row-per-page";
 
 function PaginationControlButtons() {
-  const { table, data } = useDashboardTableContext();
+  const { data, page } = useDashboardTableContext();
   return (
     <div className="flex w-full items-center gap-8 lg:w-fit">
       <PaginationRowsPerPage />
 
       <div className="flex w-fit items-center justify-center text-sm font-medium">
-        Page {table.getState().pagination.pageIndex + 1} of{" "}
+        Page {page} of{" "}
         {data.totalPages}
       </div>
 

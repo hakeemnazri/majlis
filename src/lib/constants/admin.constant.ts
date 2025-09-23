@@ -78,7 +78,7 @@ export const EVENT_FORM_THIRD_PAGE_DEFAULT_VALUES: z.infer<
   {
     id: crypto.randomUUID(),
     type: "SHORT_ANSWER",
-    question: "Tempat tinggatl (Cth: Kota Damansara)",
+    question: "Tempat tinggal (Cth: Kota Damansara)",
     options: [""],
     isRequired: false,
   },

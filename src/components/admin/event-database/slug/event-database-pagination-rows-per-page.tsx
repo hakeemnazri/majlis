@@ -1,4 +1,6 @@
 "use client";
+
+import { setAdminEventDatabasePagination } from "@/actions/adminDatabase.action";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -8,16 +10,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useEventDatabaseTableContext } from "@/lib/hooks/contexts.hook";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React from "react";
+import { toast } from "sonner";
 
 function EventDatabasePaginationRowsPerPage() {
-  const { table } = useEventDatabaseTableContext();
+  const { table, slug, setData } = useEventDatabaseTableContext();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const handleChangePageSize = async ({
-    page = 2,
+    page = 1,
     pageSize,
   }: {
     page: number;
@@ -26,8 +30,19 @@ function EventDatabasePaginationRowsPerPage() {
     const params = new URLSearchParams(searchParams.toString());
     params.set("pageNumber", page.toString());
     params.set("pageSize", pageSize.toString());
+    router.push(`${pathname}?${params.toString()}`);
+    const data = await setAdminEventDatabasePagination({
+      page,
+      pageSize,
+      slug,
+    });
 
-    window.location.href = `${pathname}?${params.toString()}`;
+    if(!data.success) {
+      toast.error(data.error);
+      return;
+    }
+
+    setData(data.events);
   };
   return (
     <div className="hidden items-center gap-2 lg:flex">
@@ -38,7 +53,7 @@ function EventDatabasePaginationRowsPerPage() {
         value={`${table.getState().pagination.pageSize}`}
         onValueChange={async (value) => {
           handleChangePageSize({
-            page: 2,
+            page: 1,
             pageSize: parseInt(value),
           });
           table.setPageSize(Number(value));

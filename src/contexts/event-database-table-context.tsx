@@ -7,13 +7,16 @@ import {
   Table,
   useReactTable,
 } from "@tanstack/react-table";
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import {
   EventData,
   EventResponse,
 } from "@/components/admin/event-database/slug/table-data";
 import { Button } from "@/components/ui/button";
 import EventDatabaseActionCell from "@/components/admin/event-database/slug/event-database-action-cell";
+import { useSearchParams } from "next/navigation";
+import { setAdminEventDatabasePagination } from "@/actions/adminDatabase.action";
+import { toast } from "sonner";
 
 type EventDatabaseTableContextProviderProps = {
   fetchedData: EventData;
@@ -21,12 +24,14 @@ type EventDatabaseTableContextProviderProps = {
 };
 
 type TEventDatabaseTableContext = {
+  slug: string;
   table: Table<EventResponse>;
   columns: ColumnDef<EventResponse>[];
   setData: React.Dispatch<React.SetStateAction<EventData>>;
   data: EventData;
   isPaginationLoading: boolean;
   setIsPaginatoinLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  currentPage: number;
 };
 
 type ChecklistType = EventResponse["checklist"][number];
@@ -46,9 +51,9 @@ function EventDatabaseTableContextProvider({
   fetchedData,
   children,
 }: EventDatabaseTableContextProviderProps) {
-  console.log(fetchedData.responses);
   const [data, setData] = useState(fetchedData);
   const [isPaginationLoading, setIsPaginatoinLoading] = useState(false);
+  const searchParams = useSearchParams();
 
   function getAllUniqueChecklists<T extends keyof TypeMap>(
     responses: EventResponse[],
@@ -146,12 +151,14 @@ function EventDatabaseTableContextProvider({
     header: () => <div className="text-center">Remarks</div>,
     accessorKey: "remark",
     cell: ({ row }: CellContext<EventResponse, unknown>) => (
-      <Button
-        variant={"secondary"}
-        onClick={() => console.log(row.original.remark)}
-      >
-        View
-      </Button>
+      <div className="flex justify-center">
+        <Button
+          variant={"secondary"}
+          onClick={() => console.log(row.original.remark)}
+        >
+          View
+        </Button>
+      </div>
     ),
   };
 
@@ -160,12 +167,14 @@ function EventDatabaseTableContextProvider({
     header: () => <div className="text-center">Uploads</div>,
     accessorKey: "uploads",
     cell: ({ row }: CellContext<EventResponse, unknown>) => (
-      <Button
-        variant={"secondary"}
-        onClick={() => console.log(row.original.upload)}
-      >
-        View
-      </Button>
+      <div className="flex justify-center">
+        <Button
+          variant={"secondary"}
+          onClick={() => console.log(row.original.upload)}
+        >
+          View
+        </Button>
+      </div>
     ),
   };
 
@@ -194,15 +203,47 @@ function EventDatabaseTableContextProvider({
     getCoreRowModel: getCoreRowModel(),
   });
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await setAdminEventDatabasePagination({
+        page: Number(searchParams.get("pageNumber")) || 1,
+        pageSize: Number(searchParams.get("pageSize")) || 10,
+        slug: fetchedData.event.slug,
+      });
+
+      if (!data.success) {
+        toast.error(data.error);
+        return;
+      }
+
+      setData(data.events);
+    };
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const pageSize = urlParams.get("pageSize");
+    const pageNumber = urlParams.get("pageNumber");
+
+    if (pageSize) {
+      table.setPageSize(Number(pageSize));
+    }
+    if (pageNumber) {
+      table.setPageIndex(Number(pageNumber) - 1);
+    }
+
+    fetchData();
+  }, [searchParams, fetchedData.event.slug, table]);
+
   return (
     <EventDatabaseTableContext.Provider
       value={{
+        slug: data.event.slug,
         table,
         columns,
         data,
         setData,
         isPaginationLoading,
         setIsPaginatoinLoading,
+        currentPage: data.currentPage,
       }}
     >
       {children}

@@ -68,6 +68,8 @@ async function page({ params, searchParams }: pageProps) {
     return {
       event,
       responses,
+      currentPage: page,
+      currentPageSize: pageSize,
       totalResponsesCount,
       totalPages,
       canGetPreviousPage,

@@ -1,29 +1,47 @@
 "use client";
 
-import { setAdminDashboardPagination } from "@/actions/adminDashboard.action";
+import { setAdminEventDatabasePagination } from "@/actions/adminDatabase.action";
 import { Button } from "@/components/ui/button";
-import { useDashboardTableContext } from "@/lib/hooks/contexts.hook";
+import { useEventDatabaseTableContext } from "@/lib/hooks/contexts.hook";
 import {
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
 } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React from "react";
+import { toast } from "sonner";
 
-function PaginationChevronButtons() {
-  const { data, table, setData, isPaginationLoading, setIsPaginatoinLoading, setPage } =
-    useDashboardTableContext();
+function EventDatabasePaginationChevronButtons() {
+  const { slug, data, setData, table, isPaginationLoading, setIsPaginatoinLoading } =
+    useEventDatabaseTableContext();
+
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   const handleChangePage = async (page: number) => {
+    const pageSize = table.getState().pagination.pageSize;
     setIsPaginatoinLoading(true);
-    const sendData = {
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("pageNumber", page.toString());
+    params.set("pageSize", pageSize.toString());
+
+    router.push(`${pathname}?${params.toString()}`);
+    const data = await setAdminEventDatabasePagination({
       page,
-      pageSize: table.getState().pagination.pageSize,
-    };
-    const data = await setAdminDashboardPagination(sendData);
-    setData(data);
-    setPage(page);
+      pageSize,
+      slug,
+    });
+
+    if(!data.success) {
+      toast.error(data.error);
+      return;
+    }
+
+    setData(data.events);
     setIsPaginatoinLoading(false);
   };
   return (
@@ -75,4 +93,4 @@ function PaginationChevronButtons() {
   );
 }
 
-export default PaginationChevronButtons;
+export default EventDatabasePaginationChevronButtons;
