@@ -4,9 +4,11 @@ import { useEventDatabaseTableContext } from "@/lib/hooks/contexts.hook";
 import React from "react";
 import EventDatabasePaginationRowsPerPage from "./event-database-pagination-rows-per-page";
 import EventDatabasePaginationChevronButtons from "./event-database-pagination-chevron-buttons";
+import { useDatabaseStore } from "@/stores/admin/databaseStore";
 
 function EventDatabasePaginationControlButtons() {
-  const { data, currentPage } = useEventDatabaseTableContext();
+  const { data } = useEventDatabaseTableContext();
+  const { currentPage } = useDatabaseStore((state) => state);
   return (
     <div className="flex w-full items-center gap-8 lg:w-fit">
       <EventDatabasePaginationRowsPerPage />

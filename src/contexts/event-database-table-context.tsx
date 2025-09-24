@@ -19,6 +19,9 @@ import { setAdminEventDatabasePagination } from "@/actions/adminDatabase.action"
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useDatabaseStore } from "@/stores/admin/databaseStore";
+import { useForm, UseFormReturn } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
 type EventDatabaseTableContextProviderProps = {
   fetchedData: EventData;
@@ -26,14 +29,12 @@ type EventDatabaseTableContextProviderProps = {
 };
 
 type TEventDatabaseTableContext = {
-  slug: string;
+  form: UseFormReturn<z.infer<typeof nameSchema>>;
+  handleOnSubmit: (values: z.infer<typeof nameSchema>) => void;
   table: Table<EventResponse>;
   columns: ColumnDef<EventResponse>[];
   setData: React.Dispatch<React.SetStateAction<EventData>>;
   data: EventData;
-  isPaginationLoading: boolean;
-  setIsPaginatoinLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  currentPage: number;
 };
 
 type ChecklistType = EventResponse["checklist"][number];
@@ -46,17 +47,31 @@ type TypeMap = {
   tag: TagType[];
 };
 
+const nameSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters."),
+});
+
+// TODO: clean up
 export const EventDatabaseTableContext =
   createContext<TEventDatabaseTableContext | null>(null);
-// TODO: clean up
 function EventDatabaseTableContextProvider({
   fetchedData,
   children,
 }: EventDatabaseTableContextProviderProps) {
   const [data, setData] = useState(fetchedData);
-  const [isPaginationLoading, setIsPaginatoinLoading] = useState(false);
   const searchParams = useSearchParams();
-  const { setId } = useDatabaseStore((state) => state);
+  const { setId, setSlug, setCurrentPage } = useDatabaseStore((state) => state);
+  setSlug(data.event.slug);
+  setCurrentPage(data.currentPage)
+
+  const form = useForm<z.infer<typeof nameSchema>>({
+    resolver: zodResolver(nameSchema),
+  });
+
+  function handleOnSubmit(values: z.infer<typeof nameSchema>) {
+    form.trigger();
+    console.log(values);
+  }
 
   function getAllUniqueChecklists<T extends keyof TypeMap>(
     responses: EventResponse[],
@@ -113,7 +128,9 @@ function EventDatabaseTableContextProvider({
             setId(
               row.original.checklist.find(
                 (item) => item.Validation.id === checklist.Validation.id
-              )?.id || ""
+              )?.id || "",
+              "edit-checkbox",
+              true //isDialogOpen: True
             )
           }
         />
@@ -251,14 +268,12 @@ function EventDatabaseTableContextProvider({
   return (
     <EventDatabaseTableContext.Provider
       value={{
-        slug: data.event.slug,
+        form,
+        handleOnSubmit,
         table,
         columns,
         data,
         setData,
-        isPaginationLoading,
-        setIsPaginatoinLoading,
-        currentPage: data.currentPage,
       }}
     >
       {children}

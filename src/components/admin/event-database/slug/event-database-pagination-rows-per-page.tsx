@@ -10,12 +10,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useEventDatabaseTableContext } from "@/lib/hooks/contexts.hook";
+import { useDatabaseStore } from "@/stores/admin/databaseStore";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
 
 function EventDatabasePaginationRowsPerPage() {
-  const { table, slug, setData } = useEventDatabaseTableContext();
+  const { table, setData } = useEventDatabaseTableContext();
+  const { slug } = useDatabaseStore((state) => state);
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -37,7 +39,7 @@ function EventDatabasePaginationRowsPerPage() {
       slug,
     });
 
-    if(!data.success) {
+    if (!data.success) {
       toast.error(data.error);
       return;
     }

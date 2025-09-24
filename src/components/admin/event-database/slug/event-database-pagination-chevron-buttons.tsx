@@ -3,6 +3,7 @@
 import { setAdminEventDatabasePagination } from "@/actions/adminDatabase.action";
 import { Button } from "@/components/ui/button";
 import { useEventDatabaseTableContext } from "@/lib/hooks/contexts.hook";
+import { useDatabaseStore } from "@/stores/admin/databaseStore";
 import {
   ChevronLeft,
   ChevronRight,
@@ -14,8 +15,12 @@ import React from "react";
 import { toast } from "sonner";
 
 function EventDatabasePaginationChevronButtons() {
-  const { slug, data, setData, table, isPaginationLoading, setIsPaginatoinLoading } =
-    useEventDatabaseTableContext();
+  const {
+    data,
+    setData,
+    table,
+  } = useEventDatabaseTableContext();
+  const { slug, isPaginationLoading, setIsPaginatoinLoading } = useDatabaseStore((state) => state);
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -36,7 +41,7 @@ function EventDatabasePaginationChevronButtons() {
       slug,
     });
 
-    if(!data.success) {
+    if (!data.success) {
       toast.error(data.error);
       return;
     }
