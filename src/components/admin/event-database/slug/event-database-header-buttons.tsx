@@ -4,7 +4,7 @@ import { Plus } from 'lucide-react';
 import React from 'react'
 
 function EventDatabaseHeaderButtons() {
-    const { setAddValidationColumn } = useDatabaseStore((state) => state);
+    const { setAddValidationColumn, setAddResponse } = useDatabaseStore((state) => state);
 
     return (
       <div className="flex items-center justify-end gap-4">
@@ -12,7 +12,7 @@ function EventDatabaseHeaderButtons() {
           <Plus />
           <span className="hidden lg:inline">Add Validation Column</span>
         </Button>
-        <Button onClick={() => {console.log("add response")}} variant="outline" size="sm">
+        <Button onClick={setAddResponse} variant="outline" size="sm">
           <Plus />
           <span className="hidden lg:inline">Add Response Data</span>
         </Button>

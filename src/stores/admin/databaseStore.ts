@@ -4,12 +4,14 @@ import { create } from "zustand";
 type Store = {
   id: string | null;
   isDialogOpen: boolean;
-  formAction: "add-validation-column" | "remove-validation-column" | "";
+  formAction: "add-validation-column" | "remove-validation-column" | "add-response" | "edit-checkbox" | "";
   searchEvents: EventWithinTimeSelect[] | null;
   setSearchEvents: (events: EventWithinTimeSelect[] | null) => void;
   setAddValidationColumn: () => void;
   setRemoveValidationColumn: () => void;
+  setAddResponse: () => void;
   setDialogClose: () => void;
+  setId: (id: string) => void;
 };
 
 export const useDatabaseStore = create<Store>((set) => ({
@@ -33,6 +35,13 @@ export const useDatabaseStore = create<Store>((set) => ({
       formAction: "remove-validation-column",
     }));
   },
+  setAddResponse: () => {
+    set((state) => ({
+      ...state,
+      isDialogOpen: true,
+      formAction: "add-response",
+    }));
+  },
   setDialogClose: () =>
     set((state) => ({
       ...state,
@@ -41,6 +50,8 @@ export const useDatabaseStore = create<Store>((set) => ({
   setId: (id: string) =>
     set((state) => ({
       ...state,
+      isDialogOpen: true,
+      formAction: "edit-checkbox",
       id,
     })),
 }));

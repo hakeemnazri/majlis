@@ -11,7 +11,7 @@ import { useDatabaseStore } from "@/stores/admin/databaseStore";
 import React from "react";
 
 function EventDatabaseDialog() {
-  const { isDialogOpen, setDialogClose, formAction } = useDatabaseStore(
+  const { isDialogOpen, setDialogClose, formAction, id } = useDatabaseStore(
     (state) => state
   );
   return (
@@ -21,6 +21,8 @@ function EventDatabaseDialog() {
         <Separator />
         {formAction === "add-validation-column" && <p>{formAction}</p>}
         {formAction === "remove-validation-column" && <p>{formAction}</p>}
+
+        {id && <p>{id}</p>}
         <Separator />
         <DialogFooter>Footer</DialogFooter>
       </DialogContent>

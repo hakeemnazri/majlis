@@ -18,6 +18,7 @@ import { useSearchParams } from "next/navigation";
 import { setAdminEventDatabasePagination } from "@/actions/adminDatabase.action";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useDatabaseStore } from "@/stores/admin/databaseStore";
 
 type EventDatabaseTableContextProviderProps = {
   fetchedData: EventData;
@@ -47,7 +48,7 @@ type TypeMap = {
 
 export const EventDatabaseTableContext =
   createContext<TEventDatabaseTableContext | null>(null);
-
+// TODO: clean up
 function EventDatabaseTableContextProvider({
   fetchedData,
   children,
@@ -55,6 +56,7 @@ function EventDatabaseTableContextProvider({
   const [data, setData] = useState(fetchedData);
   const [isPaginationLoading, setIsPaginatoinLoading] = useState(false);
   const searchParams = useSearchParams();
+  const { setId } = useDatabaseStore((state) => state);
 
   function getAllUniqueChecklists<T extends keyof TypeMap>(
     responses: EventResponse[],
@@ -107,13 +109,13 @@ function EventDatabaseTableContextProvider({
           //     (item) => item.Validation.id === checklist.Validation.id
           //   )?.isCheck || false
           // }
-          onCheckedChange={() => {
-            console.log(
+          onCheckedChange={() =>
+            setId(
               row.original.checklist.find(
                 (item) => item.Validation.id === checklist.Validation.id
-              )?.id
-            );
-          }}
+              )?.id || ""
+            )
+          }
         />
       </div>
     ),
