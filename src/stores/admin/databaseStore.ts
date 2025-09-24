@@ -1,7 +1,7 @@
 import { EventWithinTimeSelect } from "@/actions/adminDatabase.action";
 import { create } from "zustand";
 
-type formActionEnums =
+export type formActionEnums =
   | "add-validation-column"
   | "remove-validation-column"
   | "add-response"

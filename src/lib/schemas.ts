@@ -256,3 +256,11 @@ export const nameSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   eventId: z.string().min(2, "Event ID is missing."),
 });
+
+export const editCheckboxSchema = z.string().min(2, "Event ID is missing.")
+
+export const eventDatabasePaginationSchema = z.object({
+  page: z.number().min(1),
+  pageSize: z.number().min(10).max(20),
+  slug: z.string(),
+});

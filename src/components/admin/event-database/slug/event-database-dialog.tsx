@@ -3,6 +3,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -14,27 +15,43 @@ import { Button } from "@/components/ui/button";
 import { useEventDatabaseTableContext } from "@/lib/hooks/contexts.hook";
 
 function EventDatabaseDialog() {
-  const { isDialogOpen, setDialogClose, formAction, id, setId, payload } = useDatabaseStore(
-    (state) => state
-  );
-  const { handleOnSubmit, eventDatabaseForm } = useEventDatabaseTableContext();
-  
+  const { isDialogOpen, formAction, id, payload } =
+    useDatabaseStore((state) => state);
+  const { handleOnSubmit, handleCloseDialog } = useEventDatabaseTableContext();
+
   return (
-    <Dialog open={isDialogOpen} onOpenChange={() => {
-      eventDatabaseForm.reset();
-      setDialogClose();
-      setId(null, formAction, false, undefined);
-    }}>
+    <Dialog
+      open={isDialogOpen}
+      onOpenChange={() => {
+        handleCloseDialog();
+      }}
+    >
       <DialogContent className="flex flex-col max-h-2/3">
         <DialogTitle>Header</DialogTitle>
         <Separator />
         {formAction === "add-validation-column" && <AddValidationForm />}
+
         {formAction === "remove-validation-column" && <p>{formAction}</p>}
-        {formAction === "edit-input" && <p>{id} && {payload}</p>}
+
+        {formAction === "edit-checkbox" && (
+          <DialogDescription>
+            Are you sure you want to proceed with this action? Once you check
+            this box, the action will be applied and may not be easily
+            reversible. <br></br>Please take a moment to review that this is
+            truly what you intend to do before continuing.
+          </DialogDescription>
+        )}
+        {formAction === "edit-input" && (
+          <p>
+            {id} && {payload}
+          </p>
+        )}
 
         <Separator />
         <DialogFooter>
-          <Button onClick={() => handleOnSubmit(eventDatabaseForm.getValues())}>Submit</Button>
+          <Button onClick={() => handleOnSubmit(formAction)}>
+            Submit
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

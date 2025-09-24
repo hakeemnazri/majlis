@@ -12,6 +12,7 @@ import { Event as EventModel, Prisma, Survey as SurveyModel, Tickets as TicketMo
 import { UseFormReturn } from "react-hook-form";
 import { EventData, EventResponse } from "@/components/admin/event-database/slug/table-data";
 import { ColumnDef, Table } from "@tanstack/react-table";
+import { formActionEnums } from "@/stores/admin/databaseStore";
 
 export type TRegistername = keyof z.infer<typeof strictTicketSchema>;
 
@@ -77,7 +78,8 @@ export type TTimeFormSchema = z.infer<typeof timeFormSchema>
 
 export type TEventDatabaseTableContext = {
   eventDatabaseForm: UseFormReturn<z.infer<typeof nameSchema>>;
-  handleOnSubmit: (values: z.infer<typeof nameSchema>) => void;
+  handleOnSubmit: (action: formActionEnums) => void;
+  handleCloseDialog: () => void;
   table: Table<EventResponse>;
   columns: ColumnDef<EventResponse>[];
   setData: React.Dispatch<React.SetStateAction<EventData>>;

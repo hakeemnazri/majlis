@@ -16,11 +16,12 @@ import EventDatabaseActionCell from "@/components/admin/event-database/slug/even
 import { useSearchParams } from "next/navigation";
 import {
   addValidation,
+  editCheckbox,
   setAdminEventDatabasePagination,
 } from "@/actions/adminDatabase.action";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useDatabaseStore } from "@/stores/admin/databaseStore";
+import { formActionEnums, useDatabaseStore } from "@/stores/admin/databaseStore";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -55,26 +56,57 @@ function EventDatabaseTableContextProvider({
 }: EventDatabaseTableContextProviderProps) {
   const [data, setData] = useState(fetchedData);
   const searchParams = useSearchParams();
-  const { setId, setSlug, setCurrentPage, setEventId } =
-    useDatabaseStore((state) => state);
+  const { setId, setSlug, setCurrentPage, setEventId, setDialogClose, formAction, id } = useDatabaseStore(
+    (state) => state
+  );
 
   const eventDatabaseForm = useForm<TNameSchema>({
     resolver: zodResolver(nameSchema),
   });
 
-  async function handleOnSubmit(values: TNameSchema) {
-    await eventDatabaseForm.trigger("name");
-    const formData = {
-      ...values,
-      eventId: data.event.id,
-    };
-    toast.promise(addValidation(formData), {
-      loading: `deleting event...`,
-      success: () => {
-        return `Event deleted successfully!`;
-      },
-      error: (error: ServerActionError) => error.error || "Failed to add event",
-    });
+  function handleCloseDialog() {
+    eventDatabaseForm.reset();
+    setDialogClose();
+    setId(null, formAction, false, undefined);
+  }
+  async function handleOnSubmit( action: formActionEnums) {
+    if (action === "add-validation-column") {
+      const values = eventDatabaseForm.getValues();
+      await eventDatabaseForm.trigger("name");
+      const formData = {
+        ...values,
+        eventId: data.event.id,
+      };
+      toast.promise(addValidation(formData), {
+        loading: `Adding validation column...`,
+        success: (data) => {
+          if(!data.success){
+            throw new Error(data.error);
+          }
+          handleCloseDialog();
+          return `Validation column added successfully!`;
+        },
+        error: (error: ServerActionError) =>
+          error.error || "Failed to add column",
+      });
+    }
+
+    if(action === "edit-checkbox"){
+      toast.promise(editCheckbox(id), {
+        loading: `Editing checkbox...`,
+        success: (data) => {
+          if(!data.success){
+            throw new Error(data.error);
+          }
+          handleCloseDialog();
+          return `Checkbox edited successfully!`;
+        },
+        error: (error: ServerActionError) =>
+          error.error || "Failed to edit checkbox",
+      });
+    }
+
+    return;
   }
 
   function getAllUniqueChecklists<T extends keyof TypeMap>(
@@ -123,11 +155,11 @@ function EventDatabaseTableContextProvider({
       <div className="flex justify-center">
         <Checkbox
           className="h-8 w-8"
-          // checked={
-          //   row.original.checklist.find(
-          //     (item) => item.Validation.id === checklist.Validation.id
-          //   )?.isCheck || false
-          // }
+          checked={
+            row.original.checklist.find(
+              (item) => item.Validation.id === checklist.Validation.id
+            )?.isCheck || false
+          }
           onCheckedChange={() =>
             setId(
               row.original.checklist.find(
@@ -310,6 +342,7 @@ function EventDatabaseTableContextProvider({
       value={{
         eventDatabaseForm,
         handleOnSubmit,
+        handleCloseDialog,
         table,
         columns,
         data,

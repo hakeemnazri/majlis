@@ -2,10 +2,14 @@
 
 import { ErrorResponse, handleServerActionError } from "@/lib/error";
 import prisma from "@/lib/prisma";
-import { nameSchema, timeFormSchema } from "@/lib/schemas";
+import {
+  editCheckboxSchema,
+  eventDatabasePaginationSchema,
+  nameSchema,
+  timeFormSchema,
+} from "@/lib/schemas";
 import { Prisma } from "../../generated/prisma";
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
 import { EventData } from "@/components/admin/event-database/slug/table-data";
 
 export type EventWithinTimeSelect = Prisma.EventGetPayload<{
@@ -74,12 +78,6 @@ export const searchEventByTime = async (
     return handleServerActionError(error, "submitEventSurveyForm");
   }
 };
-
-const eventDatabasePaginationSchema = z.object({
-  page: z.number().min(1),
-  pageSize: z.number().min(10).max(20),
-  slug: z.string(),
-});
 
 export const setAdminEventDatabasePagination = async (
   data: unknown
@@ -219,6 +217,51 @@ export const addValidation = async (
     };
   } catch (error) {
     return handleServerActionError(error, "addValidation");
+  }
+};
+
+export const editCheckbox = async (data: unknown) : Promise<SuccessResponse | ErrorResponse> => {
+  try {
+    const parsedData = editCheckboxSchema.safeParse(data);
+
+    if (!parsedData.success) {
+      throw new Error("Invalid data");
+    }
+    const id  = parsedData.data;
+
+    await prisma.$transaction(async (tx) => {
+      const response = await tx.checklist.findFirst({
+        where: {
+          id: id,
+        },
+        select: {
+          isCheck: true,
+        },
+      });
+
+      if(!response) {
+        throw new Error("id not found");
+      }
+
+      await tx.checklist.update({
+        where: {
+          id: id,
+        },
+        data: {
+          isCheck: !response.isCheck,
+        },
+      });
+    });
+
+    revalidatePath("/app/admin/database/11"); //TODO: Make this dynamic
+
+    return{
+      success: true,
+      message: "Checkbox edited!",
+    }
+
+  } catch (error) {
+    return handleServerActionError(error, "editCheckbox");
   }
 };
 
