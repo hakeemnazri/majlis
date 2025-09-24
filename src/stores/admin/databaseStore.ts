@@ -6,15 +6,18 @@ type formActionEnums =
   | "remove-validation-column"
   | "add-response"
   | "edit-checkbox"
+  | "edit-input"
   | "";
 
 type Store = {
   id: string | null;
+  eventId: string | null;
   slug: string | null;
   isDialogOpen: boolean;
   formAction: formActionEnums;
   isPaginationLoading: boolean;
   currentPage: number;
+  payload: string | null;
   setCurrentPage: (page: number) => void;
   setIsPaginatoinLoading: (isPaginationLoading: boolean) => void;
   searchEvents: EventWithinTimeSelect[] | null;
@@ -26,17 +29,21 @@ type Store = {
   setId: (
     id: string | null,
     formAction: formActionEnums,
-    isDialogOpen: boolean
+    isDialogOpen: boolean,
+    payload?: string
   ) => void;
   setSlug: (slug: string | null) => void;
+  setEventId: (eventId: string | null) => void;
 };
 
 export const useDatabaseStore = create<Store>((set) => ({
   id: null,
+  eventId: null,
   slug: null,
   searchEvents: null,
   isDialogOpen: false,
   formAction: "",
+  payload: null,
   isPaginationLoading: false,
   currentPage: 1,
   setSearchEvents: (events: EventWithinTimeSelect[] | null) =>
@@ -67,12 +74,13 @@ export const useDatabaseStore = create<Store>((set) => ({
       ...state,
       isDialogOpen: false,
     })),
-  setId: (id: string | null, formAction, isDialogOpen) =>
+  setId: (id, formAction, isDialogOpen, payload) =>
     set((state) => ({
       ...state,
       isDialogOpen,
       formAction,
-      id,
+      payload,
+      id
     })),
   setSlug: (slug: string | null) => set((state) => ({ ...state, slug })),
   setCurrentPage: (page: number) =>
@@ -85,6 +93,8 @@ export const useDatabaseStore = create<Store>((set) => ({
       ...state,
       isPaginationLoading,
     })),
+  setEventId: (eventId: string | null) =>
+    set((state) => ({ ...state, eventId })),
 }));
 
 // isPaginationLoading: boolean;

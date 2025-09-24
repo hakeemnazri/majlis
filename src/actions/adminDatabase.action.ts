@@ -2,7 +2,7 @@
 
 import { ErrorResponse, handleServerActionError } from "@/lib/error";
 import prisma from "@/lib/prisma";
-import { timeFormSchema } from "@/lib/schemas";
+import { nameSchema, timeFormSchema } from "@/lib/schemas";
 import { Prisma } from "../../generated/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -19,20 +19,21 @@ export type EventWithinTimeSelect = Prisma.EventGetPayload<{
   };
 }>;
 
-type SuccessSearchEventResponse = {
+type SuccessResponse = {
   success: true;
   message: string;
+};
+
+type SearchEvent = {
   events: EventWithinTimeSelect[];
 };
-type SuccessDatabasePaginationResponse = {
-  success: true;
-  message: string;
+type DatabasePagination = {
   events: EventData;
 };
 
 export const searchEventByTime = async (
   data: unknown
-): Promise<SuccessSearchEventResponse | ErrorResponse> => {
+): Promise<(SuccessResponse & SearchEvent) | ErrorResponse> => {
   try {
     const parsedData = timeFormSchema.safeParse(data);
 
@@ -82,7 +83,7 @@ const eventDatabasePaginationSchema = z.object({
 
 export const setAdminEventDatabasePagination = async (
   data: unknown
-): Promise<SuccessDatabasePaginationResponse | ErrorResponse> => {
+): Promise<(SuccessResponse & DatabasePagination) | ErrorResponse> => {
   try {
     const parsedData = eventDatabasePaginationSchema.safeParse(data);
 
@@ -100,7 +101,7 @@ export const setAdminEventDatabasePagination = async (
         },
       });
 
-      if(!event) {
+      if (!event) {
         throw new Error("Event not found");
       }
 
@@ -161,6 +162,63 @@ export const setAdminEventDatabasePagination = async (
     };
   } catch (error) {
     return handleServerActionError(error, "setAdminEventDatabasePagination");
+  }
+};
+
+export const addValidation = async (
+  data: unknown
+): Promise<SuccessResponse | ErrorResponse> => {
+  try {
+    const parsedData = nameSchema.safeParse(data);
+
+    if (!parsedData.success) {
+      throw new Error("Invalid data");
+    }
+
+    const { name, eventId } = parsedData.data;
+
+    prisma.$transaction(async (tx) => {
+      const [eventTotalResponses, newValidation] = await Promise.all([
+        tx.response.findMany({
+          where: {
+            eventId: eventId,
+          },
+          select: {
+            id: true,
+          },
+        }),
+        tx.validation.create({
+          data: {
+            type: name,
+            eventId: eventId,
+          },
+          select: {
+            id: true,
+          },
+        }),
+      ]);
+
+      await Promise.all(
+        eventTotalResponses.map(async (response) => {
+          return tx.checklist.create({
+            data: {
+              isCheck: false,
+              validationId: newValidation.id,
+              responseId: response.id,
+            },
+          });
+        })
+      );
+    });
+
+    revalidatePath("/app/admin/database/11"); //TODO: Make this dynamic
+
+    return {
+      success: true,
+      message: "Validation added!",
+    };
+  } catch (error) {
+    return handleServerActionError(error, "addValidation");
   }
 };
 

@@ -251,3 +251,8 @@ export const timeFormSchema = z.object({
   month: z.string().min(1, "Required"),
   year: z.string().min(1, "Required"),
 });
+
+export const nameSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters."),
+  eventId: z.string().min(2, "Event ID is missing."),
+});

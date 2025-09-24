@@ -4,7 +4,6 @@ import {
   CellContext,
   ColumnDef,
   getCoreRowModel,
-  Table,
   useReactTable,
 } from "@tanstack/react-table";
 import React, { createContext, useEffect, useState } from "react";
@@ -15,26 +14,26 @@ import {
 import { Button } from "@/components/ui/button";
 import EventDatabaseActionCell from "@/components/admin/event-database/slug/event-database-action-cell";
 import { useSearchParams } from "next/navigation";
-import { setAdminEventDatabasePagination } from "@/actions/adminDatabase.action";
+import {
+  addValidation,
+  setAdminEventDatabasePagination,
+} from "@/actions/adminDatabase.action";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useDatabaseStore } from "@/stores/admin/databaseStore";
-import { useForm, UseFormReturn } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import {
+  ServerActionError,
+  TEventDatabaseTableContext,
+  TNameSchema,
+} from "@/lib/types";
+import { nameSchema } from "@/lib/schemas";
+import { Input } from "@/components/ui/input";
 
 type EventDatabaseTableContextProviderProps = {
   fetchedData: EventData;
   children: React.ReactNode;
-};
-
-type TEventDatabaseTableContext = {
-  form: UseFormReturn<z.infer<typeof nameSchema>>;
-  handleOnSubmit: (values: z.infer<typeof nameSchema>) => void;
-  table: Table<EventResponse>;
-  columns: ColumnDef<EventResponse>[];
-  setData: React.Dispatch<React.SetStateAction<EventData>>;
-  data: EventData;
 };
 
 type ChecklistType = EventResponse["checklist"][number];
@@ -47,10 +46,6 @@ type TypeMap = {
   tag: TagType[];
 };
 
-const nameSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters."),
-});
-
 // TODO: clean up
 export const EventDatabaseTableContext =
   createContext<TEventDatabaseTableContext | null>(null);
@@ -60,17 +55,26 @@ function EventDatabaseTableContextProvider({
 }: EventDatabaseTableContextProviderProps) {
   const [data, setData] = useState(fetchedData);
   const searchParams = useSearchParams();
-  const { setId, setSlug, setCurrentPage } = useDatabaseStore((state) => state);
-  setSlug(data.event.slug);
-  setCurrentPage(data.currentPage)
+  const { setId, setSlug, setCurrentPage, setEventId } =
+    useDatabaseStore((state) => state);
 
-  const form = useForm<z.infer<typeof nameSchema>>({
+  const eventDatabaseForm = useForm<TNameSchema>({
     resolver: zodResolver(nameSchema),
   });
 
-  function handleOnSubmit(values: z.infer<typeof nameSchema>) {
-    form.trigger();
-    console.log(values);
+  async function handleOnSubmit(values: TNameSchema) {
+    await eventDatabaseForm.trigger("name");
+    const formData = {
+      ...values,
+      eventId: data.event.id,
+    };
+    toast.promise(addValidation(formData), {
+      loading: `deleting event...`,
+      success: () => {
+        return `Event deleted successfully!`;
+      },
+      error: (error: ServerActionError) => error.error || "Failed to add event",
+    });
   }
 
   function getAllUniqueChecklists<T extends keyof TypeMap>(
@@ -144,11 +148,41 @@ function EventDatabaseTableContextProvider({
       header: () => <div className="text-center">{answer.survey.question}</div>,
       accessorKey: answer.id,
       cell: ({ row }: CellContext<EventResponse, unknown>) => (
-        <p className="text-center">
-          {row.original.answer.find(
-            (item) => item.survey.id === answer.survey.id
-          )?.input || ""}
-        </p>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target as HTMLFormElement);
+            const inputValue = formData.get(
+              `${
+                row.original.answer.find(
+                  (item) => item.survey.id === answer.survey.id
+                )?.id
+              }-input`
+            );
+            setId(
+              row.original.answer.find(
+                (item) => item.survey.id === answer.survey.id
+              )?.id || null,
+              "edit-input",
+              true,
+              inputValue?.toString()
+            );
+          }}
+        >
+          <Input
+            className="hover:bg-input/30 focus-visible:bg-background dark:hover:bg-input/30 dark:focus-visible:bg-input/30 h-8 min-w-35 w-full border-transparent bg-transparent text-center shadow-none focus-visible:border dark:bg-transparent"
+            defaultValue={
+              row.original.answer.find(
+                (item) => item.survey.id === answer.survey.id
+              )?.input || ""
+            }
+            name={`${
+              row.original.answer.find(
+                (item) => item.survey.id === answer.survey.id
+              )?.id
+            }-input`}
+          />
+        </form>
         // TODO: Add Checkbox type
       ),
     }));
@@ -265,10 +299,16 @@ function EventDatabaseTableContextProvider({
     fetchData();
   }, [searchParams, fetchedData.event.slug, table]);
 
+  useEffect(() => {
+    setSlug(data.event.slug);
+    setCurrentPage(data.currentPage);
+    setEventId(data.event.id);
+  }, [data, setCurrentPage, setSlug, setEventId]);
+
   return (
     <EventDatabaseTableContext.Provider
       value={{
-        form,
+        eventDatabaseForm,
         handleOnSubmit,
         table,
         columns,

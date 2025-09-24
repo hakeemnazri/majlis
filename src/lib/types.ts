@@ -5,9 +5,13 @@ import {
   strictSurveyQuestionSchema,
   surveyQuestionsSchema,
   timeFormSchema,
+  nameSchema,
 } from "./schemas";
 import { handleServerActionError } from "./error";
 import { Event as EventModel, Prisma, Survey as SurveyModel, Tickets as TicketModel } from "../../generated/prisma";
+import { UseFormReturn } from "react-hook-form";
+import { EventData, EventResponse } from "@/components/admin/event-database/slug/table-data";
+import { ColumnDef, Table } from "@tanstack/react-table";
 
 export type TRegistername = keyof z.infer<typeof strictTicketSchema>;
 
@@ -70,3 +74,14 @@ export type PaginatedEvents = {
 
 
 export type TTimeFormSchema = z.infer<typeof timeFormSchema>
+
+export type TEventDatabaseTableContext = {
+  eventDatabaseForm: UseFormReturn<z.infer<typeof nameSchema>>;
+  handleOnSubmit: (values: z.infer<typeof nameSchema>) => void;
+  table: Table<EventResponse>;
+  columns: ColumnDef<EventResponse>[];
+  setData: React.Dispatch<React.SetStateAction<EventData>>;
+  data: EventData;
+};
+
+export type TNameSchema = z.infer<typeof nameSchema>

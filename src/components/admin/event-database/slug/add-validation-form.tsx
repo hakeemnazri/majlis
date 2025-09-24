@@ -10,19 +10,22 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useEventDatabaseTableContext } from "@/lib/hooks/contexts.hook";
+import { useDatabaseStore } from "@/stores/admin/databaseStore";
 
 function AddValidationForm() {
-  const { form } = useEventDatabaseTableContext();
+  const { eventDatabaseForm } = useEventDatabaseTableContext();
+  const { formAction } = useDatabaseStore((state) => state);
   return (
-    <Form {...form}>
+    <Form {...eventDatabaseForm}>
       <form
         onSubmit={(e) => {
           e.preventDefault();
         }}
         className="space-y-8"
       >
-        <FormField
-          control={form.control}
+        { formAction === "add-validation-column" &&
+          <FormField
+          control={eventDatabaseForm.control}
           name="name"
           render={({ field }) => (
             <FormItem>
@@ -36,7 +39,7 @@ function AddValidationForm() {
               <FormMessage />
             </FormItem>
           )}
-        />
+        />}
       </form>
     </Form>
   );
