@@ -1,12 +1,12 @@
 "use client"
 
-import EventButtonList from "./admin/edit-event/event-button-list"
 
 type WrapperProps = {
-    event: any[]
+    event: string[]
 }
 
 function Wrapper({event}:WrapperProps ) {
+  console.log(event)
   return (
     <p>meow</p>
     // <EventButtonList events={event} />

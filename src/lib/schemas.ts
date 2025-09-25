@@ -259,6 +259,11 @@ export const nameSchema = z.object({
 
 export const editCheckboxSchema = z.string().min(2, "Event ID is missing.")
 
+export const editInputSchema = z.object({
+  id: z.string().min(2, "Input ID is missing."),
+  payload: z.string(),
+})
+
 export const eventDatabasePaginationSchema = z.object({
   page: z.number().min(1),
   pageSize: z.number().min(10).max(20),

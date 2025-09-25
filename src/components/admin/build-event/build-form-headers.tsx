@@ -3,7 +3,6 @@
 import React from "react";
 import { BUILD_FORM_HEADERS } from "@/lib/constants/admin.constant";
 import { useBuildFormStore } from "@/stores/admin/buildFormStore";
-import { useBuildEventContext } from "@/lib/hooks/contexts.hook";
 import { Button } from "../../ui/button";
 import AnimContainer from "./anim-container";
 import { Dialog, DialogDescription, DialogTitle } from "@/components/ui/dialog";
@@ -33,24 +32,26 @@ const HeaderTitle = ({ formPage }: HeaderTitleProps) => {
   const description = BUILD_FORM_HEADERS[formPage].description;
   return (
     <div className="flex flex-col">
+      <Dialog>
         <DialogTitle>{title}</DialogTitle>
         <DialogDescription>{description}</DialogDescription>
+      </Dialog>
     </div>
   );
 };
 
 const AddSurveyQuestion = () => {
-  const {
-    survey: { append },
-  } = useBuildEventContext();
+  // const {
+  //   survey: { append },
+  // } = useBuildEventContext();
 
   const handleAddSurveyQuestion = () => {
-    append({
-      id: crypto.randomUUID(),
-      type: "SHORT_ANSWER",
-      question: "",
-      options: [""],
-    });
+    // append({
+    //   id: crypto.randomUUID(),
+    //   type: "SHORT_ANSWER",
+    //   question: "",
+    //   options: [""],
+    // });
   };
   return (
     <>

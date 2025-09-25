@@ -4,6 +4,7 @@ import { ErrorResponse, handleServerActionError } from "@/lib/error";
 import prisma from "@/lib/prisma";
 import {
   editCheckboxSchema,
+  editInputSchema,
   eventDatabasePaginationSchema,
   nameSchema,
   timeFormSchema,
@@ -23,7 +24,7 @@ export type EventWithinTimeSelect = Prisma.EventGetPayload<{
   };
 }>;
 
-type SuccessResponse = {
+export type SuccessResponse = {
   success: true;
   message: string;
 };
@@ -220,14 +221,16 @@ export const addValidation = async (
   }
 };
 
-export const editCheckbox = async (data: unknown) : Promise<SuccessResponse | ErrorResponse> => {
+export const editCheckbox =async (
+  data: unknown
+): Promise<SuccessResponse | ErrorResponse> => {
   try {
     const parsedData = editCheckboxSchema.safeParse(data);
 
     if (!parsedData.success) {
       throw new Error("Invalid data");
     }
-    const id  = parsedData.data;
+    const id = parsedData.data;
 
     await prisma.$transaction(async (tx) => {
       const response = await tx.checklist.findFirst({
@@ -239,7 +242,7 @@ export const editCheckbox = async (data: unknown) : Promise<SuccessResponse | Er
         },
       });
 
-      if(!response) {
+      if (!response) {
         throw new Error("id not found");
       }
 
@@ -253,15 +256,47 @@ export const editCheckbox = async (data: unknown) : Promise<SuccessResponse | Er
       });
     });
 
-    revalidatePath("/app/admin/database/11"); //TODO: Make this dynamic
+    revalidatePath('/app', 'layout');
+    //TODO: Make this dynamic
+
+    return {
+      success: true,
+      message: "Checkbox edited!",
+    };
+  } catch (error) {
+    return handleServerActionError(error, "editCheckbox");
+  }
+};
+
+export const editInput = async (
+  data: unknown
+): Promise<SuccessResponse | ErrorResponse> => {
+  try {
+    const parsedData = editInputSchema.safeParse(data);
+
+    if (!parsedData.success) {
+      throw new Error("Invalid data");
+    }
+
+    const { id, payload } = parsedData.data;
+
+    await prisma.answer.update({
+      where: {
+        id: id,
+      },
+      data:{
+        input: payload
+      }
+    })
+
+    revalidatePath("/app/admin/database");
 
     return{
       success: true,
-      message: "Checkbox edited!",
+      message: "Input edited!"
     }
-
   } catch (error) {
-    return handleServerActionError(error, "editCheckbox");
+    return handleServerActionError(error, "editInput");
   }
 };
 

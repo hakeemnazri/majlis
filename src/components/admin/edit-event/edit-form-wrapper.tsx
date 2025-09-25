@@ -8,7 +8,7 @@ async function EditFormWrapper() {
   }
 
   return (
-    <Wrapper event={events.data} />
+    <Wrapper event={[]} />
   );
 }
 

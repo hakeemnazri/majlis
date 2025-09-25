@@ -17,8 +17,10 @@ type Store = {
   formAction: formActionEnums;
   isPaginationLoading: boolean;
   currentPage: number;
+  currentPageSize: number;
   payload: string | null;
   setCurrentPage: (page: number) => void;
+  setCurrentPageSize: (pageSize: number) => void;
   setIsPaginatoinLoading: (isPaginationLoading: boolean) => void;
   searchEvents: EventWithinTimeSelect[] | null;
   setSearchEvents: (events: EventWithinTimeSelect[] | null) => void;
@@ -46,6 +48,7 @@ export const useDatabaseStore = create<Store>((set) => ({
   payload: null,
   isPaginationLoading: false,
   currentPage: 1,
+  currentPageSize: 10,
   setSearchEvents: (events: EventWithinTimeSelect[] | null) =>
     set({ searchEvents: events }),
   setAddValidationColumn: () => {
@@ -87,6 +90,11 @@ export const useDatabaseStore = create<Store>((set) => ({
     set((state) => ({
       ...state,
       currentPage: page,
+    })),
+  setCurrentPageSize: (pageSize: number) =>
+    set((state) => ({
+      ...state,
+      currentPageSize: pageSize,
     })),
   setIsPaginatoinLoading: (isPaginationLoading: boolean) =>
     set((state) => ({

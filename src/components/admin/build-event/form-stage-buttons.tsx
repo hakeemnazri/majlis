@@ -62,10 +62,14 @@ function FormStageButtons({ action = "create" }: FormStageButtonsProps) {
     const formData = getValues();
     const parsedFormData = formSchema2(false).safeParse(formData);
     if (!parsedFormData.success) return;
+    const data = {
+      ...parsedFormData.data,
+      id: parsedFormData.data.id || "",
+    }
     toast.promise(
       action === "create"
-        ? addEvent(parsedFormData.data)
-        : editEvent(parsedFormData.data),
+        ? addEvent(data)
+        : editEvent(data),
       {
         loading: `${action === "create" ? "Adding" : "Editing"} event...`,
         success: (data) => {

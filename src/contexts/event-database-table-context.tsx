@@ -17,11 +17,15 @@ import { useSearchParams } from "next/navigation";
 import {
   addValidation,
   editCheckbox,
+  editInput,
   setAdminEventDatabasePagination,
 } from "@/actions/adminDatabase.action";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
-import { formActionEnums, useDatabaseStore } from "@/stores/admin/databaseStore";
+import {
+  formActionEnums,
+  useDatabaseStore,
+} from "@/stores/admin/databaseStore";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -55,10 +59,20 @@ function EventDatabaseTableContextProvider({
   children,
 }: EventDatabaseTableContextProviderProps) {
   const [data, setData] = useState(fetchedData);
+  const [refreshKey, setRefreshKey] = useState(0);
   const searchParams = useSearchParams();
-  const { setId, setSlug, setCurrentPage, setEventId, setDialogClose, formAction, id } = useDatabaseStore(
-    (state) => state
-  );
+  const {
+    setId,
+    setSlug,
+    setCurrentPage,
+    setEventId,
+    setDialogClose,
+    formAction,
+    id,
+    payload,
+    currentPageSize,
+    currentPage,
+  } = useDatabaseStore((state) => state);
 
   const eventDatabaseForm = useForm<TNameSchema>({
     resolver: zodResolver(nameSchema),
@@ -69,7 +83,7 @@ function EventDatabaseTableContextProvider({
     setDialogClose();
     setId(null, formAction, false, undefined);
   }
-  async function handleOnSubmit( action: formActionEnums) {
+  async function handleOnSubmit(action: formActionEnums) {
     if (action === "add-validation-column") {
       const values = eventDatabaseForm.getValues();
       await eventDatabaseForm.trigger("name");
@@ -80,10 +94,9 @@ function EventDatabaseTableContextProvider({
       toast.promise(addValidation(formData), {
         loading: `Adding validation column...`,
         success: (data) => {
-          if(!data.success){
+          if (!data.success) {
             throw new Error(data.error);
           }
-          handleCloseDialog();
           return `Validation column added successfully!`;
         },
         error: (error: ServerActionError) =>
@@ -91,14 +104,13 @@ function EventDatabaseTableContextProvider({
       });
     }
 
-    if(action === "edit-checkbox"){
+    if (action === "edit-checkbox") {
       toast.promise(editCheckbox(id), {
         loading: `Editing checkbox...`,
         success: (data) => {
-          if(!data.success){
+          if (!data.success) {
             throw new Error(data.error);
           }
-          handleCloseDialog();
           return `Checkbox edited successfully!`;
         },
         error: (error: ServerActionError) =>
@@ -106,7 +118,21 @@ function EventDatabaseTableContextProvider({
       });
     }
 
-    return;
+    if (action === "edit-input") {
+      toast.promise(editInput({ id, payload }), {
+        loading: `Editing input...`,
+        success: (data) => {
+          if (!data.success) {
+            throw new Error(data.error);
+          }
+          return `Input edited successfully!`;
+        },
+        error: (error: ServerActionError) =>
+          error.error || "Failed to edit input",
+      });
+    }
+    handleCloseDialog();
+    setRefreshKey((prev) => prev + 1);
   }
 
   function getAllUniqueChecklists<T extends keyof TypeMap>(
@@ -197,7 +223,7 @@ function EventDatabaseTableContextProvider({
               )?.id || null,
               "edit-input",
               true,
-              inputValue?.toString()
+              inputValue?.toString() || ""
             );
           }}
         >
@@ -302,10 +328,10 @@ function EventDatabaseTableContextProvider({
   });
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async (pageNumber: number, pageSize: number) => {
       const data = await setAdminEventDatabasePagination({
-        page: Number(searchParams.get("pageNumber")) || 1,
-        pageSize: Number(searchParams.get("pageSize")) || 10,
+        page: pageNumber || currentPage,
+        pageSize: pageSize || currentPageSize,
         slug: fetchedData.event.slug,
       });
 
@@ -318,18 +344,25 @@ function EventDatabaseTableContextProvider({
     };
 
     const urlParams = new URLSearchParams(window.location.search);
-    const pageSize = urlParams.get("pageSize");
-    const pageNumber = urlParams.get("pageNumber");
+    const pageSize = Number(urlParams.get("pageSize"));
+    const pageNumber = Number(urlParams.get("pageNumber"));
 
     if (pageSize) {
-      table.setPageSize(Number(pageSize));
+      table.setPageSize(pageSize || currentPageSize);
     }
     if (pageNumber) {
-      table.setPageIndex(Number(pageNumber) - 1);
+      table.setPageIndex(pageNumber - 1 || currentPage);
     }
 
-    fetchData();
-  }, [searchParams, fetchedData.event.slug, table]);
+    fetchData(pageNumber, pageSize);
+  }, [
+    searchParams,
+    fetchedData.event.slug,
+    table,
+    currentPage,
+    currentPageSize,
+    refreshKey,
+  ]);
 
   useEffect(() => {
     setSlug(data.event.slug);

@@ -5,6 +5,7 @@ import prisma from "@/lib/prisma";
 import { formSchema2 } from "@/lib/schemas";
 import { revalidatePath } from "next/cache";
 
+
 export async function addEvent(event: unknown) {
   const schema = formSchema2(false);
   const parsedEvent = schema.safeParse(event);
@@ -74,10 +75,7 @@ export async function addEvent(event: unknown) {
     const schema = formSchema2(false);
     const parsedEvent = schema.safeParse(event);
     if (!parsedEvent.success) {
-      return {
-        success: false,
-        message: "Invalid event data.",
-      };
+      throw new Error("Invalid event data.");
     }
 
     const { tickets, survey, ...rest } = parsedEvent.data;

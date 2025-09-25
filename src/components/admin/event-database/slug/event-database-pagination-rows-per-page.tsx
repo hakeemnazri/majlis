@@ -17,7 +17,7 @@ import { toast } from "sonner";
 
 function EventDatabasePaginationRowsPerPage() {
   const { table, setData } = useEventDatabaseTableContext();
-  const { slug } = useDatabaseStore((state) => state);
+  const { slug, setCurrentPageSize } = useDatabaseStore((state) => state);
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -38,12 +38,11 @@ function EventDatabasePaginationRowsPerPage() {
       pageSize,
       slug,
     });
-
     if (!data.success) {
       toast.error(data.error);
       return;
     }
-
+    setCurrentPageSize(pageSize);
     setData(data.events);
   };
   return (
