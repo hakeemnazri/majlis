@@ -14,11 +14,10 @@ import React from "react";
 import AddValidationForm from "./add-validation-form";
 import { Button } from "@/components/ui/button";
 import { useEventDatabaseTableContext } from "@/lib/hooks/contexts.hook";
+import EventResponseForm from "@/components/public/form/event-response-form";
 
 function EventDatabaseDialog() {
-  const { isDialogOpen, formAction } = useDatabaseStore(
-    (state) => state
-  );
+  const { isDialogOpen, formAction } = useDatabaseStore((state) => state);
   const { handleOnSubmit, handleCloseDialog } = useEventDatabaseTableContext();
 
   return (
@@ -34,9 +33,12 @@ function EventDatabaseDialog() {
           {formAction === "remove-validation-column" &&
             "Remove Validation Column"}
           {formAction === "edit-checkbox" && "Edit Validation Checkbox"}
-          {formAction === "edit-input" && "Edit Responses Data"}
+          {formAction === "edit-input" && "Edit Response Data"}
+          {formAction === "add-response" && "Add Response Data"}
         </DialogTitle>
         <Separator />
+        {formAction === "add-response" && <EventResponseForm />}
+
         {formAction === "add-validation-column" && <AddValidationForm />}
         {formAction === "remove-validation-column" && <p>{formAction}</p>}
         {(formAction === "edit-checkbox" || formAction === "edit-input") && (
@@ -46,7 +48,8 @@ function EventDatabaseDialog() {
             </DialogHeader>
             <div className="space-y-2">
               <DialogDescription>
-                Once you proceed, the action will be applied and previous data will be lost.
+                Once you proceed, the action will be applied and previous data
+                will be lost.
               </DialogDescription>
               <DialogDescription>
                 Please take a moment to review that this is truly what you

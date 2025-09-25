@@ -5,22 +5,22 @@ import { FieldPath } from "react-hook-form";
 import { create } from "zustand";
 import { Event, Survey } from "../../../generated/prisma";
 
-type TEvent = Pick<Event, "id"> & {
-  survey: Survey[];
-};
 
 type Store = {
-  event: TEvent | null;
+  survey: Survey[] | null;
+  event: Event | null;
   formProps: () => FieldPath<TEventResponseForm>[];
-  setEvent: (event: TEvent) => void;
+  setEvent: (event: Event) => void;
+  setSurvey: (survey: Survey[]) => void;
 };
 
 export const useEventResponseFormStore = create<Store>((set, get) => ({
+  survey: null,
   event: null,
   formProps: () => {
-    const event = get().event;
+    const survey = get().survey;
     return [
-      ...(event?.survey ?? []).map((question, index) => {
+      ...(survey ?? []).map((question, index) => {
         if (question.type === "CHECKBOXES") {
           return "responses." + index + ".answer.checkbox";
         } else {
@@ -29,5 +29,14 @@ export const useEventResponseFormStore = create<Store>((set, get) => ({
       }),
     ] as FieldPath<TEventResponseForm>[];
   },
-  setEvent: (event: TEvent) => set({ event }),
+  setEvent: (event: Event) =>
+    set((state) => ({
+      ...state,
+      event,
+    })),
+  setSurvey: (survey: Survey[]) =>
+    set((state) => ({
+      ...state,
+      survey,
+    })),
 }));

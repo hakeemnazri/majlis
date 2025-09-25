@@ -9,9 +9,17 @@ import {
   ResponseQuestionSchema,
 } from "./schemas";
 import { handleServerActionError } from "./error";
-import { Event as EventModel, Prisma, Survey as SurveyModel, Tickets as TicketModel } from "../../generated/prisma";
+import {
+  Event as EventModel,
+  Prisma,
+  Survey as SurveyModel,
+  Tickets as TicketModel,
+} from "../../generated/prisma";
 import { UseFormReturn } from "react-hook-form";
-import { EventData, EventResponse, EventSurvey } from "@/components/admin/event-database/slug/table-data";
+import {
+  EventData,
+  EventResponse,
+} from "@/components/admin/event-database/slug/table-data";
 import { ColumnDef, Table } from "@tanstack/react-table";
 import { formActionEnums } from "@/stores/admin/databaseStore";
 
@@ -46,25 +54,26 @@ export type TInputTickets = {
   className: string;
 };
 
-
 export type EventWithRelations = EventModel & {
-    survey: SurveyModel[];
-    tickets: TicketModel[]
-}
+  survey: SurveyModel[];
+  tickets: TicketModel[];
+};
 export type TGetAdminDashboardEvents = {
-    success: true,
-    message: string,
-    data: EventWithRelations[]
-}
+  success: true;
+  message: string;
+  data: EventWithRelations[];
+};
 
 export type TAction = "create" | "edit";
 
-export type TEventSurveyForm = z.infer<typeof surveyQuestionsSchema>
+export type TEventSurveyForm = z.infer<typeof surveyQuestionsSchema>;
 
-export type TEventPayload = Prisma.EventGetPayload<{ include:{
-  survey: true;
-  tickets: true
-}}>
+export type TEventPayload = Prisma.EventGetPayload<{
+  include: {
+    survey: true;
+    tickets: true;
+  };
+}>;
 
 export type PaginatedEvents = {
   data: TEventPayload[];
@@ -74,8 +83,7 @@ export type PaginatedEvents = {
   isFinalPage: boolean;
 };
 
-
-export type TTimeFormSchema = z.infer<typeof timeFormSchema>
+export type TTimeFormSchema = z.infer<typeof timeFormSchema>;
 
 export type TEventDatabaseTableContext = {
   eventDatabaseForm: UseFormReturn<z.infer<typeof nameSchema>>;
@@ -85,10 +93,8 @@ export type TEventDatabaseTableContext = {
   columns: ColumnDef<EventResponse>[];
   setData: React.Dispatch<React.SetStateAction<EventData>>;
   data: EventData;
-  survey: EventSurvey
 };
 
-export type TNameSchema = z.infer<typeof nameSchema>
+export type TNameSchema = z.infer<typeof nameSchema>;
 
-export type TEventResponseForm = z.infer<typeof ResponseQuestionSchema>
-
+export type TEventResponseForm = z.infer<typeof ResponseQuestionSchema>;

@@ -36,6 +36,8 @@ import {
 } from "@/lib/types";
 import { nameSchema } from "@/lib/schemas";
 import { Input } from "@/components/ui/input";
+import { useEventResponseFormStore } from "@/stores/event/eventResponseFormStore";
+import { useEventResponseFormContext } from "@/lib/hooks/contexts.hook";
 
 type EventDatabaseTableContextProviderProps = {
   fetchedData: EventData & EventSurvey;
@@ -61,7 +63,6 @@ function EventDatabaseTableContextProvider({
 }: EventDatabaseTableContextProviderProps) {
   const { survey, ...eventDataProps } = fetchedData;
   const eventData = eventDataProps;
-  const eventSurvey = { survey };
   const [data, setData] = useState(eventData);
   const [refreshKey, setRefreshKey] = useState(0);
   const searchParams = useSearchParams();
@@ -77,6 +78,8 @@ function EventDatabaseTableContextProvider({
     currentPageSize,
     currentPage,
   } = useDatabaseStore((state) => state);
+  const { setSurvey, setEvent } = useEventResponseFormStore((state) => state);
+  const { handleOnSubmitEventResponse } = useEventResponseFormContext();
 
   const eventDatabaseForm = useForm<TNameSchema>({
     resolver: zodResolver(nameSchema),
@@ -135,6 +138,11 @@ function EventDatabaseTableContextProvider({
           error.error || "Failed to edit input",
       });
     }
+
+    if (action === "add-response") {
+      await handleOnSubmitEventResponse();
+    }
+
     handleCloseDialog();
     setRefreshKey((prev) => prev + 1);
   }
@@ -372,7 +380,9 @@ function EventDatabaseTableContextProvider({
     setSlug(data.event.slug);
     setCurrentPage(data.currentPage);
     setEventId(data.event.id);
-  }, [data, setCurrentPage, setSlug, setEventId]);
+    setSurvey(survey);
+    setEvent(data.event);
+  }, [data, survey, setCurrentPage, setSlug, setEventId, setSurvey, setEvent]);
 
   return (
     <EventDatabaseTableContext.Provider
@@ -383,7 +393,6 @@ function EventDatabaseTableContextProvider({
         table,
         columns,
         data,
-        survey: eventSurvey,
         setData,
       }}
     >

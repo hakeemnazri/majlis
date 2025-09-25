@@ -1,18 +1,21 @@
 "use client";
 
+import { submitEventSurveyForm } from "@/actions/eventFormSubmit.admin";
 import { strictSurveyQuestionInputSchema } from "@/lib/schemas";
 import { TEventResponseForm } from "@/lib/types";
 import { useEventResponseFormStore } from "@/stores/event/eventResponseFormStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createContext, useEffect } from "react";
 import { useForm, UseFormReturn } from "react-hook-form";
+import { toast } from "sonner";
 
 type EventResponseFormContextProviderProps = {
   children: React.ReactNode;
 };
 
 type TEventResponseFormContext = {
-  form: UseFormReturn<TEventResponseForm>;
+  eventResponseForm: UseFormReturn<TEventResponseForm>;
+  handleOnSubmitEventResponse: () => Promise<void>;
 };
 
 export const EventResponseFormContext =
@@ -21,9 +24,9 @@ export const EventResponseFormContext =
 function EventResponseFormContextProvider({
   children,
 }: EventResponseFormContextProviderProps) {
-  const { event } = useEventResponseFormStore((state) => state);
+  const { survey, event, formProps } = useEventResponseFormStore((state) => state);
 
-  const form = useForm<TEventResponseForm>({
+  const eventResponseForm = useForm<TEventResponseForm>({
     resolver: zodResolver(strictSurveyQuestionInputSchema(true)),
     defaultValues: {
       eventId: undefined,
@@ -32,10 +35,10 @@ function EventResponseFormContextProvider({
   });
 
   useEffect(() => {
-    if (event) {
-      form.reset({
-        eventId: event?.id,
-        responses: event?.survey.map((question) => ({
+    if (event && survey) {
+      eventResponseForm.reset({
+        eventId: event.id,
+        responses: survey.map((question) => ({
           id: question.id,
           answer: {
             input: "",
@@ -44,12 +47,39 @@ function EventResponseFormContextProvider({
         })),
       });
     }
-  }, [event, form]);
+  }, [event, eventResponseForm, survey]);
+
+  async function handleOnSubmitEventResponse() {
+    const values = eventResponseForm.getValues();
+    const validateForm = await eventResponseForm.trigger(formProps());
+    if (!validateForm) return;
+
+    toast.promise(submitEventSurveyForm(values), {
+      loading: "Submitting response...",
+      success: (data) => {
+        if ("error" in data) {
+          throw new Error(data.error);
+        }
+        if (!data.success) {
+          throw new Error(data.message);
+        }
+        if (data.success) {
+          eventResponseForm.reset();
+          return data.message;
+        }
+        return "Response submitted successfully!";
+      },
+      error: (error) => {
+        return error.message || "Failed to submit response";
+      },
+    });
+  }
 
   return (
     <EventResponseFormContext.Provider
       value={{
-        form,
+        eventResponseForm,
+        handleOnSubmitEventResponse
       }}
     >
       {children}
