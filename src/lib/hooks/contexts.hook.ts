@@ -2,6 +2,7 @@
 import { BuildEventContext } from "@/contexts/build-event-context-provider";
 import { DashboardTableContext } from "@/contexts/dashboard-table-context";
 import { EventDatabaseTableContext } from "@/contexts/event-database-table-context";
+import { EventResponseFormContext } from "@/contexts/event-response-form-context";
 import { EventSurveyFormContext } from "@/contexts/event-survey-form-context-provider";
 import { useContext } from "react";
 
@@ -48,6 +49,18 @@ export const useEventDatabaseTableContext = () => {
   if (!context) {
     throw new Error(
       "useEventDatabaseTableContext must be used within a EventSurveyFormContextProvider"
+    );
+  }
+
+  return context;
+};
+
+export const useEventResponseFormContext = () => {
+  const context = useContext(EventResponseFormContext);
+
+  if (!context) {
+    throw new Error(
+      "EventResponseFormContext must be used within a EventSurveyFormContextProvider"
     );
   }
 

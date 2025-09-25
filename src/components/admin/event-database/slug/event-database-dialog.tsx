@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
@@ -15,8 +16,9 @@ import { Button } from "@/components/ui/button";
 import { useEventDatabaseTableContext } from "@/lib/hooks/contexts.hook";
 
 function EventDatabaseDialog() {
-  const { isDialogOpen, formAction, id, payload } =
-    useDatabaseStore((state) => state);
+  const { isDialogOpen, formAction } = useDatabaseStore(
+    (state) => state
+  );
   const { handleOnSubmit, handleCloseDialog } = useEventDatabaseTableContext();
 
   return (
@@ -27,31 +29,36 @@ function EventDatabaseDialog() {
       }}
     >
       <DialogContent className="flex flex-col max-h-2/3">
-        <DialogTitle>Header</DialogTitle>
+        <DialogTitle>
+          {formAction === "add-validation-column" && "Add Validation Column"}
+          {formAction === "remove-validation-column" &&
+            "Remove Validation Column"}
+          {formAction === "edit-checkbox" && "Edit Validation Checkbox"}
+          {formAction === "edit-input" && "Edit Responses Data"}
+        </DialogTitle>
         <Separator />
         {formAction === "add-validation-column" && <AddValidationForm />}
-
         {formAction === "remove-validation-column" && <p>{formAction}</p>}
-
-        {formAction === "edit-checkbox" && (
-          <DialogDescription>
-            Are you sure you want to proceed with this action? Once you check
-            this box, the action will be applied and may not be easily
-            reversible. <br></br>Please take a moment to review that this is
-            truly what you intend to do before continuing.
-          </DialogDescription>
-        )}
-        {formAction === "edit-input" && (
-          <p>
-            {id} && {payload}
-          </p>
+        {(formAction === "edit-checkbox" || formAction === "edit-input") && (
+          <>
+            <DialogHeader>
+              Are you sure you want to proceed with this action?
+            </DialogHeader>
+            <div className="space-y-2">
+              <DialogDescription>
+                Once you proceed, the action will be applied and previous data will be lost.
+              </DialogDescription>
+              <DialogDescription>
+                Please take a moment to review that this is truly what you
+                intend to do before continuing.
+              </DialogDescription>
+            </div>
+          </>
         )}
 
         <Separator />
         <DialogFooter>
-          <Button onClick={() => handleOnSubmit(formAction)}>
-            Submit
-          </Button>
+          <Button onClick={() => handleOnSubmit(formAction)}>Submit</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

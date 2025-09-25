@@ -6,11 +6,12 @@ import {
   surveyQuestionsSchema,
   timeFormSchema,
   nameSchema,
+  ResponseQuestionSchema,
 } from "./schemas";
 import { handleServerActionError } from "./error";
 import { Event as EventModel, Prisma, Survey as SurveyModel, Tickets as TicketModel } from "../../generated/prisma";
 import { UseFormReturn } from "react-hook-form";
-import { EventData, EventResponse } from "@/components/admin/event-database/slug/table-data";
+import { EventData, EventResponse, EventSurvey } from "@/components/admin/event-database/slug/table-data";
 import { ColumnDef, Table } from "@tanstack/react-table";
 import { formActionEnums } from "@/stores/admin/databaseStore";
 
@@ -84,6 +85,10 @@ export type TEventDatabaseTableContext = {
   columns: ColumnDef<EventResponse>[];
   setData: React.Dispatch<React.SetStateAction<EventData>>;
   data: EventData;
+  survey: EventSurvey
 };
 
 export type TNameSchema = z.infer<typeof nameSchema>
+
+export type TEventResponseForm = z.infer<typeof ResponseQuestionSchema>
+

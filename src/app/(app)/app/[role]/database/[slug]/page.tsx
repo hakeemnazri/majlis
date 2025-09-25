@@ -26,6 +26,9 @@ async function page({ params, searchParams }: pageProps) {
       where: {
         slug: resolvedParams.slug,
       },
+      include:{
+        survey: true,
+      }
     });
 
     const responses = await tx.response.findMany({
@@ -33,13 +36,13 @@ async function page({ params, searchParams }: pageProps) {
         eventId: event?.id,
       },
       include: {
+        upload: true,
+        remark: true,
         answer: {
           include: {
             survey: true,
           },
         },
-        upload: true,
-        remark: true,
         tag: {
           include: {
             AddedProps: true,
@@ -80,6 +83,34 @@ async function page({ params, searchParams }: pageProps) {
   if (fetchedData.event === null) {
     notFound();
   }
+////////////////////////////////////
+  const id = "cmfuryjja0000tyd20qphwet1";
+  const event = await prisma.event.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      survey: true,
+      response: {
+        include: {
+          answer: {
+            include: {
+              survey: true,
+            },
+          },
+          checklist: {
+            include: {
+              Validation: true,
+            }
+          },
+        },
+      },
+    },
+  });
+
+  if (!event) {
+    return null;
+  }
 
   return (
     <section className="flex flex-col gap-4 py-4 px-4 md:gap-6 md:py-6 lg:px-6">
@@ -87,6 +118,7 @@ async function page({ params, searchParams }: pageProps) {
         fetchedData={{
           ...fetchedData,
           event: fetchedData.event!,
+          survey: event.survey,
         }}
       >
         <EventDatabaseTable />

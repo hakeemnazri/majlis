@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Event, Prisma } from "../../../../../generated/prisma";
+import { Event, Prisma, Survey, } from "../../../../../generated/prisma";
 import { useEventDatabaseTableContext } from "@/lib/hooks/contexts.hook";
 import {
   Table,
@@ -22,6 +22,10 @@ export type EventData = {
   canGetPreviousPage: boolean;
   isFinalPage: boolean;
 };
+
+export type EventSurvey = {
+  survey: Survey[];
+}
 
 export type EventResponse = Prisma.ResponseGetPayload<{
   include: {
@@ -44,6 +48,12 @@ export type EventResponse = Prisma.ResponseGetPayload<{
     remark: true;
   };
 }>;
+
+export type EventWithSurvey = Prisma.EventGetPayload<{
+  include:{
+    survey: true,
+  }
+}>
 
 function TableData() {
   const { table, columns } = useEventDatabaseTableContext();

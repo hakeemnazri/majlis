@@ -10,6 +10,7 @@ import React, { createContext, useEffect, useState } from "react";
 import {
   EventData,
   EventResponse,
+  EventSurvey,
 } from "@/components/admin/event-database/slug/table-data";
 import { Button } from "@/components/ui/button";
 import EventDatabaseActionCell from "@/components/admin/event-database/slug/event-database-action-cell";
@@ -37,7 +38,7 @@ import { nameSchema } from "@/lib/schemas";
 import { Input } from "@/components/ui/input";
 
 type EventDatabaseTableContextProviderProps = {
-  fetchedData: EventData;
+  fetchedData: EventData & EventSurvey;
   children: React.ReactNode;
 };
 
@@ -58,7 +59,10 @@ function EventDatabaseTableContextProvider({
   fetchedData,
   children,
 }: EventDatabaseTableContextProviderProps) {
-  const [data, setData] = useState(fetchedData);
+  const { survey, ...eventDataProps } = fetchedData;
+  const eventData = eventDataProps;
+  const eventSurvey = { survey };
+  const [data, setData] = useState(eventData);
   const [refreshKey, setRefreshKey] = useState(0);
   const searchParams = useSearchParams();
   const {
@@ -379,6 +383,7 @@ function EventDatabaseTableContextProvider({
         table,
         columns,
         data,
+        survey: eventSurvey,
         setData,
       }}
     >

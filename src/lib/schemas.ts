@@ -269,3 +269,13 @@ export const eventDatabasePaginationSchema = z.object({
   pageSize: z.number().min(10).max(20),
   slug: z.string(),
 });
+
+export const ResponseQuestionSchema = z.object({
+  eventId: z.string(),
+  responses: z.array(
+    z.object({
+      id: z.string(),
+      answer: surveyInputSchema,
+    })
+  ),
+});

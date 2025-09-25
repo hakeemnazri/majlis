@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import EventResponseFormContextProvider from "@/contexts/event-response-form-context";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -23,7 +24,9 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${poppins.variable} antialiased min-h-screen w-full`}>
-        {children}
+        <EventResponseFormContextProvider>
+          {children}
+        </EventResponseFormContextProvider>
         <Toaster />
       </body>
     </html>
