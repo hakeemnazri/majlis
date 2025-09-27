@@ -61,11 +61,11 @@ function FormStageButtons({ action = "create" }: FormStageButtonsProps) {
     const { getValues } = form;
     const formData = getValues();
     const parsedFormData = formSchema2(false).safeParse(formData);
-    if (!parsedFormData.success) return;
-    const data = {
-      ...parsedFormData.data,
-      id: parsedFormData.data.id || "",
-    }
+    if (!parsedFormData.success){
+      toast.error("Invalid form data");
+      return;
+    };
+    const data = parsedFormData.data;
     toast.promise(
       action === "create"
         ? addEvent(data)

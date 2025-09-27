@@ -1,16 +1,18 @@
-"use client"
+"use client";
 
 
 type WrapperProps = {
-    event: string[]
-}
+  event: string[];
+};
 
-function Wrapper({event}:WrapperProps ) {
-  console.log(event)
+function Wrapper({ event }: WrapperProps) {
+  console.log(event);
   return (
-    <p>meow</p>
-    // <EventButtonList events={event} />
-  )
+    <>
+      <p>meow</p>
+      {/* <EventButtonList events={event} /> */}
+    </>
+  );
 }
 
-export default Wrapper
+export default Wrapper;

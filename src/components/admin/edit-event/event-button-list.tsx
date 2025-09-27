@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
   DialogFooter,
 } from "@/components/ui/dialog";
 import FormStageButtons from "../build-event/form-stage-buttons";
@@ -29,7 +28,6 @@ type EventButtonList = {
 };
 
 function EventButtonList({ events }: EventButtonList) {
-
   const {
     formPage,
     isDialogOpen,
@@ -65,11 +63,8 @@ function EventButtonList({ events }: EventButtonList) {
           });
         }}
       >
-        
         <DialogContent className="flex flex-col max-h-2/3">
-          <DialogHeader>
-            <BuildFormHeaders />
-          </DialogHeader>
+          <BuildFormHeaders />
 
           <Separator />
 

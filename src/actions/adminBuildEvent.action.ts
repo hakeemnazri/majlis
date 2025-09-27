@@ -5,8 +5,8 @@ import prisma from "@/lib/prisma";
 import { formSchema2 } from "@/lib/schemas";
 import { revalidatePath } from "next/cache";
 
-
 export async function addEvent(event: unknown) {
+  console.log("asdadsads", event)
   const schema = formSchema2(false);
   const parsedEvent = schema.safeParse(event);
   if (!parsedEvent.success) {
@@ -52,11 +52,13 @@ export async function addEvent(event: unknown) {
           create: [
             {
               type: "register", //Default validation for each
+              order: 1,
             },
           ],
         },
       },
     });
+
 
     revalidatePath("/app/admin/dashboard"); //TODO: Make this Dynamic
 
@@ -70,7 +72,7 @@ export async function addEvent(event: unknown) {
   }
 }
 
- export async function editEvent(event: unknown) {
+export async function editEvent(event: unknown) {
   try {
     const schema = formSchema2(false);
     const parsedEvent = schema.safeParse(event);

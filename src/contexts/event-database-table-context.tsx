@@ -62,7 +62,7 @@ function EventDatabaseTableContextProvider({
   children,
 }: EventDatabaseTableContextProviderProps) {
   const { survey, ...eventDataProps } = fetchedData;
-  const eventData = eventDataProps;
+  const eventData = {...eventDataProps};
   const [data, setData] = useState(eventData);
   const [refreshKey, setRefreshKey] = useState(0);
   const searchParams = useSearchParams();

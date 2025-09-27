@@ -125,6 +125,11 @@ export const setAdminEventDatabasePagination = async (
             include: {
               Validation: true,
             },
+            orderBy:{
+              Validation:{
+                order: "asc"
+              }
+            }
           },
         },
         skip,
@@ -177,6 +182,13 @@ export const addValidation = async (
     const { name, eventId } = parsedData.data;
 
     prisma.$transaction(async (tx) => {
+
+      const validationNumber = await tx.validation.count({
+        where: {
+          eventId: eventId,
+        },
+      });
+
       const [eventTotalResponses, newValidation] = await Promise.all([
         tx.response.findMany({
           where: {
@@ -190,6 +202,7 @@ export const addValidation = async (
           data: {
             type: name,
             eventId: eventId,
+            order: validationNumber + 1,
           },
           select: {
             id: true,
@@ -204,6 +217,7 @@ export const addValidation = async (
               isCheck: false,
               validationId: newValidation.id,
               responseId: response.id,
+              order: validationNumber + 1,
             },
           });
         })

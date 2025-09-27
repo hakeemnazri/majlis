@@ -48,10 +48,10 @@ model Survey {
   id         String     @id @default(cuid())
   eventId    String
   order      Int
-  type       SurveyType
   question   String
   options    String[]
   isRequired Boolean
+  type       SurveyType
   answer     Answer[]
   event      Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
   createdAt  DateTime   @default(now())
@@ -64,6 +64,7 @@ model Validation {
   id        String      @id @default(cuid())
   eventId   String
   type      String
+  order     Int
   checklist Checklist[]
 
   Event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
@@ -76,6 +77,7 @@ model Validation {
 model AddedProps {
   id      String @id @default(cuid())
   eventId String
+  order   Int
   type    String
   tags    Tag[]
 
@@ -107,13 +109,14 @@ model Response {
 model Tag {
   id         String @id @default(cuid())
   note       String
-  propsId     String
+  order      Int
+  propsId    String
   responseId String
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Response  Response @relation(fields: [responseId], references: [id])
-  AddedProps     AddedProps   @relation(fields: [propsId], references: [id])
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  Response   Response   @relation(fields: [responseId], references: [id])
+  AddedProps AddedProps @relation(fields: [propsId], references: [id])
 
   @@index([responseId])
   @@index([propsId])
@@ -122,6 +125,7 @@ model Tag {
 model Upload {
   id         String @id @default(cuid())
   link       String
+  order      Int
   note       String
   responseId String
 
@@ -135,6 +139,7 @@ model Upload {
 
 model Remark {
   id         String @id @default(cuid())
+  order      Int
   note       String
   responseId String
 
@@ -167,6 +172,7 @@ model Checklist {
   id           String  @id @default(cuid())
   responseId   String
   validationId String
+  order        Int
   isCheck      Boolean
 
   response   Response   @relation(fields: [responseId], references: [id], onDelete: Cascade)

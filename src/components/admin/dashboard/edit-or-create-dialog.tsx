@@ -3,7 +3,6 @@ import {
   Dialog,
   DialogContent,
   DialogFooter,
-  DialogHeader,
 } from "@/components/ui/dialog";
 import React from "react";
 import BuildFormHeaders from "../build-event/build-form-headers";
@@ -23,12 +22,8 @@ import { useBuildEventContext } from "@/lib/hooks/contexts.hook";
 import { useBuildFormStore } from "@/stores/admin/buildFormStore";
 
 function EditOrCreateDialog() {
-  const {
-    formPage,
-    isDialogOpen,
-    formAction,
-    handleOnDialogClose,
-  } = useBuildFormStore((state) => state);
+  const { formPage, isDialogOpen, formAction, handleOnDialogClose } =
+    useBuildFormStore((state) => state);
   const { form } = useBuildEventContext();
 
   return (
@@ -43,9 +38,7 @@ function EditOrCreateDialog() {
       }}
     >
       <DialogContent className="flex flex-col max-h-2/3">
-        <DialogHeader>
-          <BuildFormHeaders />
-        </DialogHeader>
+        <BuildFormHeaders />
 
         <Separator />
 

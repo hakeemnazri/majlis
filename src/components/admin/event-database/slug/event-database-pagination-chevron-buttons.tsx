@@ -20,7 +20,7 @@ function EventDatabasePaginationChevronButtons() {
     setData,
     table,
   } = useEventDatabaseTableContext();
-  const { slug, isPaginationLoading, setIsPaginatoinLoading } = useDatabaseStore((state) => state);
+  const { slug, isPaginationLoading, currentPage, setIsPaginatoinLoading } = useDatabaseStore((state) => state);
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -49,6 +49,7 @@ function EventDatabasePaginationChevronButtons() {
     setData(data.events);
     setIsPaginatoinLoading(false);
   };
+  
   return (
     <div className="ml-auto flex items-center gap-2 lg:ml-0">
       <Button
@@ -65,7 +66,7 @@ function EventDatabasePaginationChevronButtons() {
         className="size-8"
         size="icon"
         onClick={() =>
-          handleChangePage(table.getState().pagination.pageIndex + 1)
+          handleChangePage(currentPage - 1)
         }
         disabled={!data.canGetPreviousPage || isPaginationLoading}
       >
@@ -77,7 +78,7 @@ function EventDatabasePaginationChevronButtons() {
         className="size-8"
         size="icon"
         onClick={() => {
-          handleChangePage(table.getState().pagination.pageIndex + 2);
+          handleChangePage(currentPage + 1);
         }}
         disabled={data.isFinalPage || isPaginationLoading}
       >

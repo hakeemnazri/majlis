@@ -51,9 +51,10 @@ export const submitEventSurveyForm = async (response: unknown) => {
             })),
           },
           checklist: {
-            create: event?.validation.map((validation) => ({
+            create: event?.validation.map((validation, index) => ({
               validationId: validation.id,
               isCheck: false,
+              order: index + 1,
             })),
           },
         },

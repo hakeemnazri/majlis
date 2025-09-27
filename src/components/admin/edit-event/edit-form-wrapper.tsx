@@ -1,4 +1,3 @@
-import Wrapper from "@/components/wrapper";
 import { getAdminDashboardEvents } from "@/lib/server-utils";
 
 async function EditFormWrapper() {
@@ -8,7 +7,8 @@ async function EditFormWrapper() {
   }
 
   return (
-    <Wrapper event={[]} />
+    // <Wrapper event={events.data} />
+    <></>
   );
 }
 

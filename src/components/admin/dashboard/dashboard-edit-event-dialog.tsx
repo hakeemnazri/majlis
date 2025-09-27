@@ -3,7 +3,6 @@ import {
   Dialog,
   DialogContent,
   DialogFooter,
-  DialogHeader,
 } from "@/components/ui/dialog";
 import React from "react";
 import BuildFormHeaders from "../build-event/build-form-headers";
@@ -17,7 +16,10 @@ import FormFourthPage from "../build-event/form-fourth-page";
 import FormStageButtons from "../build-event/form-stage-buttons";
 import { useBuildEventContext } from "@/lib/hooks/contexts.hook";
 import { useBuildFormStore } from "@/stores/admin/buildFormStore";
-import { EVENT_FORM_SECOND_PAGE_DEFAULT_VALUES, EVENT_FORM_THIRD_PAGE_DEFAULT_VALUES } from "@/lib/constants/admin.constant";
+import {
+  EVENT_FORM_SECOND_PAGE_DEFAULT_VALUES,
+  EVENT_FORM_THIRD_PAGE_DEFAULT_VALUES,
+} from "@/lib/constants/admin.constant";
 
 function DashboardEditEventDialog() {
   const { form } = useBuildEventContext();
@@ -35,9 +37,7 @@ function DashboardEditEventDialog() {
       }}
     >
       <DialogContent className="flex flex-col max-h-2/3">
-        <DialogHeader>
-          <BuildFormHeaders />
-        </DialogHeader>
+        <BuildFormHeaders />
 
         <Separator />
 

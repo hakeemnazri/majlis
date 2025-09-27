@@ -3,7 +3,13 @@
 import { useBuildEventContext } from "@/lib/hooks/contexts.hook";
 import { cn } from "@/lib/utils";
 import React from "react";
-import { FormField, FormItem, FormControl, FormMessage, FormLabel } from "../../ui/form";
+import {
+  FormField,
+  FormItem,
+  FormControl,
+  FormMessage,
+  FormLabel,
+} from "../../ui/form";
 import {
   Select,
   SelectContent,
@@ -117,7 +123,14 @@ const SurveyQuestion = ({
                       <SelectContent>
                         {QUESTION_TYPES.map((option, index) => (
                           <SelectItem key={index} value={option}>
-                            {option.charAt(0).toUpperCase() + option.slice(1)}
+                            {option
+                              .split("_")
+                              .map(
+                                (word) =>
+                                  word.charAt(0).toUpperCase() +
+                                  word.slice(1).toLowerCase()
+                              )
+                              .join(" ")}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -166,9 +179,7 @@ const SurveyQuestion = ({
               name={`survey.${index}.isRequired`}
               render={({ field }) => {
                 return (
-                  <FormItem
-                    className="flex flex-row items-center gap-2"
-                  >
+                  <FormItem className="flex flex-row items-center gap-2">
                     <FormControl>
                       <Checkbox
                         checked={field.value}
