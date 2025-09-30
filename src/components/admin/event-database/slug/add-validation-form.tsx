@@ -34,7 +34,9 @@ function AddValidationForm() {
                 Please enter the validation name.
               </FormDescription>
               <FormControl>
-                <Input placeholder="Enter validation name" {...field} />
+                <Input placeholder="Enter validation name" {...field}
+                value={field.value}
+                 />
               </FormControl>
               <FormMessage />
             </FormItem>

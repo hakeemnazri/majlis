@@ -69,7 +69,7 @@ function TableData() {
                       key={header.id}
                       colSpan={header.colSpan}
                       className={`${
-                        header.column.id === "actions" ? "w-12" : ""
+                        header.column.id === "actions" ? "w-8" : ""
                       } px-4`}
                     >
                       {header.isPlaceholder

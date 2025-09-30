@@ -125,11 +125,11 @@ export const setAdminEventDatabasePagination = async (
             include: {
               Validation: true,
             },
-            orderBy:{
-              Validation:{
-                order: "asc"
-              }
-            }
+            orderBy: {
+              Validation: {
+                order: "asc",
+              },
+            },
           },
         },
         skip,
@@ -182,7 +182,6 @@ export const addValidation = async (
     const { name, eventId } = parsedData.data;
 
     prisma.$transaction(async (tx) => {
-
       const validationNumber = await tx.validation.count({
         where: {
           eventId: eventId,
@@ -235,7 +234,37 @@ export const addValidation = async (
   }
 };
 
-export const editCheckbox =async (
+export const deleteValidation = async (data: unknown) : Promise<SuccessResponse | ErrorResponse> => {
+  try {
+    const parsedData = editInputSchema.safeParse(data);
+
+    if (!parsedData.success) {
+      throw new Error("Invalid data");
+    }
+
+    const { id } = parsedData.data;
+
+    prisma.$transaction(async (tx) => {
+      tx.validation.delete({
+        where: {
+          id: id,
+        },
+      })
+    });
+
+    revalidatePath("/app/admin/database/11"); //TODO: Make this dynamic
+
+    return {
+      success: true,
+      message: "Validation deleted!",
+    };
+
+  } catch (error) {
+    return handleServerActionError(error, "addValidation");
+  }
+};
+
+export const editCheckbox = async (
   data: unknown
 ): Promise<SuccessResponse | ErrorResponse> => {
   try {
@@ -270,7 +299,7 @@ export const editCheckbox =async (
       });
     });
 
-    revalidatePath('/app', 'layout');
+    revalidatePath("/app", "layout");
     //TODO: Make this dynamic
 
     return {
@@ -298,17 +327,17 @@ export const editInput = async (
       where: {
         id: id,
       },
-      data:{
-        input: payload
-      }
-    })
+      data: {
+        input: payload,
+      },
+    });
 
     revalidatePath("/app/admin/database");
 
-    return{
+    return {
       success: true,
-      message: "Input edited!"
-    }
+      message: "Input edited!",
+    };
   } catch (error) {
     return handleServerActionError(error, "editInput");
   }

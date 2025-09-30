@@ -15,7 +15,7 @@ type EventResponseFormContextProviderProps = {
 
 type TEventResponseFormContext = {
   eventResponseForm: UseFormReturn<TEventResponseForm>;
-  handleOnSubmitEventResponse: () => Promise<void>;
+  handleOnSubmitEventResponse: () => Promise<boolean>;
 };
 
 export const EventResponseFormContext =
@@ -24,7 +24,9 @@ export const EventResponseFormContext =
 function EventResponseFormContextProvider({
   children,
 }: EventResponseFormContextProviderProps) {
-  const { survey, event, formProps } = useEventResponseFormStore((state) => state);
+  const { survey, event, formProps } = useEventResponseFormStore(
+    (state) => state
+  );
 
   const eventResponseForm = useForm<TEventResponseForm>({
     resolver: zodResolver(strictSurveyQuestionInputSchema(true)),
@@ -50,11 +52,12 @@ function EventResponseFormContextProvider({
   }, [event, eventResponseForm, survey]);
 
   async function handleOnSubmitEventResponse() {
+    let success = false;
     const values = eventResponseForm.getValues();
     const validateForm = await eventResponseForm.trigger(formProps());
-    if (!validateForm) return;
-
-    toast.promise(submitEventSurveyForm(values), {
+    if (!validateForm) return success;
+    const promise = submitEventSurveyForm(values);
+    toast.promise(promise, {
       loading: "Submitting response...",
       success: (data) => {
         if ("error" in data) {
@@ -65,6 +68,7 @@ function EventResponseFormContextProvider({
         }
         if (data.success) {
           eventResponseForm.reset();
+          success = true;
           return data.message;
         }
         return "Response submitted successfully!";
@@ -73,13 +77,16 @@ function EventResponseFormContextProvider({
         return error.message || "Failed to submit response";
       },
     });
+    await promise;
+
+    return success;
   }
 
   return (
     <EventResponseFormContext.Provider
       value={{
         eventResponseForm,
-        handleOnSubmitEventResponse
+        handleOnSubmitEventResponse,
       }}
     >
       {children}
@@ -88,5 +95,3 @@ function EventResponseFormContextProvider({
 }
 
 export default EventResponseFormContextProvider;
-
-

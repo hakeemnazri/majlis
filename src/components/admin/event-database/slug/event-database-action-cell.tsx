@@ -35,16 +35,24 @@ function EventDatabaseActionCell({ row }: ActionCellProps) {
             console.log(row.original);
           }}
         >
-          Revoke Tickets
+          Resend Email
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => {
             console.log(row.original);
           }}
         >
-          Resend Email
+          Upload Image
         </DropdownMenuItem>
         <DropdownMenuSeparator />
+        <DropdownMenuItem
+          variant="destructive"
+          onClick={() => {
+            console.log(row.original);
+          }}
+        >
+          Revoke Tickets
+        </DropdownMenuItem>
         <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

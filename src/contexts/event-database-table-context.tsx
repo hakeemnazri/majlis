@@ -6,7 +6,13 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import React, { createContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import {
   EventData,
   EventResponse,
@@ -14,7 +20,6 @@ import {
 } from "@/components/admin/event-database/slug/table-data";
 import { Button } from "@/components/ui/button";
 import EventDatabaseActionCell from "@/components/admin/event-database/slug/event-database-action-cell";
-import { useSearchParams } from "next/navigation";
 import {
   addValidation,
   editCheckbox,
@@ -38,6 +43,12 @@ import { nameSchema } from "@/lib/schemas";
 import { Input } from "@/components/ui/input";
 import { useEventResponseFormStore } from "@/stores/event/eventResponseFormStore";
 import { useEventResponseFormContext } from "@/lib/hooks/contexts.hook";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import { Trash } from "lucide-react";
 
 type EventDatabaseTableContextProviderProps = {
   fetchedData: EventData & EventSurvey;
@@ -61,11 +72,13 @@ function EventDatabaseTableContextProvider({
   fetchedData,
   children,
 }: EventDatabaseTableContextProviderProps) {
-  const { survey, ...eventDataProps } = fetchedData;
-  const eventData = {...eventDataProps};
+  const { survey, ...eventDataProps } = useMemo(() => {
+    const { survey, ...rest } = fetchedData;
+    return { survey, ...rest };
+  }, [fetchedData]);
+  const eventData = { ...eventDataProps };
   const [data, setData] = useState(eventData);
   const [refreshKey, setRefreshKey] = useState(0);
-  const searchParams = useSearchParams();
   const {
     setId,
     setSlug,
@@ -75,263 +88,322 @@ function EventDatabaseTableContextProvider({
     formAction,
     id,
     payload,
-    currentPageSize,
-    currentPage,
   } = useDatabaseStore((state) => state);
   const { setSurvey, setEvent } = useEventResponseFormStore((state) => state);
+
   const { handleOnSubmitEventResponse } = useEventResponseFormContext();
 
   const eventDatabaseForm = useForm<TNameSchema>({
     resolver: zodResolver(nameSchema),
   });
 
-  function handleCloseDialog() {
+  const handleCloseDialog = useCallback(() => {
     eventDatabaseForm.reset();
     setDialogClose();
     setId(null, formAction, false, undefined);
-  }
-  async function handleOnSubmit(action: formActionEnums) {
-    if (action === "add-validation-column") {
-      const values = eventDatabaseForm.getValues();
-      await eventDatabaseForm.trigger("name");
-      const formData = {
-        ...values,
-        eventId: data.event.id,
-      };
-      toast.promise(addValidation(formData), {
-        loading: `Adding validation column...`,
-        success: (data) => {
-          if (!data.success) {
-            throw new Error(data.error);
-          }
-          return `Validation column added successfully!`;
-        },
-        error: (error: ServerActionError) =>
-          error.error || "Failed to add column",
-      });
-    }
+  }, [eventDatabaseForm, setDialogClose, setId, formAction]);
 
-    if (action === "edit-checkbox") {
-      toast.promise(editCheckbox(id), {
-        loading: `Editing checkbox...`,
-        success: (data) => {
-          if (!data.success) {
-            throw new Error(data.error);
-          }
-          return `Checkbox edited successfully!`;
-        },
-        error: (error: ServerActionError) =>
-          error.error || "Failed to edit checkbox",
-      });
-    }
-
-    if (action === "edit-input") {
-      toast.promise(editInput({ id, payload }), {
-        loading: `Editing input...`,
-        success: (data) => {
-          if (!data.success) {
-            throw new Error(data.error);
-          }
-          return `Input edited successfully!`;
-        },
-        error: (error: ServerActionError) =>
-          error.error || "Failed to edit input",
-      });
-    }
-
-    if (action === "add-response") {
-      await handleOnSubmitEventResponse();
-    }
-
-    handleCloseDialog();
-    setRefreshKey((prev) => prev + 1);
-  }
-
-  function getAllUniqueChecklists<T extends keyof TypeMap>(
-    responses: EventResponse[],
-    action: T
-  ): TypeMap[T] {
-    const uniqueListMap = new Map();
-
-    if (action === "validation") {
-      responses.forEach((response) => {
-        response.checklist.forEach((checklist) => {
-          uniqueListMap.set(checklist.Validation.id, checklist);
+  const handleOnSubmit = useCallback(
+    async (action: formActionEnums) => {
+      let success = false;
+      if (action === "add-validation-column") {
+        const values = eventDatabaseForm.getValues();
+        await eventDatabaseForm.trigger("name");
+        const formData = {
+          ...values,
+          eventId: data.event.id,
+        };
+        const promise = addValidation(formData);
+        toast.promise(promise, {
+          loading: `Adding validation column...`,
+          success: (data) => {
+            if (!data.success) {
+              throw new Error(data.error);
+            }
+            success = true;
+            return `Validation column added successfully!`;
+          },
+          error: (error: ServerActionError) =>
+            error.error || "Failed to add column",
         });
-      });
-    }
+        await promise;
+      }
 
-    if (action === "answer") {
-      responses.forEach((response) => {
-        response.answer.forEach((answer) => {
-          uniqueListMap.set(answer.survey.id, answer);
+      if (action === "edit-checkbox") {
+        const promise = editCheckbox(id);
+        toast.promise(promise, {
+          loading: `Editing checkbox...`,
+          success: (data) => {
+            if (!data.success) {
+              throw new Error(data.error);
+            }
+            success = true;
+            return `Checkbox edited successfully!`;
+          },
+          error: (error: ServerActionError) =>
+            error.error || "Failed to edit checkbox",
         });
-      });
-    }
+        await promise;
+      }
 
-    if (action === "tag") {
-      responses.forEach((response) => {
-        response.tag.forEach((tag) => {
-          uniqueListMap.set(tag.id, tag);
+      if (action === "edit-input") {
+        const promise = editInput({ id, payload });
+        toast.promise(promise, {
+          loading: `Editing input...`,
+          success: (data) => {
+            if (!data.success) {
+              throw new Error(data.error);
+            }
+            success = true;
+            return `Input edited successfully!`;
+          },
+          error: (error: ServerActionError) =>
+            error.error || "Failed to edit input",
         });
-      });
-    }
+        await promise;
+      }
 
-    return Array.from(uniqueListMap.values()) as TypeMap[T];
-  }
+      if (action === "add-response") {
+        success = await handleOnSubmitEventResponse();
+      }
 
-  const checklistColumn: ColumnDef<EventResponse>[] = getAllUniqueChecklists(
-    data.responses,
-    "validation"
-  ).map((checklist) => ({
-    id: checklist.id,
-    header: () => (
-      <div className="text-center">{checklist.Validation.type}</div>
-    ),
-    accessorKey: checklist.id,
-    cell: ({ row }: CellContext<EventResponse, unknown>) => (
-      <div className="flex justify-center">
-        <Checkbox
-          className="h-8 w-8"
-          checked={
-            row.original.checklist.find(
-              (item) => item.Validation.id === checklist.Validation.id
-            )?.isCheck || false
-          }
-          onCheckedChange={() =>
-            setId(
-              row.original.checklist.find(
-                (item) => item.Validation.id === checklist.Validation.id
-              )?.id || "",
-              "edit-checkbox",
-              true //isDialogOpen: True
-            )
-          }
-        />
-      </div>
-    ),
-  }));
+      if (!success) return;
 
-  const responseAnswerColumn: ColumnDef<EventResponse>[] =
-    getAllUniqueChecklists(data.responses, "answer").map((answer) => ({
-      id: answer.id,
-      header: () => <div className="text-center">{answer.survey.question}</div>,
-      accessorKey: answer.id,
-      cell: ({ row }: CellContext<EventResponse, unknown>) => (
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target as HTMLFormElement);
-            const inputValue = formData.get(
-              `${
+      handleCloseDialog();
+      setRefreshKey((prev) => prev + 1);
+    },
+    [
+      eventDatabaseForm,
+      data.event.id,
+      id,
+      payload,
+      handleOnSubmitEventResponse,
+      handleCloseDialog,
+    ]
+  );
+
+  const getAllUniqueChecklists = useCallback(
+    <T extends keyof TypeMap>(
+      responses: EventResponse[],
+      action: T
+    ): TypeMap[T] => {
+      const uniqueListMap = new Map();
+
+      if (action === "validation") {
+        responses.forEach((response) => {
+          response.checklist.forEach((checklist) => {
+            uniqueListMap.set(checklist.Validation.id, checklist);
+          });
+        });
+      }
+
+      if (action === "answer") {
+        responses.forEach((response) => {
+          response.answer.forEach((answer) => {
+            uniqueListMap.set(answer.survey.id, answer);
+          });
+        });
+      }
+
+      if (action === "tag") {
+        responses.forEach((response) => {
+          response.tag.forEach((tag) => {
+            uniqueListMap.set(tag.id, tag);
+          });
+        });
+      }
+
+      return Array.from(uniqueListMap.values()) as TypeMap[T];
+    },
+    []
+  );
+
+  const uniqueValidations = useMemo(
+    () => getAllUniqueChecklists(data.responses, "validation"),
+    [data.responses, getAllUniqueChecklists]
+  );
+
+  const uniqueAnswers = useMemo(
+    () => getAllUniqueChecklists(data.responses, "answer"),
+    [data.responses, getAllUniqueChecklists]
+  );
+
+  const uniqueTags = useMemo(
+    () => getAllUniqueChecklists(data.responses, "tag"),
+    [data.responses, getAllUniqueChecklists]
+  );
+
+  const columns: ColumnDef<EventResponse>[] = useMemo(() => {
+    const checklistColumn: ColumnDef<EventResponse>[] = uniqueValidations.map(
+      (checklist) => ({
+        id: checklist.id,
+        header: () => (
+          <HoverCard>
+            <HoverCardTrigger>
+              <Button variant="link" className="text-center">
+                {checklist.Validation.type}
+              </Button>
+            </HoverCardTrigger>
+            <HoverCardContent className="w-auto p-2.5">
+              <Button
+                variant="destructive"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => {
+                  console.log(checklist.Validation.id);
+                }}
+              >
+                <Trash className="h-4 w-4" />
+                <span className="sr-only">Remove</span>
+              </Button>
+            </HoverCardContent>
+          </HoverCard>
+        ),
+        accessorKey: checklist.id,
+        cell: ({ row }: CellContext<EventResponse, unknown>) => (
+          <div className="flex justify-center">
+            <Checkbox
+              className="h-8 w-8"
+              checked={
+                row.original.checklist.find(
+                  (item) => item.Validation.id === checklist.Validation.id
+                )?.isCheck || false
+              }
+              onCheckedChange={() =>
+                setId(
+                  row.original.checklist.find(
+                    (item) => item.Validation.id === checklist.Validation.id
+                  )?.id || "",
+                  "edit-checkbox",
+                  true
+                )
+              }
+            />
+          </div>
+        ),
+      })
+    );
+
+    const responseAnswerColumn: ColumnDef<EventResponse>[] = uniqueAnswers.map(
+      (answer) => ({
+        id: answer.id,
+        header: () => (
+          <div className="text-center">{answer.survey.question}</div>
+        ),
+        accessorKey: answer.id,
+        cell: ({ row }: CellContext<EventResponse, unknown>) => (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.target as HTMLFormElement);
+              const inputValue = formData.get(
+                `${
+                  row.original.answer.find(
+                    (item) => item.survey.id === answer.survey.id
+                  )?.id
+                }-input`
+              );
+              setId(
+                row.original.answer.find(
+                  (item) => item.survey.id === answer.survey.id
+                )?.id || null,
+                "edit-input",
+                true,
+                inputValue?.toString() || ""
+              );
+            }}
+          >
+            <Input
+              className="hover:bg-input/30 focus-visible:bg-background dark:hover:bg-input/30 dark:focus-visible:bg-input/30 h-8 min-w-35 w-full border-transparent bg-transparent text-center shadow-none focus-visible:border dark:bg-transparent"
+              defaultValue={
+                row.original.answer.find(
+                  (item) => item.survey.id === answer.survey.id
+                )?.input || ""
+              }
+              name={`${
                 row.original.answer.find(
                   (item) => item.survey.id === answer.survey.id
                 )?.id
-              }-input`
-            );
-            setId(
-              row.original.answer.find(
-                (item) => item.survey.id === answer.survey.id
-              )?.id || null,
-              "edit-input",
-              true,
-              inputValue?.toString() || ""
-            );
-          }}
-        >
-          <Input
-            className="hover:bg-input/30 focus-visible:bg-background dark:hover:bg-input/30 dark:focus-visible:bg-input/30 h-8 min-w-35 w-full border-transparent bg-transparent text-center shadow-none focus-visible:border dark:bg-transparent"
-            defaultValue={
-              row.original.answer.find(
-                (item) => item.survey.id === answer.survey.id
-              )?.input || ""
-            }
-            name={`${
-              row.original.answer.find(
-                (item) => item.survey.id === answer.survey.id
-              )?.id
-            }-input`}
-          />
-        </form>
-        // TODO: Add Checkbox type
+              }-input`}
+            />
+          </form>
+        ),
+      })
+    );
+
+    const tagColumn: ColumnDef<EventResponse>[] = uniqueTags.map((tag) => ({
+      id: tag.id,
+      header: () => <div className="text-center">{tag.AddedProps.type}</div>,
+      accessorKey: tag.id,
+      cell: ({ row }: CellContext<EventResponse, unknown>) => (
+        <p className="text-center">
+          {row.original.tag.find(
+            (item) => item.AddedProps.id === tag.AddedProps.id
+          )?.note || ""}
+        </p>
       ),
     }));
 
-  const tagColumn: ColumnDef<EventResponse>[] = getAllUniqueChecklists(
-    data.responses,
-    "tag"
-  ).map((tag) => ({
-    id: tag.id,
-    header: () => <div className="text-center">{tag.AddedProps.type}</div>,
-    accessorKey: tag.id,
-    cell: ({ row }: CellContext<EventResponse, unknown>) => (
-      <p className="text-center">
-        {row.original.tag.find(
-          (item) => item.AddedProps.id === tag.AddedProps.id
-        )?.note || ""}
-      </p>
-    ),
-  }));
+    const actionColumn = {
+      id: "actions",
+      header: () => null,
+      accessorKey: "actions",
+      cell: ({ row }: CellContext<EventResponse, unknown>) => (
+        <EventDatabaseActionCell row={row} />
+      ),
+    };
 
-  const actionColumn = {
-    id: "actions",
-    header: () => null,
-    accessorKey: "actions",
-    cell: ({ row }: CellContext<EventResponse, unknown>) => (
-      <EventDatabaseActionCell row={row} />
-    ),
-  };
+    const remarkColumn = {
+      id: "remark",
+      header: () => <div className="text-center">Remarks</div>,
+      accessorKey: "remark",
+      cell: ({ row }: CellContext<EventResponse, unknown>) => (
+        <div className="flex justify-center">
+          <Button
+            variant={"secondary"}
+            onClick={() => console.log(row.original.remark)}
+          >
+            View
+          </Button>
+        </div>
+      ),
+    };
 
-  const remarkColumn = {
-    id: "remark",
-    header: () => <div className="text-center">Remarks</div>,
-    accessorKey: "remark",
-    cell: ({ row }: CellContext<EventResponse, unknown>) => (
-      <div className="flex justify-center">
-        <Button
-          variant={"secondary"}
-          onClick={() => console.log(row.original.remark)}
-        >
-          View
-        </Button>
-      </div>
-    ),
-  };
+    const uploadsColumn = {
+      id: "uploads",
+      header: () => <div className="text-center">Uploads</div>,
+      accessorKey: "uploads",
+      cell: ({ row }: CellContext<EventResponse, unknown>) => (
+        <div className="flex justify-center">
+          <Button
+            variant={"secondary"}
+            onClick={() => console.log(row.original.upload)}
+          >
+            View
+          </Button>
+        </div>
+      ),
+    };
 
-  const uploadsColumn = {
-    id: "uploads",
-    header: () => <div className="text-center">Uploads</div>,
-    accessorKey: "uploads",
-    cell: ({ row }: CellContext<EventResponse, unknown>) => (
-      <div className="flex justify-center">
-        <Button
-          variant={"secondary"}
-          onClick={() => console.log(row.original.upload)}
-        >
-          View
-        </Button>
-      </div>
-    ),
-  };
+    const indexColumn = {
+      id: "no.",
+      header: () => <div className="text-center">No.</div>,
+      accessorKey: "no.",
+      cell: ({ row }: CellContext<EventResponse, unknown>) => (
+        <p className="text-center">{row.index + 1}</p>
+      ),
+    };
 
-  const indexColumn = {
-    id: "no.",
-    header: () => <div className="text-center">No.</div>,
-    accessorKey: "no.",
-    cell: ({ row }: CellContext<EventResponse, unknown>) => (
-      <p className="text-center">{row.index + 1}</p>
-    ),
-  };
-
-  const columns: ColumnDef<EventResponse>[] = [
-    indexColumn,
-    remarkColumn,
-    uploadsColumn,
-    ...checklistColumn,
-    ...responseAnswerColumn,
-    ...tagColumn,
-    actionColumn,
-  ];
+    return [
+      indexColumn,
+      remarkColumn,
+      uploadsColumn,
+      ...checklistColumn,
+      ...responseAnswerColumn,
+      ...tagColumn,
+      actionColumn,
+    ];
+  }, [uniqueValidations, uniqueAnswers, uniqueTags, setId]);
 
   const table = useReactTable({
     data: data.responses,
@@ -339,42 +411,36 @@ function EventDatabaseTableContextProvider({
     getCoreRowModel: getCoreRowModel(),
   });
 
-  useEffect(() => {
-    const fetchData = async (pageNumber: number, pageSize: number) => {
-      const data = await setAdminEventDatabasePagination({
-        page: pageNumber || currentPage,
-        pageSize: pageSize || currentPageSize,
-        slug: fetchedData.event.slug,
+  const fetchData = useCallback(
+    async (pageNumber: number, pageSize: number, slug: string) => {
+      const result = await setAdminEventDatabasePagination({
+        page: pageNumber,
+        pageSize: pageSize,
+        slug,
       });
 
-      if (!data.success) {
-        toast.error(data.error);
+      if (!result.success) {
+        toast.error(result.error);
         return;
       }
 
-      setData(data.events);
-    };
+      setData(result.events);
+    },
+    []
+  );
 
+  useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const pageSize = Number(urlParams.get("pageSize"));
     const pageNumber = Number(urlParams.get("pageNumber"));
-
     if (pageSize) {
-      table.setPageSize(pageSize || currentPageSize);
+      table.setPageSize(pageSize);
     }
     if (pageNumber) {
-      table.setPageIndex(pageNumber - 1 || currentPage);
+      table.setPageIndex(pageNumber - 1);
     }
-
-    fetchData(pageNumber, pageSize);
-  }, [
-    searchParams,
-    fetchedData.event.slug,
-    table,
-    currentPage,
-    currentPageSize,
-    refreshKey,
-  ]);
+    fetchData(pageNumber, pageSize, fetchedData.event.slug);
+  }, [refreshKey, fetchedData.event.slug, fetchData, table]);
 
   useEffect(() => {
     setSlug(data.event.slug);
