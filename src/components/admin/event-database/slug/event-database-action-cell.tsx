@@ -44,6 +44,13 @@ function EventDatabaseActionCell({ row }: ActionCellProps) {
         >
           Upload Image
         </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            console.log(row.original);
+          }}
+        >
+          Add Remark
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           variant="destructive"

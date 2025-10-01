@@ -4,6 +4,8 @@ import { create } from "zustand";
 export type formActionEnums =
   | "add-validation-column"
   | "remove-validation-column"
+  | "edit-validation-column"
+  | "edit-validation-index-column"
   | "add-response"
   | "edit-checkbox"
   | "edit-input"

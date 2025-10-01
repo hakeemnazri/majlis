@@ -23,7 +23,7 @@ function AddValidationForm() {
         }}
         className="space-y-8"
       >
-        { formAction === "add-validation-column" &&
+        { (formAction === "add-validation-column" || formAction === "edit-validation-column") &&
           <FormField
           control={eventDatabaseForm.control}
           name="name"
@@ -35,7 +35,8 @@ function AddValidationForm() {
               </FormDescription>
               <FormControl>
                 <Input placeholder="Enter validation name" {...field}
-                value={field.value}
+                defaultValue={field.value?.toString()}
+                value={field.value?.toString() || ""}
                  />
               </FormControl>
               <FormMessage />

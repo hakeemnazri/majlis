@@ -234,7 +234,9 @@ export const addValidation = async (
   }
 };
 
-export const deleteValidation = async (data: unknown) : Promise<SuccessResponse | ErrorResponse> => {
+export const deleteValidation = async (
+  data: unknown
+): Promise<SuccessResponse | ErrorResponse> => {
   try {
     const parsedData = editInputSchema.safeParse(data);
 
@@ -244,12 +246,10 @@ export const deleteValidation = async (data: unknown) : Promise<SuccessResponse 
 
     const { id } = parsedData.data;
 
-    prisma.$transaction(async (tx) => {
-      tx.validation.delete({
-        where: {
-          id: id,
-        },
-      })
+    await prisma.validation.delete({
+      where: {
+        id: id,
+      },
     });
 
     revalidatePath("/app/admin/database/11"); //TODO: Make this dynamic
@@ -258,9 +258,115 @@ export const deleteValidation = async (data: unknown) : Promise<SuccessResponse 
       success: true,
       message: "Validation deleted!",
     };
-
   } catch (error) {
     return handleServerActionError(error, "addValidation");
+  }
+};
+export const editValidation = async (
+  data: unknown
+): Promise<SuccessResponse | ErrorResponse> => {
+  try {
+    const parsedData = editInputSchema.safeParse(data);
+
+    if (!parsedData.success) {
+      throw new Error("Invalid data");
+    }
+
+    const { id, payload } = parsedData.data;
+
+    await prisma.validation.update({
+      where: {
+        id: id,
+      },
+      data: {
+        type: payload,
+      },
+    });
+
+    revalidatePath("/app/admin/database/11"); //TODO: Make this dynamic
+
+    return {
+      success: true,
+      message: "Validation edited!",
+    };
+  } catch (error) {
+    return handleServerActionError(error, "editValidation");
+  }
+};
+
+export const editValidationIndex = async (
+  data: unknown
+): Promise<SuccessResponse | ErrorResponse> => {
+  try {
+    const parsedData = editInputSchema.safeParse(data);
+
+    if (!parsedData.success) {
+      throw new Error("Invalid data");
+    }
+
+    const { id, payload } = parsedData.data;
+
+    const result = await prisma.$transaction(async (tx) => {
+      const currentValidation = await tx.validation.findUnique({
+        where: { id },
+        select: { id: true, eventId: true, order: true },
+      });
+
+      if (!currentValidation) {
+        throw new Error("Validation not found");
+      }
+
+      const allValidations = await tx.validation.findMany({
+        where: {
+          eventId: currentValidation.eventId,
+        },
+        orderBy: {
+          order: "asc",
+        },
+        select: {
+          id: true,
+          order: true,
+        },
+      });
+
+      const currentIndex = allValidations.findIndex((v) => v.id === id);
+
+      if (currentIndex === -1) {
+        throw new Error("Validation not found in list");
+      }
+
+      const targetIndex =
+        payload === "left" ? currentIndex - 1 : currentIndex + 1;
+
+      if (targetIndex < 0 || targetIndex >= allValidations.length) {
+        throw new Error("Invalid target index");
+      }
+
+      const targetValidation = allValidations[targetIndex];
+
+      await tx.validation.update({
+        where: { id: currentValidation.id },
+        data: { order: targetValidation.order },
+      });
+
+      await tx.validation.update({
+        where: { id: targetValidation.id },
+        data: { order: currentValidation.order },
+      });
+
+      return {
+        success: true,
+        message: "index success fully moved",
+      };
+    });
+
+    return {
+      success: true,
+      message: result.message,
+    };
+
+  } catch (error) {
+    return handleServerActionError(error, "editValidationIndex");
   }
 };
 

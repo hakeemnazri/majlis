@@ -30,31 +30,47 @@ function EventDatabaseDialog() {
       <DialogContent className="flex flex-col max-h-2/3">
         <DialogTitle>
           {formAction === "add-validation-column" && "Add Validation Column"}
+          {formAction === "edit-validation-index-column" && "Move Index Column"}
           {formAction === "remove-validation-column" &&
             "Remove Validation Column"}
+          {formAction === "edit-validation-column" && "Edit Validation Column"}
           {formAction === "edit-checkbox" && "Edit Validation Checkbox"}
           {formAction === "edit-input" && "Edit Response Data"}
           {formAction === "add-response" && "Add Response Data"}
         </DialogTitle>
         <Separator />
+
         {formAction === "add-response" && <EventResponseForm />}
 
-        {formAction === "add-validation-column" && <AddValidationForm />}
-        {formAction === "remove-validation-column" && <p>{formAction}</p>}
-        {(formAction === "edit-checkbox" || formAction === "edit-input") && (
+        {(formAction === "add-validation-column" ||
+          formAction === "edit-validation-column") && <AddValidationForm />}
+
+        {(formAction === "edit-checkbox" ||
+          formAction === "edit-input" ||
+          formAction === "remove-validation-column" ||
+          formAction === "edit-validation-index-column") && (
           <>
             <DialogHeader>
               Are you sure you want to proceed with this action?
             </DialogHeader>
             <div className="space-y-2">
-              <DialogDescription>
-                Once you proceed, the action will be applied and previous data
-                will be lost.
-              </DialogDescription>
-              <DialogDescription>
-                Please take a moment to review that this is truly what you
-                intend to do before continuing.
-              </DialogDescription>
+              {formAction !== "edit-validation-index-column" ? (
+                <>
+                  <DialogDescription>
+                    Once you proceed, the action will be applied and previous
+                    data will be lost.
+                  </DialogDescription>
+                  <DialogDescription>
+                    Please take a moment to review that this is truly what you
+                    intend to do before continuing.
+                  </DialogDescription>
+                </>
+              ) : (
+                <DialogDescription>
+                  Once you proceed, the column will be moved as per your choice
+                  and you may move the column back again.
+                </DialogDescription>
+              )}
             </div>
           </>
         )}

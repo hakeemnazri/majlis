@@ -22,8 +22,11 @@ import { Button } from "@/components/ui/button";
 import EventDatabaseActionCell from "@/components/admin/event-database/slug/event-database-action-cell";
 import {
   addValidation,
+  deleteValidation,
   editCheckbox,
   editInput,
+  editValidation,
+  editValidationIndex,
   setAdminEventDatabasePagination,
 } from "@/actions/adminDatabase.action";
 import { toast } from "sonner";
@@ -48,7 +51,8 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { Trash } from "lucide-react";
+import { ChevronLeft, ChevronRight, Edit, Images, NotebookPen, Trash } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 type EventDatabaseTableContextProviderProps = {
   fetchedData: EventData & EventSurvey;
@@ -125,6 +129,70 @@ function EventDatabaseTableContextProvider({
           },
           error: (error: ServerActionError) =>
             error.error || "Failed to add column",
+        });
+        await promise;
+      }
+
+      if (action === "remove-validation-column") {
+        const data = {
+          id,
+        };
+        const promise = deleteValidation(data);
+        toast.promise(promise, {
+          loading: `Deleting validation column...`,
+          success: (data) => {
+            if (!data.success) {
+              throw new Error(data.error);
+            }
+            success = true;
+            return `Validation column deleted successfully!`;
+          },
+          error: (error: ServerActionError) =>
+            error.error || "Failed to delete column",
+        });
+        await promise;
+      }
+
+      if (action === "edit-validation-column") {
+        const values = eventDatabaseForm.getValues();
+        await eventDatabaseForm.trigger("name");
+        const data = {
+          id,
+          payload: values.name,
+        };
+        const promise = editValidation(data);
+        toast.promise(promise, {
+          loading: `Deleting validation column...`,
+          success: (data) => {
+            if (!data.success) {
+              throw new Error(data.error);
+            }
+            success = true;
+            return `Validation column deleted successfully!`;
+          },
+          error: (error: ServerActionError) =>
+            error.error || "Failed to delete column",
+        });
+        await promise;
+      }
+
+      if (action === "edit-validation-index-column") {
+        const data = {
+          id,
+          payload,
+        };
+        const promise = editValidationIndex(data);
+        toast.promise(promise, {
+          loading: `Editing validation index...`,
+          success: (data) => {
+            if (!data.success) {
+              throw new Error(data.error);
+            }
+            success = true;
+            return `Validation index edited successfully!`;
+          },
+          error: (error: ServerActionError) =>
+            error.error || "Failed to edit validation index",
         });
         await promise;
       }
@@ -245,17 +313,74 @@ function EventDatabaseTableContextProvider({
               </Button>
             </HoverCardTrigger>
             <HoverCardContent className="w-auto p-2.5">
-              <Button
-                variant="destructive"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => {
-                  console.log(checklist.Validation.id);
-                }}
-              >
-                <Trash className="h-4 w-4" />
-                <span className="sr-only">Remove</span>
-              </Button>
+              <div className="flex gap-4 items-center h-8">
+                <Button
+                  variant="outline"
+                  className="hidden h-8 w-8 p-0 lg:flex"
+                  onClick={() => {
+                    setId(
+                      checklist.Validation.id,
+                      "edit-validation-index-column",
+                      true,
+                      "left"
+                    );
+                  }}
+                  disabled={checklist.Validation.order === 1}
+                >
+                  <span className="sr-only">Go to first page</span>
+                  <ChevronLeft />
+                </Button>
+                <Button
+                  variant="outline"
+                  className="hidden h-8 w-8 p-0 lg:flex"
+                  onClick={() => {
+                    setId(
+                      checklist.Validation.id,
+                      "edit-validation-index-column",
+                      true,
+                      "right"
+                    );
+                  }}
+                  disabled={
+                    checklist.Validation.order === uniqueValidations.length
+                  }
+                >
+                  <span className="sr-only">Go to first page</span>
+                  <ChevronRight />
+                </Button>
+                <Separator orientation="vertical" className="h-4" />
+
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => {
+                    setId(
+                      checklist.Validation.id,
+                      "edit-validation-column",
+                      true
+                    );
+                  }}
+                >
+                  <Edit className="h-4 w-4" />
+                  <span className="sr-only">Edit</span>
+                </Button>
+                <Button
+                  variant="destructive"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => {
+                    setId(
+                      checklist.Validation.id,
+                      "remove-validation-column",
+                      true
+                    );
+                  }}
+                >
+                  <Trash className="h-4 w-4" />
+                  <span className="sr-only">Remove</span>
+                </Button>
+              </div>
             </HoverCardContent>
           </HoverCard>
         ),
@@ -360,10 +485,14 @@ function EventDatabaseTableContextProvider({
       cell: ({ row }: CellContext<EventResponse, unknown>) => (
         <div className="flex justify-center">
           <Button
-            variant={"secondary"}
-            onClick={() => console.log(row.original.remark)}
+            variant="ghost"
+            size="icon"
+            className="h-10 w-10"
+            onClick={() => {
+              console.log(row.original);
+            }}
           >
-            View
+            <NotebookPen className="h-10 w-10" />
           </Button>
         </div>
       ),
@@ -376,10 +505,14 @@ function EventDatabaseTableContextProvider({
       cell: ({ row }: CellContext<EventResponse, unknown>) => (
         <div className="flex justify-center">
           <Button
-            variant={"secondary"}
-            onClick={() => console.log(row.original.upload)}
+            variant="ghost"
+            size="icon"
+            className="h-10 w-10"
+            onClick={() => {
+              console.log(row.original);
+            }}
           >
-            View
+            <Images className="h-10 w-10" />
           </Button>
         </div>
       ),
